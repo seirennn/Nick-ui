@@ -4,10 +4,12 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { ArrowRight, Copy, Check, Terminal, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface CenteredHeroLayoutProps {
+  showLogo?: boolean;
   badgeText?: string;
   badgeHref?: string;
   title?: React.ReactNode;
@@ -26,7 +28,8 @@ export interface CenteredHeroLayoutProps {
 }
 
 export function CenteredHeroLayout({
-  badgeText = 'NickUI v0.1.0 · Open Source Release',
+  showLogo = true,
+  badgeText = 'NickUI v0.1.1 · Open Source Ecosystem',
   badgeHref = '/components',
   title = (
     <>
@@ -34,7 +37,7 @@ export function CenteredHeroLayout({
       <span className="text-text-muted">developer-owned software</span>.
     </>
   ),
-  description = 'High-craft UI components, tactile skeuomorphic tiers, and native AI MCP server. Built for developers who care about spatial clarity and atmospheric presence.',
+  description = 'High-craft UI components, tactile depth tiers, and native AI MCP server. Built for developers who care about spatial clarity and atmospheric presence.',
   primaryAction = {
     label: 'Explore Components',
     href: '/components',
@@ -43,7 +46,7 @@ export function CenteredHeroLayout({
     label: 'CLI Documentation',
     href: '/docs/cli',
   },
-  commandSnippet = 'pnpm dlx nickui add button',
+  commandSnippet = 'pnpm dlx @sehrennn/nickui add button',
   previewContent,
   className,
 }: CenteredHeroLayoutProps) {
@@ -57,6 +60,13 @@ export function CenteredHeroLayout({
 
   return (
     <div className={cn('w-full py-12 md:py-20 flex flex-col items-center text-center', className)}>
+      {/* Brand Logo Emblem */}
+      {showLogo && (
+        <div className="mb-4">
+          <BrandLogo size="lg" variant="tactile" />
+        </div>
+      )}
+
       {/* Announcement Badge */}
       {badgeText && (
         <div className="mb-6">

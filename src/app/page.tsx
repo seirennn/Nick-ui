@@ -21,6 +21,7 @@ import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDe
 import { FolderPreview } from '@/components/ui/folder-preview';
 import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Volume2, Sparkles, Terminal, Activity, HardDrive, ShieldCheck } from 'lucide-react';
 import componentsData from '@/registry/components.json';
 
@@ -55,16 +56,19 @@ export default function HomePage() {
           ═══════════════════════════════════════════ */}
           <section className="px-6 md:px-12 pt-16 pb-16 border-b border-border/80">
             <div className="max-w-3xl space-y-6">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <span className="text-sidebar-category uppercase tracking-wider text-text-muted font-medium">
-                  NickUI v0.1.0 · Free & Open-Source Ecosystem
-                </span>
-                <Link href="/docs/mcp">
-                  <Badge variant="engraved" className="ml-1 text-[10px] hover:border-foreground/30 transition-colors cursor-pointer">
-                    FREE MCP SERVER
-                  </Badge>
-                </Link>
+              <div className="flex items-center gap-3">
+                <BrandLogo size="md" variant="tactile" />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="text-sidebar-category uppercase tracking-wider text-text-muted font-medium">
+                    NickUI v0.1.1 · Free & Open-Source Ecosystem
+                  </span>
+                  <Link href="/docs/mcp">
+                    <Badge variant="engraved" className="ml-1 text-[10px] hover:border-foreground/30 transition-colors cursor-pointer">
+                      FREE MCP SERVER
+                    </Badge>
+                  </Link>
+                </div>
               </div>
 
               <h1 className="text-3xl sm:text-5xl font-medium tracking-tight text-text-primary leading-tight">
@@ -539,8 +543,7 @@ export default function HomePage() {
           ═══════════════════════════════════════════ */}
           <footer className="px-6 md:px-12 py-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-metadata text-text-muted">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
-              <span>NickUI · Open-Source UI Library & AI MCP Server</span>
+              <BrandLogo size="xs" showText variant="minimal" />
             </div>
             <div className="flex items-center gap-4 text-xs">
               <Link href="/docs/cli" className="hover:text-text-primary transition-colors">CLI</Link>

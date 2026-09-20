@@ -7,6 +7,7 @@ import { TactileTrendCard } from '@/components/ui/charts/tactile-trend-card';
 import { TactileMetricCard, TactileBarCard } from '@/components/ui/charts/tactile-metric-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Download, RefreshCw, Copy, Check, ArrowUpRight, ShieldCheck, Database, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -47,7 +48,7 @@ export default function Dashboard() {
       <RailSidebar
         activeId={activeNav}
         onSelect={setActiveNav}
-        workspaceGlyph="N"
+        workspaceLogo={<BrandLogo size="xs" variant="minimal" />}
         workspaceName="NickUI Autonomous Systems"
         className="hidden md:flex shrink-0"
       />

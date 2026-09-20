@@ -10,6 +10,7 @@ import { Kbd } from '@/components/ui/kbd';
 import { Badge } from '@/components/ui/badge';
 import { Search, BookOpen, Layers, Terminal, Sparkles, Sliders, ToggleLeft, Github, Bot, TerminalSquare } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import componentsData from '@/registry/components.json';
 
 export function SiteNavbar() {
@@ -96,16 +97,8 @@ export function SiteNavbar() {
     <>
       <Navbar
         brand={
-          <Link href="/" className="flex items-center gap-2 select-none group">
-            <div className="w-6 h-6 rounded-md bg-secondary border border-border/80 flex items-center justify-center text-text-primary">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-medium text-sm text-text-primary tracking-tight">NickUI</span>
-              <span className="text-[10px] font-mono text-text-muted px-1.5 py-0.5 rounded bg-secondary/60">v0.1</span>
-            </div>
+          <Link href="/" className="flex items-center select-none group">
+            <BrandLogo size="sm" showText variant="minimal" />
           </Link>
         }
         items={navItems}

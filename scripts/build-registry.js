@@ -44,6 +44,7 @@ const slugToFile = {
   'magnetic-tabs': 'magnetic-tabs.tsx',
   'stack-deck': 'stack-deck.tsx',
   'rail-sidebar': 'rail-sidebar.tsx',
+  'studio-sidebar': 'studio-sidebar.tsx',
   'dot-matrix-chart': 'charts/dot-matrix-chart.tsx',
   'tactile-trend-card': 'charts/tactile-trend-card.tsx',
   'tactile-metric-card': 'charts/tactile-metric-card.tsx',

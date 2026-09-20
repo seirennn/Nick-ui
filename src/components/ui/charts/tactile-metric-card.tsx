@@ -78,8 +78,8 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
       <div
         ref={ref}
         className={cn(
-          'relative w-full max-w-sm rounded-[24px] border border-border/80 bg-[#161617] text-white p-6',
-          'shadow-2xl select-none transition-all overflow-hidden',
+          'relative w-full max-w-sm rounded-[24px] border border-border/80 bg-card text-text-primary p-6',
+          'shadow-tactile select-none transition-colors overflow-hidden',
           className
         )}
         {...props}
@@ -87,26 +87,26 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
         {/* Header: Icon + Title & Dropdown Pill + More Button */}
         <div className="flex items-center justify-between gap-3 pb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center text-white/80">
+            <div className="w-7 h-7 rounded-lg bg-secondary/80 border border-border/70 flex items-center justify-center text-text-secondary">
               <BarChart2 className="w-3.5 h-3.5" />
             </div>
-            <span className="text-sm font-medium tracking-tight text-white/90">{title}</span>
+            <span className="text-sm font-medium tracking-tight text-text-primary">{title}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onPeriodClick}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-white/80 hover:bg-white/[0.08] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-secondary/50 border border-border/60 text-text-secondary hover:text-text-primary hover:bg-secondary/80 transition-colors cursor-pointer"
             >
               <span>{periodLabel}</span>
-              <ChevronDown className="w-3 h-3 text-white/40" />
+              <ChevronDown className="w-3 h-3 text-text-muted" />
             </button>
             <button
               type="button"
               onClick={onMoreClick}
               aria-label="More options"
-              className="w-7 h-7 rounded-lg inline-flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/5 transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-lg inline-flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-secondary/60 transition-colors cursor-pointer"
             >
               <MoreHorizontal className="w-4 h-4" />
             </button>
@@ -118,14 +118,14 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
           <div
             className={cn(
               'w-1 h-8 rounded-full',
-              accentColor === 'emerald' && 'bg-emerald-400 shadow-sm shadow-emerald-400/40',
-              accentColor === 'amber' && 'bg-amber-400 shadow-sm shadow-amber-400/40',
-              accentColor === 'neutral' && 'bg-white/80'
+              accentColor === 'emerald' && 'bg-emerald-600 dark:bg-emerald-400',
+              accentColor === 'amber' && 'bg-amber-600 dark:bg-amber-400',
+              accentColor === 'neutral' && 'bg-text-primary'
             )}
           />
-          <div className="text-3xl font-medium tracking-tight text-white">{value}</div>
-          <div className="text-[11px] font-mono leading-tight text-white/50 pl-1">
-            <div className="text-white/80 font-medium">{deltaText}</div>
+          <div className="text-3xl font-medium tracking-tight text-text-primary">{value}</div>
+          <div className="text-[11px] font-mono leading-tight text-text-muted pl-1">
+            <div className="text-text-secondary font-medium">{deltaText}</div>
             <div>{deltaSubtext}</div>
           </div>
         </div>
@@ -138,17 +138,17 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
               key={activeIndex}
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute z-20 px-3 py-1.5 rounded-xl bg-[#0d0e0f]/95 border border-white/10 text-white shadow-xl pointer-events-none"
+              className="absolute z-20 px-3 py-1.5 rounded-xl bg-popover border border-border/80 text-text-primary shadow-tactile pointer-events-none"
               style={{
                 left: `${Math.min(Math.max(activePoint.x - 60, 10), width - 150)}px`,
                 top: `${Math.max(activePoint.y - 48, 0)}px`,
               }}
             >
-              <div className="text-[11px] font-mono font-medium text-white/95">
+              <div className="text-[11px] font-mono font-medium text-text-primary">
                 {activePoint.node.tooltipValue}
               </div>
               {activePoint.node.tooltipSubtext && (
-                <div className="text-[10px] font-mono text-emerald-400">
+                <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
                   {activePoint.node.tooltipSubtext}
                 </div>
               )}
@@ -156,21 +156,21 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
           )}
 
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-32 overflow-visible">
-            {/* Active Vertical Glow Beam */}
+            {/* Active Vertical Soft Beam */}
             <rect
               x={activePoint.x - 14}
               y={0}
               width={28}
               height={height}
-              rx={12}
+              rx={8}
               fill="url(#columnGlow)"
               className="transition-all duration-300 pointer-events-none"
             />
 
             <defs>
               <linearGradient id="columnGlow" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.22" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="var(--text-primary)" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="var(--text-primary)" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
@@ -178,10 +178,11 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
             <path
               d={pathD}
               fill="none"
-              stroke="#10b981"
+              stroke="var(--text-primary)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              className="opacity-90"
             />
 
             {/* Interactive Node Dots */}
@@ -193,20 +194,23 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
                     cx={pt.x}
                     cy={pt.y}
                     r={isActive ? 4.5 : 3}
-                    fill={isActive ? '#10b981' : '#161617'}
-                    stroke="#10b981"
+                    className={cn(
+                      'transition-all duration-200',
+                      isActive
+                        ? 'fill-text-primary stroke-text-primary'
+                        : 'fill-card stroke-border hover:stroke-text-secondary'
+                    )}
                     strokeWidth={isActive ? 2 : 1.5}
-                    className="transition-all duration-200"
                   />
                   {isActive && (
                     <circle
                       cx={pt.x}
                       cy={pt.y}
-                      r="9"
+                      r="8"
                       fill="none"
-                      stroke="#10b981"
+                      stroke="var(--text-primary)"
                       strokeWidth="1"
-                      strokeOpacity="0.4"
+                      strokeOpacity="0.3"
                     />
                   )}
                 </g>
@@ -215,15 +219,15 @@ export const TactileMetricCard = React.forwardRef<HTMLDivElement, TactileMetricC
           </svg>
 
           {/* Month Labels */}
-          <div className="flex items-center justify-between text-[11px] font-mono text-white/40 pt-2 px-1">
+          <div className="flex items-center justify-between text-[11px] font-mono text-text-muted pt-2 px-1">
             {nodes.map((n, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setActiveIndex(i)}
                 className={cn(
-                  'transition-colors cursor-pointer hover:text-white',
-                  activeIndex === i ? 'text-white font-medium' : 'text-white/40'
+                  'transition-colors cursor-pointer hover:text-text-primary',
+                  activeIndex === i ? 'text-text-primary font-medium' : 'text-text-muted'
                 )}
               >
                 {n.label}
@@ -297,8 +301,8 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
       <div
         ref={ref}
         className={cn(
-          'relative w-full max-w-sm rounded-[24px] border border-border/80 bg-[#161617] text-white p-6',
-          'shadow-2xl select-none transition-all overflow-hidden',
+          'relative w-full max-w-sm rounded-[24px] border border-border/80 bg-card text-text-primary p-6',
+          'shadow-tactile select-none transition-colors overflow-hidden',
           className
         )}
         {...props}
@@ -306,26 +310,26 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
         {/* Header: Icon + Title & Dropdown Pill + More Button */}
         <div className="flex items-center justify-between gap-3 pb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center text-white/80">
+            <div className="w-7 h-7 rounded-lg bg-secondary/80 border border-border/70 flex items-center justify-center text-text-secondary">
               <BarChart2 className="w-3.5 h-3.5" />
             </div>
-            <span className="text-sm font-medium tracking-tight text-white/90">{title}</span>
+            <span className="text-sm font-medium tracking-tight text-text-primary">{title}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onPeriodClick}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-white/80 hover:bg-white/[0.08] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-secondary/50 border border-border/60 text-text-secondary hover:text-text-primary hover:bg-secondary/80 transition-colors cursor-pointer"
             >
               <span>{periodLabel}</span>
-              <ChevronDown className="w-3 h-3 text-white/40" />
+              <ChevronDown className="w-3 h-3 text-text-muted" />
             </button>
             <button
               type="button"
               onClick={onMoreClick}
               aria-label="More options"
-              className="w-7 h-7 rounded-lg inline-flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/5 transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-lg inline-flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-secondary/60 transition-colors cursor-pointer"
             >
               <MoreHorizontal className="w-4 h-4" />
             </button>
@@ -334,10 +338,10 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
 
         {/* Metric Value Row */}
         <div className="flex items-center gap-3 pb-6">
-          <div className="w-1 h-8 rounded-full bg-amber-400 shadow-sm shadow-amber-400/40" />
-          <div className="text-3xl font-medium tracking-tight text-white">{value}</div>
-          <div className="text-[11px] font-mono leading-tight text-white/50 pl-1">
-            <div className="text-white/80 font-medium">{deltaText}</div>
+          <div className="w-1 h-8 rounded-full bg-amber-600 dark:bg-amber-400" />
+          <div className="text-3xl font-medium tracking-tight text-text-primary">{value}</div>
+          <div className="text-[11px] font-mono leading-tight text-text-muted pl-1">
+            <div className="text-text-secondary font-medium">{deltaText}</div>
             <div>{deltaSubtext}</div>
           </div>
         </div>
@@ -350,10 +354,10 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
               className="absolute left-0 right-0 z-10 flex items-center pointer-events-none"
               style={{ bottom: `${averageThreshold.value * 0.95}px` }}
             >
-              <div className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/15 backdrop-blur-md text-white/90 border border-white/20 shadow-xs mr-2">
+              <div className="px-2 py-0.5 rounded text-[10px] font-mono bg-secondary/80 backdrop-blur-md text-text-secondary border border-border/70 shadow-2xs mr-2">
                 {averageThreshold.label}
               </div>
-              <div className="flex-1 border-b border-dashed border-white/20" />
+              <div className="flex-1 border-b border-dashed border-border/60" />
             </div>
           )}
 
@@ -372,7 +376,7 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
                     <motion.div
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mb-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-amber-400 text-black shadow-md shadow-amber-400/30"
+                      className="mb-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-primary text-primary-foreground shadow-2xs"
                     >
                       {bar.amountFormatted}
                     </motion.div>
@@ -383,8 +387,8 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
                     className={cn(
                       'w-full max-w-[28px] rounded-t-lg transition-all duration-200',
                       isHighlighted
-                        ? 'bg-gradient-to-t from-amber-500/80 to-amber-400 shadow-md shadow-amber-400/20'
-                        : 'bg-white/[0.09] hover:bg-white/[0.15]'
+                        ? 'bg-text-primary shadow-2xs'
+                        : 'bg-secondary/70 hover:bg-secondary border-t border-x border-border/40'
                     )}
                     style={{ height: `${bar.value}%` }}
                   />
@@ -394,13 +398,13 @@ export const TactileBarCard = React.forwardRef<HTMLDivElement, TactileBarCardPro
           </div>
 
           {/* Day of week labels */}
-          <div className="flex items-center justify-between text-[11px] font-mono text-white/40 pt-3 px-1 border-t border-white/[0.08] mt-2">
+          <div className="flex items-center justify-between text-[11px] font-mono text-text-muted pt-3 px-1 border-t border-border/40 mt-2">
             {bars.map((b, i) => (
               <span
                 key={i}
                 className={cn(
                   'transition-colors',
-                  selectedBar?.label === b.label ? 'text-white font-medium' : 'text-white/40'
+                  selectedBar?.label === b.label ? 'text-text-primary font-medium' : 'text-text-muted'
                 )}
               >
                 {b.label}

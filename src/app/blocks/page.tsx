@@ -2,34 +2,30 @@
 
 import * as React from 'react';
 import { SiteNavbar } from '@/components/docs/SiteNavbar';
+import { BlockViewer } from '@/components/blocks/BlockViewer';
 import { TactileStudioDashboard } from '@/components/blocks/TactileStudioDashboard';
+import { ExecutiveStudioConsole } from '@/components/blocks/ExecutiveStudioConsole';
 import { AnalyticsDashboard } from '@/components/blocks/AnalyticsDashboard';
 import { InfrastructureConsole } from '@/components/blocks/InfrastructureConsole';
 import { WorkspaceSettingsBlock } from '@/components/blocks/WorkspaceSettingsBlock';
 import { CenteredHeroLayout } from '@/components/blocks/landing/CenteredHeroLayout';
 import { FeatureGridLayout } from '@/components/blocks/landing/FeatureGridLayout';
 import { SplitShowcaseLayout } from '@/components/blocks/landing/SplitShowcaseLayout';
+import { BentoShowcaseLayout } from '@/components/blocks/landing/BentoShowcaseLayout';
 import { DotMatrixChart } from '@/components/ui/charts/dot-matrix-chart';
 import { TactileTrendCard } from '@/components/ui/charts/tactile-trend-card';
 import { TactileMetricCard, TactileBarCard } from '@/components/ui/charts/tactile-metric-card';
 import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDescription, SpotlightCardContent } from '@/components/ui/spotlight-card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { CodeBlock } from '@/components/docs/CodeBlock';
 import {
-  DollarSign,
+  Activity,
+  Layers,
+  BarChart3,
   Server,
   Shield,
-  Eye,
-  Code2,
-  Copy,
-  Check,
-  Sparkles,
   LayoutTemplate,
-  Activity,
-  BarChart3,
-  TrendingUp,
+  Cpu,
 } from 'lucide-react';
 
 const FLAGSHIP_CODE = `import { TactileStudioDashboard } from '@/components/blocks/TactileStudioDashboard';
@@ -42,17 +38,27 @@ export default function DashboardPage() {
   );
 }`;
 
+const EXECUTIVE_CONSOLE_CODE = `import { ExecutiveStudioConsole } from '@/components/blocks/ExecutiveStudioConsole';
+
+export default function ConsolePage() {
+  return (
+    <main className="min-h-screen p-6 md:p-10 bg-background">
+      <ExecutiveStudioConsole />
+    </main>
+  );
+}`;
+
 const DOT_MATRIX_CODE = `import { DotMatrixChart } from '@/components/ui/charts/dot-matrix-chart';
 
 export default function RevenueOverview() {
   return (
     <DotMatrixChart
-      title="REVENUE"
+      title="REVENUE VELOCITY"
       metric="+326%"
       timeframe="MONTHLY"
       previousLabel="MAY $3,250"
       currentLabel="JUN $12,392"
-      footerTagline="DON'T OVERTHINK | AUG 2024 | SIMPLIFYING DIGITAL EXP."
+      footerTagline="HIGH THROUGHPUT | 2024 | ZERO LOSS"
     />
   );
 }`;
@@ -62,9 +68,9 @@ const TREND_CARD_CODE = `import { TactileTrendCard } from '@/components/ui/chart
 export default function TrendAnalysis() {
   return (
     <TactileTrendCard
-      title="Chart"
-      keywords={['Batch auction', 'Liquid staking derivatives (LSD)']}
-      metricLabel="Total Personas"
+      title="Protocol Volume Trend"
+      keywords={['Batch auction', 'Liquid staking derivatives (LSD)', 'Proof rollups']}
+      metricLabel="Active Validated Nodes"
       metricValue="824"
       metricDeltaSuperscript="+334"
       percentageDelta="34.4%"
@@ -76,13 +82,14 @@ const METRIC_CARDS_CODE = `import { TactileMetricCard, TactileBarCard } from '@/
 
 export default function FinancialKPIs() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
       <TactileMetricCard
         title="Balance"
-        periodLabel="2023"
+        periodLabel="2024"
         value="$94,127"
         deltaText="increase 13%"
         deltaSubtext="vs last year"
+        className="w-full max-w-none"
       />
       <TactileBarCard
         title="Income"
@@ -90,6 +97,7 @@ export default function FinancialKPIs() {
         value="$12,532"
         deltaText="increase 12%"
         deltaSubtext="vs last month"
+        className="w-full max-w-none"
       />
     </div>
   );
@@ -100,13 +108,26 @@ const HERO_CODE = `import { CenteredHeroLayout } from '@/components/blocks/landi
 export default function LandingPage() {
   return (
     <CenteredHeroLayout
-      badgeText="NickUI v0.1.0 · Open Source Release"
+      showLogo={true}
+      badgeText="NickUI v0.1.1 · Open Source Release"
       badgeHref="/components"
       title={<>Architectural design system for <span className="text-text-muted">developer-owned software</span>.</>}
       description="High-craft UI components, tactile depth tiers, and native AI MCP server."
       primaryAction={{ label: 'Explore Components', href: '/components' }}
       secondaryAction={{ label: 'CLI Documentation', href: '/docs/cli' }}
-      commandSnippet="pnpm dlx nickui add button"
+      commandSnippet="pnpm dlx @sehrennn/nickui add button"
+    />
+  );
+}`;
+
+const BENTO_LAYOUT_CODE = `import { BentoShowcaseLayout } from '@/components/blocks/landing/BentoShowcaseLayout';
+
+export default function BentoSection() {
+  return (
+    <BentoShowcaseLayout
+      category="SYSTEM ARCHITECTURE"
+      title="Engineered for tactile precision & zero-latency execution."
+      description="Every primitive is physically grounded with atmospheric lighting, measured spring physics, and native AI MCP bindings."
     />
   );
 }`;
@@ -177,35 +198,23 @@ export default function SettingsPage() {
 export default function BlocksPage() {
   const [activeTab, setActiveTab] = React.useState('all');
 
-  // Preview / Code toggles for each block
-  const [flagshipView, setFlagshipView] = React.useState<'preview' | 'code'>('preview');
-  const [dotMatrixView, setDotMatrixView] = React.useState<'preview' | 'code'>('preview');
-  const [trendView, setTrendView] = React.useState<'preview' | 'code'>('preview');
-  const [metricView, setMetricView] = React.useState<'preview' | 'code'>('preview');
-  const [heroView, setHeroView] = React.useState<'preview' | 'code'>('preview');
-  const [featureView, setFeatureView] = React.useState<'preview' | 'code'>('preview');
-  const [splitView, setSplitView] = React.useState<'preview' | 'code'>('preview');
-  const [analyticsView, setAnalyticsView] = React.useState<'preview' | 'code'>('preview');
-  const [infraView, setInfraView] = React.useState<'preview' | 'code'>('preview');
-  const [settingsView, setSettingsView] = React.useState<'preview' | 'code'>('preview');
-
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-foreground">
       <SiteNavbar />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-24 space-y-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-24 space-y-12">
         {/* Page Header */}
         <div className="max-w-3xl space-y-3">
           <div className="flex items-center gap-2">
             <Badge variant="mono" className="text-xs">
-              Open-Source Blocks · 10 Pre-built Patterns
+              Open-Source Blocks · 11 Production Patterns
             </Badge>
           </div>
           <h1 className="text-3xl sm:text-4xl font-medium tracking-tight text-text-primary">
             Blocks & Architectural Dashboards
           </h1>
           <p className="text-body text-text-secondary max-w-2xl leading-relaxed">
-            Full-width responsive application dashboards, tactile physical telemetry widgets, and landing page layouts built exclusively with <span className="font-mono text-text-primary font-medium">nickui</span> primitives.
+            Full-width responsive application dashboards, multiple sidebar styles, tactile physical telemetry widgets, and landing layouts built exclusively with <span className="font-mono text-text-primary font-medium">nickui</span> primitives.
           </p>
 
           {/* Category Filter Deck */}
@@ -213,517 +222,248 @@ export default function BlocksPage() {
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="flex flex-wrap gap-1 h-auto p-1">
                 <TabsTrigger value="all">All Blocks</TabsTrigger>
-                <TabsTrigger value="flagship">Flagship Studio</TabsTrigger>
+                <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
                 <TabsTrigger value="tactile">Tactile Metrics</TabsTrigger>
                 <TabsTrigger value="landing">Landing Layouts</TabsTrigger>
-                <TabsTrigger value="analytics">Revenue Telemetry</TabsTrigger>
-                <TabsTrigger value="infrastructure">Cloud Console</TabsTrigger>
-                <TabsTrigger value="settings">Security & Settings</TabsTrigger>
+                <TabsTrigger value="infrastructure">Cloud & Ops</TabsTrigger>
+                <TabsTrigger value="settings">Governance</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
         </div>
 
         {/* Blocks Showcase Stack */}
-        <div className="space-y-20">
+        <div className="space-y-16">
           {/* BLOCK 1: FLAGSHIP TACTILE STUDIO DASHBOARD */}
-          {(activeTab === 'all' || activeTab === 'flagship') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-emerald-500" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Tactile Studio Dashboard (Flagship Operations)
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                      New
-                    </span>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Unified executive dashboard featuring the RailSidebar, dot-matrix revenue equalizer, organic wave trend card, and real-time settlement stream.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={flagshipView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setFlagshipView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={flagshipView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setFlagshipView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
-              </div>
-
-              {flagshipView === 'preview' ? (
-                <TactileStudioDashboard />
-              ) : (
-                <CodeBlock code={FLAGSHIP_CODE} title="TactileStudioDashboard.tsx" />
-              )}
-            </section>
+          {(activeTab === 'all' || activeTab === 'dashboards') && (
+            <BlockViewer
+              title="Tactile Studio Dashboard"
+              category="Rail Sidebar Dashboard"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add tactile-studio-dashboard"
+              code={FLAGSHIP_CODE}
+              codeFileName="TactileStudioDashboard.tsx"
+              description="Unified executive operations dashboard with RailSidebar, dot-matrix revenue equalizer, organic trend curve, and live settlement table."
+            >
+              <TactileStudioDashboard />
+            </BlockViewer>
           )}
 
-          {/* BLOCK 2: TACTILE METRIC WIDGETS */}
+          {/* BLOCK 2: NEW EXECUTIVE STUDIO CONSOLE (STUDIO SIDEBAR STYLE) */}
+          {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
+            <BlockViewer
+              title="Executive Studio Console"
+              category="Collapsible Studio Sidebar"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add executive-studio-console"
+              code={EXECUTIVE_CONSOLE_CODE}
+              codeFileName="ExecutiveStudioConsole.tsx"
+              description="A distinct architectural dashboard style featuring the collapsible StudioSidebar, 4 top KPI sparkline cards, and distributed cluster nodes table."
+            >
+              <ExecutiveStudioConsole />
+            </BlockViewer>
+          )}
+
+          {/* BLOCK 3: TACTILE FINANCIAL METRIC CARDS */}
           {(activeTab === 'all' || activeTab === 'tactile') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Tactile Financial Metrics (Balance & Income)
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                      New
-                    </span>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Tactile dark widgets with vertical color indicators, monthly node beam tooltips, active amber bar tag, and average threshold reference line.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={metricView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setMetricView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={metricView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setMetricView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
+            <BlockViewer
+              title="Tactile Financial Metrics (Balance & Income)"
+              category="Tactile Widgets"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add tactile-metric-card"
+              code={METRIC_CARDS_CODE}
+              codeFileName="TactileMetricCard.tsx"
+              description="Skeuomorphic cards with tactile depth, vertical color indicator bars, node trajectory beams, and average threshold reference lines."
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+                <TactileMetricCard
+                  title="Balance"
+                  periodLabel="2024"
+                  value="$94,127"
+                  deltaText="increase 13%"
+                  deltaSubtext="vs last year"
+                  className="w-full max-w-none"
+                />
+                <TactileBarCard
+                  title="Income"
+                  periodLabel="This Month"
+                  value="$12,532"
+                  deltaText="increase 12%"
+                  deltaSubtext="vs last month"
+                  className="w-full max-w-none"
+                />
               </div>
-
-              {metricView === 'preview' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8 rounded-[28px] border border-border/80 bg-card shadow-tactile">
-                  <TactileMetricCard
-                    title="Balance"
-                    periodLabel="2023"
-                    value="$94,127"
-                    deltaText="increase 13%"
-                    deltaSubtext="vs last year"
-                    className="w-full max-w-none"
-                  />
-                  <TactileBarCard
-                    title="Income"
-                    periodLabel="This Month"
-                    value="$12,532"
-                    deltaText="increase 12%"
-                    deltaSubtext="vs last month"
-                    className="w-full max-w-none"
-                  />
-                </div>
-              ) : (
-                <CodeBlock code={METRIC_CARDS_CODE} title="TactileMetricCards.tsx" />
-              )}
-            </section>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 3: DOT MATRIX EQUALIZER REVENUE CARD */}
+          {/* BLOCK 4: TACTILE TREND CARD */}
           {(activeTab === 'all' || activeTab === 'tactile') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Dot Matrix Histogram / Revenue Equalizer
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                      New
-                    </span>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Equalizer-style dot grid comparing historical periods with interactive column hover tooltips and daily/weekly/monthly filter.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={dotMatrixView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setDotMatrixView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={dotMatrixView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setDotMatrixView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
-              </div>
-
-              {dotMatrixView === 'preview' ? (
-                <div className="p-6 sm:p-8 rounded-[28px] border border-border/80 bg-card shadow-tactile flex justify-center">
-                  <DotMatrixChart
-                    title="REVENUE"
-                    metric="+326%"
-                    timeframe="MONTHLY"
-                    previousLabel="MAY $3,250"
-                    currentLabel="JUN $12,392"
-                    footerTagline="DON'T OVERTHINK | AUG 2024 | SIMPLIFYING DIGITAL EXP."
-                    className="max-w-2xl"
-                  />
-                </div>
-              ) : (
-                <CodeBlock code={DOT_MATRIX_CODE} title="DotMatrixChart.tsx" />
-              )}
-            </section>
+            <BlockViewer
+              title="Protocol Volume Trend Curve"
+              category="Tactile Widgets"
+              cliCommand="pnpm dlx @sehrennn/nickui add tactile-trend-card"
+              code={TREND_CARD_CODE}
+              codeFileName="TactileTrendCard.tsx"
+              description="Organic bezier wave chart with capsule timeframe switcher, dashed grid, keyword capsules, and active terminal node."
+            >
+              <TactileTrendCard
+                title="Protocol Volume Trend"
+                keywords={['Batch auction', 'Liquid staking derivatives (LSD)', 'Proof rollups']}
+                metricLabel="Active Validated Nodes"
+                metricValue="824"
+                metricDeltaSuperscript="+334"
+                percentageDelta="34.4%"
+                className="w-full max-w-md mx-auto"
+              />
+            </BlockViewer>
           )}
 
-          {/* BLOCK 4: TACTILE TREND CARD WITH KEYWORDS */}
+          {/* BLOCK 5: DOT MATRIX EQUALIZER */}
           {(activeTab === 'all' || activeTab === 'tactile') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-emerald-500" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Organic Trend Curve & Keyword Velocity
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                      New
-                    </span>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Smooth spline curve in deep charcoal container with dashed year grid, keyword pills, glowing end marker, and delta metrics.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={trendView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setTrendView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={trendView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setTrendView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
+            <BlockViewer
+              title="Dot Matrix Revenue Velocity Equalizer"
+              category="Tactile Charts"
+              cliCommand="pnpm dlx @sehrennn/nickui add dot-matrix-chart"
+              code={DOT_MATRIX_CODE}
+              codeFileName="DotMatrixChart.tsx"
+              description="Interactive dot-matrix columns with hover tooltips, period comparisons, and architectural footer."
+            >
+              <div className="w-full max-w-2xl mx-auto">
+                <DotMatrixChart
+                  title="REVENUE VELOCITY"
+                  metric="+326%"
+                  timeframe="MONTHLY"
+                  previousLabel="MAY $3,250"
+                  currentLabel="JUN $12,392"
+                  footerTagline="HIGH THROUGHPUT | 2024 | ZERO LOSS"
+                />
               </div>
-
-              {trendView === 'preview' ? (
-                <div className="p-6 sm:p-8 rounded-[28px] border border-border/80 bg-card shadow-tactile flex justify-center">
-                  <TactileTrendCard
-                    title="Chart"
-                    keywords={['Batch auction', 'Liquid staking derivatives (LSD)']}
-                    metricLabel="Total Personas"
-                    metricValue="824"
-                    metricDeltaSuperscript="+334"
-                    percentageDelta="34.4%"
-                    className="max-w-md"
-                  />
-                </div>
-              ) : (
-                <CodeBlock code={TREND_CARD_CODE} title="TactileTrendCard.tsx" />
-              )}
-            </section>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 5: CENTERED HERO LAYOUT */}
+          {/* BLOCK 6: BENTO SHOWCASE LANDING SECTION */}
           {(activeTab === 'all' || activeTab === 'landing') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <LayoutTemplate className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Centered Hero Layout
-                    </h2>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    High-impact centered hero with live terminal install pill and application window mockup.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={heroView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setHeroView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={heroView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setHeroView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
+            <BlockViewer
+              title="Bento Grid Capabilities Layout"
+              category="Landing Layouts"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add bento-showcase-layout"
+              code={BENTO_LAYOUT_CODE}
+              codeFileName="BentoShowcaseLayout.tsx"
+              description="Multi-tier architectural bento grid featuring live throughput telemetry sparkline, analog spring physics sliders, and AI MCP badge."
+            >
+              <div className="w-full max-w-5xl">
+                <BentoShowcaseLayout />
               </div>
-
-              {heroView === 'preview' ? (
-                <div className="rounded-2xl border border-border/80 bg-card p-4 sm:p-8 overflow-hidden shadow-tactile">
-                  <CenteredHeroLayout
-                    badgeText="NickUI v0.1.0 · Open Source Release"
-                    badgeHref="/components"
-                    title={<>Architectural design system for <span className="text-text-muted">developer-owned software</span>.</>}
-                    description="High-craft UI components, tactile depth tiers, and native AI MCP server."
-                    primaryAction={{ label: 'Explore Components', href: '/components' }}
-                    secondaryAction={{ label: 'CLI Documentation', href: '/docs/cli' }}
-                    commandSnippet="pnpm dlx nickui add button"
-                  />
-                </div>
-              ) : (
-                <CodeBlock code={HERO_CODE} title="CenteredHeroLayout.tsx" />
-              )}
-            </section>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 6: FEATURE BENTO GRID */}
+          {/* BLOCK 7: CENTERED HERO LANDING LAYOUT */}
           {(activeTab === 'all' || activeTab === 'landing') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Feature Bento Grid
-                    </h2>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Multi-tier card bento showcasing tactile telemetry, micro-spring controls, and ambient optical lighting.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={featureView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setFeatureView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={featureView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setFeatureView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
+            <BlockViewer
+              title="Centered Hero Section Layout"
+              category="Landing Layouts"
+              cliCommand="pnpm dlx @sehrennn/nickui add centered-hero-layout"
+              code={HERO_CODE}
+              codeFileName="CenteredHeroLayout.tsx"
+              description="Commanding centered hero section with official BrandLogo glyph, release announcement badge, and interactive CLI copy pill."
+            >
+              <div className="w-full max-w-4xl">
+                <CenteredHeroLayout />
               </div>
-
-              {featureView === 'preview' ? (
-                <div className="rounded-2xl border border-border/80 bg-card p-4 sm:p-8 overflow-hidden shadow-tactile">
-                  <FeatureGridLayout
-                    category="CAPABILITIES & PRINCIPLES"
-                    title="Engineered for spatial clarity & architectural presence."
-                    description="Every component is built from the ground up to respect environmental lighting and calm motion."
-                  />
-                </div>
-              ) : (
-                <CodeBlock code={FEATURE_GRID_CODE} title="FeatureGridLayout.tsx" />
-              )}
-            </section>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 7: SPLIT SHOWCASE LAYOUT */}
+          {/* BLOCK 8: FEATURE GRID LAYOUT */}
           {(activeTab === 'all' || activeTab === 'landing') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <LayoutTemplate className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Split Technical Showcase
-                    </h2>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Two-column layout pairing dense technical specifications with live interactive component nodes.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={splitView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setSplitView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={splitView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setSplitView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
+            <BlockViewer
+              title="Feature Grid Section Layout"
+              category="Landing Layouts"
+              cliCommand="pnpm dlx @sehrennn/nickui add feature-grid-layout"
+              code={FEATURE_GRID_CODE}
+              codeFileName="FeatureGridLayout.tsx"
+              description="Four-column architectural capability cards with hairline borders and tactile hover response."
+            >
+              <div className="w-full max-w-5xl">
+                <FeatureGridLayout />
               </div>
-
-              {splitView === 'preview' ? (
-                <div className="rounded-2xl border border-border/80 bg-card p-4 sm:p-8 overflow-hidden shadow-tactile">
-                  <SplitShowcaseLayout
-                    category="DESIGN PARADIGM"
-                    title="Optical physics meets calm, non-intrusive software."
-                    description="Components do not emit artificial luminescence or decorative gradients. Light behaves as an ambient condition, revealing surfaces through optical physics."
-                    showcaseNode={
-                      <SpotlightCard variant="tactile" className="w-full max-w-sm mx-auto">
-                        <SpotlightCardHeader>
-                          <SpotlightCardTitle>Telemetry Node</SpotlightCardTitle>
-                          <SpotlightCardDescription>Pass pointer to observe ambient light.</SpotlightCardDescription>
-                        </SpotlightCardHeader>
-                        <SpotlightCardContent>420px soft falloff</SpotlightCardContent>
-                      </SpotlightCard>
-                    }
-                  />
-                </div>
-              ) : (
-                <CodeBlock code={SPLIT_SHOWCASE_CODE} title="SplitShowcaseLayout.tsx" />
-              )}
-            </section>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 8: REVENUE & FINANCIAL TELEMETRY */}
-          {(activeTab === 'all' || activeTab === 'analytics') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Revenue & Financial Telemetry Dashboard
-                    </h2>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    ARR performance graphs, real-time transaction ledgers, sparkline metrics, and billing analytics.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={analyticsView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setAnalyticsView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={analyticsView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setAnalyticsView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
+          {/* BLOCK 9: SPLIT SHOWCASE LAYOUT */}
+          {(activeTab === 'all' || activeTab === 'landing') && (
+            <BlockViewer
+              title="Split Interactive Showcase Layout"
+              category="Landing Layouts"
+              cliCommand="pnpm dlx @sehrennn/nickui add split-showcase-layout"
+              code={SPLIT_SHOWCASE_CODE}
+              codeFileName="SplitShowcaseLayout.tsx"
+              description="Asymmetrical layout pairing editorial design principles with an interactive live optical spotlight widget."
+            >
+              <div className="w-full max-w-5xl">
+                <SplitShowcaseLayout
+                  category="DESIGN PARADIGM"
+                  title="Optical physics meets calm, non-intrusive software."
+                  showcaseNode={
+                    <SpotlightCard variant="tactile">
+                      <SpotlightCardHeader>
+                        <SpotlightCardTitle>Telemetry Node</SpotlightCardTitle>
+                        <SpotlightCardDescription>Pass pointer to observe ambient light.</SpotlightCardDescription>
+                      </SpotlightCardHeader>
+                      <SpotlightCardContent>420px soft falloff</SpotlightCardContent>
+                    </SpotlightCard>
+                  }
+                />
               </div>
+            </BlockViewer>
+          )}
 
-              {analyticsView === 'preview' ? (
+          {/* BLOCK 10: REVENUE & FINANCIAL TELEMETRY */}
+          {(activeTab === 'all' || activeTab === 'dashboards') && (
+            <BlockViewer
+              title="Revenue Financial Telemetry Dashboard"
+              category="Analytics Dashboard"
+              cliCommand="pnpm dlx @sehrennn/nickui add analytics-dashboard"
+              code={ANALYTICS_CODE}
+              codeFileName="AnalyticsDashboard.tsx"
+              description="ARR performance graphs, real-time transaction ledgers, sparkline metrics, and billing analytics."
+            >
+              <div className="w-full max-w-5xl">
                 <AnalyticsDashboard />
-              ) : (
-                <CodeBlock code={ANALYTICS_CODE} title="AnalyticsDashboard.tsx" />
-              )}
-            </section>
+              </div>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 9: CLUSTER INFRASTRUCTURE CONSOLE */}
+          {/* BLOCK 11: CLUSTER INFRASTRUCTURE CONSOLE */}
           {(activeTab === 'all' || activeTab === 'infrastructure') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Server className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Cluster Infrastructure & Telemetry Console
-                    </h2>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Distributed node health monitoring, CPU/RAM utilization gauges, throughput telemetry, and live terminal stream.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={infraView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setInfraView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={infraView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setInfraView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
-              </div>
-
-              {infraView === 'preview' ? (
+            <BlockViewer
+              title="Cluster Infrastructure Telemetry Console"
+              category="Infrastructure"
+              cliCommand="pnpm dlx @sehrennn/nickui add infrastructure-console"
+              code={INFRASTRUCTURE_CODE}
+              codeFileName="InfrastructureConsole.tsx"
+              description="Distributed node health monitoring, CPU/RAM utilization gauges, throughput telemetry, and live terminal stream."
+            >
+              <div className="w-full max-w-5xl">
                 <InfrastructureConsole />
-              ) : (
-                <CodeBlock code={INFRASTRUCTURE_CODE} title="InfrastructureConsole.tsx" />
-              )}
-            </section>
+              </div>
+            </BlockViewer>
           )}
 
-          {/* BLOCK 10: ENTERPRISE GOVERNANCE & SETTINGS */}
+          {/* BLOCK 12: ENTERPRISE GOVERNANCE & SETTINGS */}
           {(activeTab === 'all' || activeTab === 'settings') && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-text-muted" />
-                    <h2 className="text-lg font-medium text-text-primary tracking-tight">
-                      Enterprise Governance & Security Workspace
-                    </h2>
-                  </div>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Isolation tiers, mandatory 2FA policies, compliance audit streams, and tenant safeguards.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <Button
-                    variant={settingsView === 'preview' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setSettingsView('preview')}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" /> Preview
-                  </Button>
-                  <Button
-                    variant={settingsView === 'code' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setSettingsView('code')}
-                  >
-                    <Code2 className="w-3.5 h-3.5 mr-1" /> Code
-                  </Button>
-                </div>
-              </div>
-
-              {settingsView === 'preview' ? (
+            <BlockViewer
+              title="Enterprise Governance & Security Workspace"
+              category="Settings"
+              cliCommand="pnpm dlx @sehrennn/nickui add workspace-settings-block"
+              code={SETTINGS_CODE}
+              codeFileName="WorkspaceSettingsBlock.tsx"
+              description="Isolation tiers, mandatory 2FA policies, compliance audit streams, and tenant safeguards."
+            >
+              <div className="w-full max-w-5xl">
                 <WorkspaceSettingsBlock />
-              ) : (
-                <CodeBlock code={SETTINGS_CODE} title="WorkspaceSettingsBlock.tsx" />
-              )}
-            </section>
+              </div>
+            </BlockViewer>
           )}
         </div>
       </div>

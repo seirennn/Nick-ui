@@ -15,6 +15,7 @@ import {
   Activity,
   Search,
 } from 'lucide-react';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { cn } from '@/lib/utils';
 
 export interface RailNavItem {
@@ -31,6 +32,7 @@ export interface RailSidebarProps extends Omit<React.HTMLAttributes<HTMLElement>
   items?: RailNavItem[];
   workspaceName?: string;
   workspaceGlyph?: string;
+  workspaceLogo?: React.ReactNode;
   isExpanded?: boolean;
   onToggleExpanded?: () => void;
   onCommandClick?: () => void;
@@ -54,6 +56,7 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
       items = DEFAULT_RAIL_ITEMS,
       workspaceName = 'NickUI Core Studio',
       workspaceGlyph = 'N',
+      workspaceLogo,
       isExpanded = false,
       onToggleExpanded,
       onCommandClick,
@@ -85,10 +88,14 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
         <div className="flex flex-col items-center w-full px-3 gap-4">
           <div
             onClick={onToggleExpanded}
-            className="w-10 h-10 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+            className="w-10 h-10 rounded-xl bg-secondary border border-border/80 flex items-center justify-center shadow-2xs cursor-pointer hover:border-text-primary/40 transition-all p-1.5"
             title={workspaceName}
           >
-            <span className="text-sm tracking-wider font-mono font-bold">{workspaceGlyph}</span>
+            {workspaceLogo ? (
+              workspaceLogo
+            ) : (
+              <BrandLogo size="xs" variant="minimal" />
+            )}
           </div>
 
           <div className="w-8 border-b border-border/60" />

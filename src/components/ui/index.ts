@@ -8,6 +8,7 @@ export * from './card';
 export * from './navbar';
 export * from './sidebar';
 export * from './rail-sidebar';
+export * from './studio-sidebar';
 export * from './tooltip';
 export * from './dropdown';
 export * from './command-palette';
