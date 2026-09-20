@@ -25,7 +25,7 @@ const program = new Command();
 program
   .name('nickui')
   .description('Official CLI for NickUI: developer-owned architectural UI components & AI MCP server')
-  .version('0.1.0');
+  .version('0.1.1');
 
 // ─── COMMAND: INIT ──────────────────────────────────────────
 program
