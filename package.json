@@ -1,5 +1,5 @@
 {
-  "name": "nickui",
+  "name": "@sehrennn/nickui",
   "version": "0.1.0",
   "description": "Architectural developer-owned UI components and open-source AI MCP server with tactile depth.",
   "license": "MIT",
@@ -16,7 +16,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "nickui": "./bin/nickui.js"
+    "nickui": "bin/nickui.js"
   },
   "files": [
     "dist",

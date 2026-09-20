@@ -17,18 +17,18 @@ Install NickUI as a regular dependency:
 
 ```bash
 # Using pnpm
-pnpm add nickui
+pnpm add @sehrennn/nickui
 
 # Or npm / yarn / bun
-npm install nickui
-yarn add nickui
-bun add nickui
+npm install @sehrennn/nickui
+yarn add @sehrennn/nickui
+bun add @sehrennn/nickui
 ```
 
 Import components directly in your application:
 
 ```tsx
-import { Button, Card, OtpInput, SpotlightCard } from 'nickui';
+import { Button, Card, OtpInput, SpotlightCard } from '@sehrennn/nickui';
 
 export default function App() {
   return (
@@ -49,15 +49,16 @@ Own and customize the component source code directly inside your repository.
 
 #### Step 1: Initialize your project
 ```bash
-pnpm dlx nickui init
+pnpm dlx @sehrennn/nickui init
+# or if installed globally: nickui init
 ```
 This generates `nickui.json` and configures your project structure (detecting `src/components/ui` or `components/ui`).
 
 #### Step 2: Add components
 ```bash
-pnpm dlx nickui add button
-pnpm dlx nickui add card otp-input spotlight-card
-pnpm dlx nickui add all
+pnpm dlx @sehrennn/nickui add button
+pnpm dlx @sehrennn/nickui add card otp-input spotlight-card
+pnpm dlx @sehrennn/nickui add all
 ```
 
 Components are injected directly into your source tree, giving you 100% control to modify and adapt them:

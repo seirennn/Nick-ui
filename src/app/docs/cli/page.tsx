@@ -54,7 +54,7 @@ export default function CliDocPage() {
                   Scans your repository, detects your project structure (`src/components/ui` or `components/ui`), creates `nickui.json`, and provides `cn()` utilities.
                 </p>
                 <CodeBlock
-                  code="pnpm dlx nickui init"
+                  code="pnpm dlx @sehrennn/nickui init"
                   language="bash"
                   title="Terminal"
                 />
@@ -66,7 +66,7 @@ export default function CliDocPage() {
                   Fetches component source from the registry and injects clean TypeScript components directly into your UI folder.
                 </p>
                 <CodeBlock
-                  code={`# Add individual components\npnpm dlx nickui add button\n\n# Add multiple components simultaneously\npnpm dlx nickui add card otp-input spotlight-card magnetic-tabs\n\n# Add all 27 components\npnpm dlx nickui add all`}
+                  code={`# Add individual components\npnpm dlx @sehrennn/nickui add button\n\n# Add multiple components simultaneously\npnpm dlx @sehrennn/nickui add card otp-input spotlight-card magnetic-tabs\n\n# Add all 31 components\npnpm dlx @sehrennn/nickui add all`}
                   language="bash"
                   title="Terminal"
                 />

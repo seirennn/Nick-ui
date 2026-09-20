@@ -91,11 +91,11 @@ export default function HomePage() {
                   <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border/60 text-xs font-mono">
                     <div>
                       <span className="text-text-muted block text-[10px] uppercase font-sans">1. Package Install</span>
-                      <span className="text-text-primary font-medium">pnpm add nickui</span>
+                      <span className="text-text-primary font-medium">pnpm add @sehrennn/nickui</span>
                     </div>
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText('pnpm add nickui');
+                        navigator.clipboard.writeText('pnpm add @sehrennn/nickui');
                         setCopiedInstall(true);
                         setTimeout(() => setCopiedInstall(false), 2000);
                       }}
@@ -109,11 +109,11 @@ export default function HomePage() {
                   <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border/60 text-xs font-mono">
                     <div>
                       <span className="text-text-muted block text-[10px] uppercase font-sans">2. Source / CLI (shadcn-style)</span>
-                      <span className="text-text-primary font-medium">pnpm dlx nickui add button</span>
+                      <span className="text-text-primary font-medium">pnpm dlx @sehrennn/nickui add button</span>
                     </div>
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText('pnpm dlx nickui add button');
+                        navigator.clipboard.writeText('pnpm dlx @sehrennn/nickui add button');
                         setCopiedInstall(true);
                         setTimeout(() => setCopiedInstall(false), 2000);
                       }}

@@ -98,7 +98,7 @@ export default function McpDocPage() {
   "mcpServers": {
     "nickui": {
       "command": "npx",
-      "args": ["nickui", "mcp"]
+      "args": ["-y", "@sehrennn/nickui", "mcp"]
     }
   }
 }`}
@@ -118,7 +118,7 @@ export default function McpDocPage() {
   "mcpServers": {
     "nickui": {
       "command": "pnpm",
-      "args": ["dlx", "nickui", "mcp"]
+      "args": ["dlx", "@sehrennn/nickui", "mcp"]
     }
   }
 }`}
