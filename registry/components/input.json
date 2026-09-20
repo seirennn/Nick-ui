@@ -1,0 +1,41 @@
+{
+  "name": "input",
+  "slug": "input",
+  "title": "Input",
+  "description": "Framed text input with subtle border transition, quiet focus ring, and optional icon slots.",
+  "category": "foundations",
+  "dependencies": [],
+  "variants": [
+    "default",
+    "error"
+  ],
+  "props": [
+    {
+      "name": "leftIcon",
+      "type": "ReactNode",
+      "required": false,
+      "description": "Icon placed inside the left padding"
+    },
+    {
+      "name": "rightAddon",
+      "type": "ReactNode",
+      "required": false,
+      "description": "Element or action rendered on the right edge"
+    },
+    {
+      "name": "hasError",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false",
+      "description": "Applies subtle destructive tint to border and ring"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Search with Icon and Shortcut Addon",
+      "description": "Input configured for omnibar search.",
+      "code": "<Input\n  leftIcon={<Search className=\"w-4 h-4 text-text-muted\" />}\n  placeholder=\"Filter registry...\"\n  rightAddon={<span className=\"font-mono text-[10px] px-1.5 py-0.5 rounded bg-muted\">⌘K</span>}\n/>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {\n  leftIcon?: React.ReactNode;\n  rightAddon?: React.ReactNode;\n  hasError?: boolean;\n}\n\nexport const Input = React.forwardRef<HTMLInputElement, InputProps>(\n  ({ className, type = 'text', leftIcon, rightAddon, hasError, disabled, ...props }, ref) => {\n    return (\n      <div\n        className={cn(\n          'relative flex items-center w-full rounded-lg bg-card border border-border transition-colors group',\n          'hover:border-foreground/20 focus-within:border-foreground/40 focus-within:ring-1 focus-within:ring-ring/40',\n          hasError && 'border-destructive/60 focus-within:border-destructive focus-within:ring-destructive/30',\n          disabled && 'opacity-40 cursor-not-allowed hover:border-border',\n          className\n        )}\n      >\n        {leftIcon && (\n          <div className=\"pl-3 pr-1 text-text-muted flex items-center justify-center shrink-0 pointer-events-none select-none\">\n            {leftIcon}\n          </div>\n        )}\n        <input\n          ref={ref}\n          type={type}\n          disabled={disabled}\n          className={cn(\n            'w-full bg-transparent px-3 py-2 text-ui text-text-primary placeholder:text-text-muted/70',\n            'focus:outline-none disabled:cursor-not-allowed',\n            leftIcon ? 'pl-1.5' : undefined,\n            rightAddon ? 'pr-1.5' : undefined\n          )}\n          {...props}\n        />\n        {rightAddon && (\n          <div className=\"pr-2.5 pl-1 text-text-muted flex items-center justify-center shrink-0\">\n            {rightAddon}\n          </div>\n        )}\n      </div>\n    );\n  }\n);\n\nInput.displayName = 'Input';\n"
+}

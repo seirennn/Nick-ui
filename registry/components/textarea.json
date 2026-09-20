@@ -1,0 +1,36 @@
+{
+  "name": "textarea",
+  "slug": "textarea",
+  "title": "Textarea",
+  "description": "Multiline textual input matching the restrained input frame and typography rhythm.",
+  "category": "foundations",
+  "dependencies": [],
+  "variants": [
+    "default",
+    "error"
+  ],
+  "props": [
+    {
+      "name": "rows",
+      "type": "number",
+      "required": false,
+      "defaultValue": "3",
+      "description": "Visible line height rows"
+    },
+    {
+      "name": "hasError",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false",
+      "description": "Applies destructive border tint"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Prompt Note Input",
+      "description": "Textarea used for prompts or technical comments.",
+      "code": "<Textarea placeholder=\"Describe the system architecture requirements...\" rows={4} />"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {\n  hasError?: boolean;\n}\n\nexport const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(\n  ({ className, hasError, disabled, rows = 3, ...props }, ref) => {\n    return (\n      <textarea\n        ref={ref}\n        rows={rows}\n        disabled={disabled}\n        className={cn(\n          'w-full rounded-lg bg-card border border-border px-3 py-2.5 text-ui text-text-primary placeholder:text-text-muted/70 transition-colors',\n          'hover:border-foreground/20 focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-ring/40',\n          'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border',\n          hasError && 'border-destructive/60 focus:border-destructive focus:ring-destructive/30',\n          className\n        )}\n        {...props}\n      />\n    );\n  }\n);\n\nTextarea.displayName = 'Textarea';\n"
+}

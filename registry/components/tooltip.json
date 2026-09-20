@@ -1,0 +1,46 @@
+{
+  "name": "tooltip",
+  "slug": "tooltip",
+  "title": "Tooltip",
+  "description": "Quiet micro-pill floating hint with delayed reveal, keyboard focus support, and inverted contrast.",
+  "category": "interaction",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "top",
+    "bottom",
+    "left",
+    "right"
+  ],
+  "props": [
+    {
+      "name": "content",
+      "type": "ReactNode",
+      "required": true,
+      "description": "Tooltip textual message"
+    },
+    {
+      "name": "side",
+      "type": "'top' | 'bottom' | 'left' | 'right'",
+      "required": false,
+      "defaultValue": "'top'",
+      "description": "Position relative to target"
+    },
+    {
+      "name": "delay",
+      "type": "number",
+      "required": false,
+      "defaultValue": "150",
+      "description": "Hover reveal delay in ms"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Icon Button Tooltip",
+      "description": "Hint on an icon button trigger.",
+      "code": "<Tooltip content=\"Search Registry (⌘K)\">\n  <IconButton icon={<Search className=\"w-4 h-4\" />} aria-label=\"Search\" />\n</Tooltip>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion, AnimatePresence } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\nexport interface TooltipProps {\n  content: React.ReactNode;\n  children: React.ReactNode;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  delay?: number;\n  className?: string;\n}\n\nexport function Tooltip({\n  content,\n  children,\n  side = 'top',\n  delay = 150,\n  className,\n}: TooltipProps) {\n  const [isVisible, setIsVisible] = React.useState(false);\n  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);\n\n  const show = () => {\n    timeoutRef.current = setTimeout(() => {\n      setIsVisible(true);\n    }, delay);\n  };\n\n  const hide = () => {\n    if (timeoutRef.current) clearTimeout(timeoutRef.current);\n    setIsVisible(false);\n  };\n\n  const sidePositions: Record<string, string> = {\n    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',\n    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',\n    left: 'right-full top-1/2 -translate-y-1/2 mr-2',\n    right: 'left-full top-1/2 -translate-y-1/2 ml-2',\n  };\n\n  return (\n    <div\n      className=\"relative inline-flex\"\n      onMouseEnter={show}\n      onMouseLeave={hide}\n      onFocus={show}\n      onBlur={hide}\n    >\n      {children}\n      <AnimatePresence>\n        {isVisible && (\n          <motion.div\n            initial={{ opacity: 0, scale: 0.96 }}\n            animate={{ opacity: 1, scale: 1 }}\n            exit={{ opacity: 0, scale: 0.96 }}\n            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}\n            role=\"tooltip\"\n            className={cn(\n              'absolute z-50 pointer-events-none whitespace-nowrap',\n              'px-2.5 py-1 rounded-md text-[11px] font-medium tracking-tight',\n              'bg-foreground text-background shadow-lg shadow-black/10 dark:shadow-black/40',\n              sidePositions[side],\n              className\n            )}\n          >\n            {content}\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </div>\n  );\n}\n"
+}

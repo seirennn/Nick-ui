@@ -1,0 +1,36 @@
+{
+  "name": "kbd",
+  "slug": "kbd",
+  "title": "Kbd",
+  "description": "3D mechanical keycap profile with tactile light rim, bottom bevel, and physical sink on press.",
+  "category": "foundations",
+  "dependencies": [],
+  "variants": [
+    "default",
+    "elevated",
+    "recessed"
+  ],
+  "props": [
+    {
+      "name": "variant",
+      "type": "'default' | 'elevated' | 'recessed'",
+      "required": false,
+      "defaultValue": "'default'",
+      "description": "Keycap elevation style"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true,
+      "description": "Key label or symbol"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Hotkey Clusters",
+      "description": "Mechanical keys indicating shortcuts.",
+      "code": "<div className=\"flex items-center gap-1\">\n  <Kbd>⌘</Kbd>\n  <Kbd>K</Kbd>\n</div>"
+    }
+  ],
+  "sourceCode": "import * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface KbdProps extends React.HTMLAttributes<HTMLElement> {\n  children: React.ReactNode;\n  variant?: 'default' | 'elevated' | 'recessed';\n}\n\nexport function Kbd({ className, children, variant = 'default', ...props }: KbdProps) {\n  const variantStyles = {\n    default:\n      'bg-card border border-border/80 text-text-primary tactile-keycap active:translate-y-[1px]',\n    elevated:\n      'bg-card border border-border text-text-primary shadow-sm font-semibold',\n    recessed:\n      'bg-secondary/90 border border-border/50 text-text-muted tactile-well',\n  };\n\n  return (\n    <kbd\n      className={cn(\n        'inline-flex items-center justify-center min-w-[20px] px-1.5 py-0.5 rounded font-mono text-[11px] select-none tracking-wider',\n        variantStyles[variant],\n        className\n      )}\n      {...props}\n    >\n      {children}\n    </kbd>\n  );\n}\n"
+}

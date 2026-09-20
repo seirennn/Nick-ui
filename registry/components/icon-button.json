@@ -1,0 +1,66 @@
+{
+  "name": "icon-button",
+  "slug": "icon-button",
+  "title": "Icon Button",
+  "description": "Compact square or circular icon action with micro-spring interaction and mandatory accessibility labels.",
+  "category": "foundations",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "default",
+    "secondary",
+    "outline",
+    "ghost"
+  ],
+  "props": [
+    {
+      "name": "icon",
+      "type": "ReactNode",
+      "required": true,
+      "description": "Icon component to render"
+    },
+    {
+      "name": "aria-label",
+      "type": "string",
+      "required": true,
+      "description": "Screen reader label describing the action"
+    },
+    {
+      "name": "variant",
+      "type": "'default' | 'secondary' | 'outline' | 'ghost'",
+      "required": false,
+      "defaultValue": "'ghost'",
+      "description": "Background and border styling"
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "required": false,
+      "defaultValue": "'md'",
+      "description": "Dimensions of the button"
+    },
+    {
+      "name": "isActive",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false",
+      "description": "Applies active background fill and accent border"
+    },
+    {
+      "name": "shape",
+      "type": "'rounded' | 'circle'",
+      "required": false,
+      "defaultValue": "'rounded'",
+      "description": "Corner geometry"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Standard Toolbar Actions",
+      "description": "Icon buttons used in navigation bars and micro-toolbars.",
+      "code": "<IconButton icon={<Search className=\"w-4 h-4\" />} aria-label=\"Search\" variant=\"ghost\" />\n<IconButton icon={<Sun className=\"w-4 h-4\" />} aria-label=\"Toggle theme\" variant=\"secondary\" />"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\nexport type IconButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost';\nexport type IconButtonSize = 'sm' | 'md' | 'lg';\n\nexport interface IconButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {\n  icon: React.ReactNode;\n  'aria-label': string;\n  variant?: IconButtonVariant;\n  size?: IconButtonSize;\n  isActive?: boolean;\n  shape?: 'rounded' | 'circle';\n}\n\nconst variantStyles: Record<IconButtonVariant, string> = {\n  default:\n    'bg-primary text-primary-foreground hover:opacity-90 active:opacity-95 shadow-2xs',\n  secondary:\n    'bg-card border border-border text-text-primary hover:bg-accent hover:border-foreground/20 shadow-2xs',\n  outline:\n    'bg-transparent border border-border text-text-secondary hover:text-text-primary hover:bg-secondary/60 hover:border-foreground/20',\n  ghost:\n    'bg-transparent text-text-muted hover:text-text-primary hover:bg-secondary/60',\n};\n\nconst sizeStyles: Record<IconButtonSize, string> = {\n  sm: 'w-7 h-7 p-1 text-xs',\n  md: 'w-8 h-8 p-1.5 text-sm',\n  lg: 'w-10 h-10 p-2 text-base',\n};\n\nexport const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(\n  (\n    {\n      className,\n      icon,\n      'aria-label': ariaLabel,\n      variant = 'ghost',\n      size = 'md',\n      isActive = false,\n      shape = 'rounded',\n      disabled,\n      ...props\n    },\n    ref\n  ) => {\n    return (\n      <motion.button\n        ref={ref}\n        whileHover={disabled ? undefined : { scale: 1.04 }}\n        whileTap={disabled ? undefined : { scale: 0.95 }}\n        transition={{ type: 'spring', stiffness: 400, damping: 25 }}\n        aria-label={ariaLabel}\n        disabled={disabled}\n        className={cn(\n          'inline-flex items-center justify-center cursor-pointer select-none transition-colors shrink-0',\n          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50',\n          'disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed',\n          shape === 'circle' ? 'rounded-full' : 'rounded-lg',\n          variantStyles[variant],\n          sizeStyles[size],\n          isActive && 'bg-sidebar-accent text-text-primary border-border',\n          className\n        )}\n        {...props}\n      >\n        <span className=\"flex items-center justify-center leading-none\">{icon}</span>\n      </motion.button>\n    );\n  }\n);\n\nIconButton.displayName = 'IconButton';\n"
+}

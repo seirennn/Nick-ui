@@ -1,0 +1,41 @@
+{
+  "name": "navbar",
+  "slug": "navbar",
+  "title": "Navbar",
+  "description": "Floating pill navigation bar with backdrop blur, sliding active pill indicator, and responsive mobile drawer.",
+  "category": "navigation",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "floating-pill"
+  ],
+  "props": [
+    {
+      "name": "brand",
+      "type": "ReactNode",
+      "required": false,
+      "description": "Brand logo or home icon trigger"
+    },
+    {
+      "name": "items",
+      "type": "NavItem[]",
+      "required": true,
+      "description": "List of navigation items with id, label, href"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "required": false,
+      "description": "Right-aligned utility actions like theme toggle"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Floating Pill Navbar",
+      "description": "Standard top navigation bar with active state animation.",
+      "code": "<Navbar\n  brand={<span className=\"font-medium text-ui\">dia-ui</span>}\n  items={[\n    { id: 'foundations', label: 'Foundations', href: '/foundations' },\n    { id: 'components', label: 'Components', href: '/components' },\n  ]}\n  actions={<ThemeToggle />}\n/>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport Link from 'next/link';\nimport { usePathname } from 'next/navigation';\nimport { motion, AnimatePresence } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\nexport interface NavItem {\n  id: string;\n  label: string;\n  href: string;\n  isExternal?: boolean;\n}\n\nexport interface NavbarProps {\n  brand?: React.ReactNode;\n  items: NavItem[];\n  actions?: React.ReactNode;\n  searchSlot?: React.ReactNode;\n  className?: string;\n}\n\nexport function Navbar({ brand, items, actions, searchSlot, className }: NavbarProps) {\n  const pathname = usePathname();\n  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);\n\n  React.useEffect(() => {\n    setMobileMenuOpen(false);\n  }, [pathname]);\n\n  return (\n    <header\n      className={cn(\n        'fixed top-0 left-0 right-0 z-50 h-12 sm:h-13 border-b border-border/70 bg-background/80 backdrop-blur-md transition-colors',\n        className\n      )}\n    >\n      <div className=\"max-w-6xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-4\">\n        {/* Left: Brand Identity */}\n        <div className=\"flex items-center gap-3 shrink-0\">\n          {brand}\n        </div>\n\n        {/* Center: Sleek Desktop Navigation */}\n        <nav className=\"hidden md:flex items-center gap-1\">\n          <ul className=\"flex items-center gap-1 m-0 p-0 list-none text-xs\">\n            {items.map((item) => {\n              const isActive =\n                pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));\n              return (\n                <li key={item.id}>\n                  <Link\n                    href={item.href}\n                    target={item.isExternal ? '_blank' : undefined}\n                    rel={item.isExternal ? 'noopener noreferrer' : undefined}\n                    className={cn(\n                      'px-3 py-1.5 rounded-md transition-colors font-medium select-none',\n                      isActive\n                        ? 'text-text-primary bg-secondary/80'\n                        : 'text-text-muted hover:text-text-primary hover:bg-secondary/40'\n                    )}\n                  >\n                    {item.label}\n                  </Link>\n                </li>\n              );\n            })}\n          </ul>\n        </nav>\n\n        {/* Right: Search Omnibar + Action Cluster */}\n        <div className=\"hidden sm:flex items-center gap-2 shrink-0\">\n          {searchSlot}\n          {actions}\n        </div>\n\n        {/* Mobile Hamburger Trigger */}\n        <div className=\"flex sm:hidden items-center gap-1\">\n          {actions}\n          <button\n            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}\n            className=\"p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-secondary transition-colors cursor-pointer\"\n            aria-label=\"Toggle navigation menu\"\n            aria-expanded={mobileMenuOpen}\n          >\n            <svg className=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n              {mobileMenuOpen ? (\n                <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={1.5} d=\"M6 18L18 6M6 6l12 12\" />\n              ) : (\n                <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={1.5} d=\"M4 6h16M4 12h16M4 18h16\" />\n              )}\n            </svg>\n          </button>\n        </div>\n      </div>\n\n      {/* Mobile Drawer */}\n      <AnimatePresence>\n        {mobileMenuOpen && (\n          <motion.div\n            initial={{ opacity: 0, y: -6 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: -6 }}\n            transition={{ duration: 0.15 }}\n            className=\"sm:hidden border-b border-border/80 bg-background/95 backdrop-blur-xl px-4 py-3 space-y-2 shadow-lg\"\n          >\n            {searchSlot && <div className=\"mb-2\">{searchSlot}</div>}\n            <div className=\"flex flex-col space-y-0.5\">\n              {items.map((item) => {\n                const isActive =\n                  pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));\n                return (\n                  <Link\n                    key={item.id}\n                    href={item.href}\n                    className={cn(\n                      'px-3 py-2 rounded-md text-xs font-medium transition-colors',\n                      isActive\n                        ? 'bg-secondary text-text-primary'\n                        : 'text-text-muted hover:text-text-primary hover:bg-secondary/40'\n                    )}\n                  >\n                    {item.label}\n                  </Link>\n                );\n              })}\n            </div>\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </header>\n  );\n}\n"
+}

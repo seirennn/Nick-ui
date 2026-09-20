@@ -1,0 +1,41 @@
+{
+  "name": "tabs",
+  "slug": "tabs",
+  "title": "Tabs",
+  "description": "Segmented tactile control deck with recessed track well and elevated sliding pill indicator.",
+  "category": "navigation",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "segmented-tactile"
+  ],
+  "props": [
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Initial active tab identifier"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": false,
+      "description": "Controlled active tab identifier"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(val: string) => void",
+      "required": false,
+      "description": "Callback when tab changes"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Segmented Tab Deck",
+      "description": "Tabs with spring-animated sliding pill indicator.",
+      "code": "<Tabs defaultValue=\"overview\">\n  <TabsList>\n    <TabsTrigger value=\"overview\">Overview</TabsTrigger>\n    <TabsTrigger value=\"specs\">Specifications</TabsTrigger>\n    <TabsTrigger value=\"logs\">Changelog</TabsTrigger>\n  </TabsList>\n  <TabsContent value=\"overview\">Overview Content</TabsContent>\n</Tabs>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\ninterface TabsContextType {\n  value: string;\n  onValueChange: (val: string) => void;\n}\n\nconst TabsContext = React.createContext<TabsContextType | undefined>(undefined);\n\nexport interface TabsProps {\n  value?: string;\n  defaultValue?: string;\n  onValueChange?: (val: string) => void;\n  children: React.ReactNode;\n  className?: string;\n}\n\nexport function Tabs({\n  value: controlledValue,\n  defaultValue,\n  onValueChange,\n  children,\n  className,\n}: TabsProps) {\n  const [internalVal, setInternalVal] = React.useState(defaultValue || '');\n  const isControlled = controlledValue !== undefined;\n  const currentVal = isControlled ? controlledValue : internalVal;\n\n  const handleValChange = (val: string) => {\n    if (!isControlled) setInternalVal(val);\n    onValueChange?.(val);\n  };\n\n  return (\n    <TabsContext.Provider value={{ value: currentVal, onValueChange: handleValChange }}>\n      <div className={cn('space-y-3', className)}>{children}</div>\n    </TabsContext.Provider>\n  );\n}\n\nexport function TabsList({\n  children,\n  className,\n}: {\n  children: React.ReactNode;\n  className?: string;\n}) {\n  return (\n    <div\n      role=\"tablist\"\n      className={cn(\n        'inline-flex items-center p-1 rounded-xl bg-secondary/80 tactile-well border border-border/70 select-none gap-1',\n        className\n      )}\n    >\n      {children}\n    </div>\n  );\n}\n\nexport function TabsTrigger({\n  value,\n  children,\n  className,\n  disabled = false,\n}: {\n  value: string;\n  children: React.ReactNode;\n  className?: string;\n  disabled?: boolean;\n}) {\n  const context = React.useContext(TabsContext);\n  if (!context) throw new Error('TabsTrigger must be used within Tabs');\n\n  const isActive = context.value === value;\n\n  return (\n    <button\n      type=\"button\"\n      role=\"tab\"\n      aria-selected={isActive}\n      disabled={disabled}\n      onClick={() => context.onValueChange(value)}\n      className={cn(\n        'relative px-3.5 py-1.5 rounded-lg text-ui font-medium transition-colors cursor-pointer select-none',\n        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50',\n        isActive ? 'text-text-primary' : 'text-text-muted hover:text-text-primary',\n        disabled && 'opacity-40 cursor-not-allowed pointer-events-none',\n        className\n      )}\n    >\n      {isActive && (\n        <motion.div\n          layoutId=\"tactileActiveTabPill\"\n          className=\"absolute inset-0 rounded-lg bg-card tactile-surface border border-border/80 shadow-sm\"\n          transition={{ type: 'spring', stiffness: 450, damping: 32 }}\n        />\n      )}\n      <span className=\"relative z-10\">{children}</span>\n    </button>\n  );\n}\n\nexport function TabsContent({\n  value,\n  children,\n  className,\n}: {\n  value: string;\n  children: React.ReactNode;\n  className?: string;\n}) {\n  const context = React.useContext(TabsContext);\n  if (!context) throw new Error('TabsContent must be used within Tabs');\n\n  if (context.value !== value) return null;\n\n  return (\n    <div role=\"tabpanel\" className={cn('focus:outline-none', className)}>\n      {children}\n    </div>\n  );\n}\n"
+}

@@ -1,0 +1,41 @@
+{
+  "name": "radio",
+  "slug": "radio",
+  "title": "Radio Group",
+  "description": "Tactile radio group with spherical concave dish wells and spring-expanded dot indicators.",
+  "category": "interaction",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "default"
+  ],
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "required": false,
+      "description": "Controlled selected radio value"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Default selected value"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(val: string) => void",
+      "required": false,
+      "description": "Callback when selected option changes"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Option Selection Group",
+      "description": "Radio group with multiple choices.",
+      "code": "<RadioGroup defaultValue=\"opt-1\">\n  <RadioGroupItem value=\"opt-1\" label=\"Fastest Ingress\" description=\"Routes through closest POP\" />\n  <RadioGroupItem value=\"opt-2\" label=\"Lowest Cost\" description=\"Prefers off-peak backhaul\" />\n</RadioGroup>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion, AnimatePresence } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\ninterface RadioContextType {\n  value?: string;\n  onValueChange?: (value: string) => void;\n  disabled?: boolean;\n  name?: string;\n}\n\nconst RadioContext = React.createContext<RadioContextType | undefined>(undefined);\n\nexport interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {\n  value?: string;\n  defaultValue?: string;\n  onValueChange?: (value: string) => void;\n  disabled?: boolean;\n  name?: string;\n}\n\nexport function RadioGroup({\n  value: controlledValue,\n  defaultValue,\n  onValueChange,\n  disabled,\n  name,\n  className,\n  children,\n  ...props\n}: RadioGroupProps) {\n  const [internalValue, setInternalValue] = React.useState(defaultValue || '');\n  const isControlled = controlledValue !== undefined;\n  const value = isControlled ? controlledValue : internalValue;\n\n  const handleValueChange = React.useCallback(\n    (newValue: string) => {\n      if (!isControlled) {\n        setInternalValue(newValue);\n      }\n      onValueChange?.(newValue);\n    },\n    [isControlled, onValueChange]\n  );\n\n  return (\n    <RadioContext.Provider value={{ value, onValueChange: handleValueChange, disabled, name }}>\n      <div role=\"radiogroup\" className={cn('flex flex-col gap-2.5', className)} {...props}>\n        {children}\n      </div>\n    </RadioContext.Provider>\n  );\n}\n\nexport interface RadioGroupItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {\n  value: string;\n  label?: React.ReactNode;\n  description?: React.ReactNode;\n  disabled?: boolean;\n}\n\nexport const RadioGroupItem = React.forwardRef<HTMLDivElement, RadioGroupItemProps>(\n  ({ value, label, description, disabled: itemDisabled, className, id, ...props }, ref) => {\n    const context = React.useContext(RadioContext);\n    if (!context) {\n      throw new Error('RadioGroupItem must be used within a RadioGroup');\n    }\n\n    const isChecked = context.value === value;\n    const isDisabled = itemDisabled || context.disabled;\n    const generatedId = React.useId();\n    const itemId = id || generatedId;\n\n    const handleClick = () => {\n      if (isDisabled) return;\n      context.onValueChange?.(value);\n    };\n\n    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {\n      if (isDisabled) return;\n      if (e.key === ' ' || e.key === 'Enter') {\n        e.preventDefault();\n        context.onValueChange?.(value);\n      }\n    };\n\n    return (\n      <div\n        ref={ref}\n        className={cn(\n          'inline-flex items-start gap-2.5 select-none cursor-pointer',\n          isDisabled && 'opacity-45 pointer-events-none',\n          className\n        )}\n        onClick={handleClick}\n        {...props}\n      >\n        <div\n          role=\"radio\"\n          aria-checked={isChecked}\n          tabIndex={isDisabled ? -1 : 0}\n          onKeyDown={handleKeyDown}\n          className={cn(\n            'relative flex items-center justify-center w-[18px] h-[18px] mt-0.5 rounded-full transition-all outline-hidden',\n            'border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',\n            isChecked\n              ? 'border-primary bg-card'\n              : 'border-border/80 bg-card tactile-well hover:border-text-muted/60'\n          )}\n        >\n          <AnimatePresence initial={false}>\n            {isChecked && (\n              <motion.div\n                initial={{ scale: 0 }}\n                animate={{ scale: 1 }}\n                exit={{ scale: 0 }}\n                transition={{ type: 'spring', stiffness: 500, damping: 30 }}\n                className=\"w-2.5 h-2.5 rounded-full bg-primary shadow-xs\"\n              />\n            )}\n          </AnimatePresence>\n        </div>\n\n        {(label || description) && (\n          <div className=\"flex flex-col leading-tight\">\n            {label && <span className=\"text-xs font-medium text-text-primary\">{label}</span>}\n            {description && <span className=\"text-[11px] text-text-muted mt-0.5\">{description}</span>}\n          </div>\n        )}\n      </div>\n    );\n  }\n);\n\nRadioGroupItem.displayName = 'RadioGroupItem';\n"
+}

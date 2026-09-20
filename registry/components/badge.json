@@ -1,0 +1,40 @@
+{
+  "name": "badge",
+  "slug": "badge",
+  "title": "Badge",
+  "description": "Compact metadata chip for categories, monospace tracking, and environmental status indicators.",
+  "category": "foundations",
+  "dependencies": [],
+  "variants": [
+    "default",
+    "outline",
+    "mono",
+    "status",
+    "engraved",
+    "tactile"
+  ],
+  "props": [
+    {
+      "name": "variant",
+      "type": "'default' | 'outline' | 'mono' | 'status' | 'engraved' | 'tactile'",
+      "required": false,
+      "defaultValue": "'default'",
+      "description": "Visual format"
+    },
+    {
+      "name": "status",
+      "type": "'neutral' | 'success' | 'warning' | 'error'",
+      "required": false,
+      "defaultValue": "'neutral'",
+      "description": "Dot color when variant is 'status'"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Metadata Tags & Status Indicators",
+      "description": "Badges in different roles.",
+      "code": "<Badge variant=\"mono\">TypeScript 5.7</Badge>\n<Badge variant=\"status\" status=\"success\">Operational</Badge>\n<Badge variant=\"engraved\">Kernel</Badge>\n<Badge variant=\"tactile\">Active</Badge>"
+    }
+  ],
+  "sourceCode": "import * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport type BadgeVariant = 'default' | 'secondary' | 'outline' | 'mono' | 'status' | 'engraved' | 'tactile';\nexport type BadgeStatus = 'neutral' | 'success' | 'warning' | 'error';\n\nexport interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {\n  variant?: BadgeVariant;\n  status?: BadgeStatus;\n  children: React.ReactNode;\n}\n\nconst statusDotColors: Record<BadgeStatus, string> = {\n  neutral: 'bg-text-muted',\n  success: 'bg-emerald-500',\n  warning: 'bg-amber-500',\n  error: 'bg-rose-500',\n};\n\nexport function Badge({\n  className,\n  variant = 'default',\n  status = 'neutral',\n  children,\n  ...props\n}: BadgeProps) {\n  if (variant === 'engraved') {\n    return (\n      <span\n        className={cn(\n          'inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-secondary/80 text-text-muted tactile-well border border-border/40 select-none',\n          className\n        )}\n        {...props}\n      >\n        {children}\n      </span>\n    );\n  }\n\n  if (variant === 'tactile') {\n    return (\n      <span\n        className={cn(\n          'inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-0.5 rounded-md bg-card text-text-primary tactile-surface border border-border/60 select-none',\n          className\n        )}\n        {...props}\n      >\n        {children}\n      </span>\n    );\n  }\n\n  if (variant === 'mono') {\n    return (\n      <span\n        className={cn(\n          'inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-muted text-text-muted border border-border/50 select-none',\n          className\n        )}\n        {...props}\n      >\n        {children}\n      </span>\n    );\n  }\n\n  if (variant === 'outline') {\n    return (\n      <span\n        className={cn(\n          'inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md border border-border text-text-muted select-none bg-transparent',\n          className\n        )}\n        {...props}\n      >\n        {children}\n      </span>\n    );\n  }\n\n  if (variant === 'status') {\n    return (\n      <span\n        className={cn(\n          'inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-secondary/80 text-text-primary border border-border/60 select-none',\n          className\n        )}\n        {...props}\n      >\n        <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', statusDotColors[status])} />\n        <span>{children}</span>\n      </span>\n    );\n  }\n\n  if (variant === 'secondary') {\n    return (\n      <span\n        className={cn(\n          'inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-md bg-secondary text-text-muted border border-border/50 select-none font-medium',\n          className\n        )}\n        {...props}\n      >\n        {children}\n      </span>\n    );\n  }\n\n  return (\n    <span\n      className={cn(\n        'inline-flex items-center gap-1 text-sidebar-category px-2.5 py-0.5 rounded-md bg-secondary text-text-secondary border border-border/60 select-none',\n        className\n      )}\n      {...props}\n    >\n      {children}\n    </span>\n  );\n}\n"
+}

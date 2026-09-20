@@ -1,0 +1,44 @@
+{
+  "name": "spotlight-card",
+  "slug": "spotlight-card",
+  "title": "Spotlight Card",
+  "description": "Surface card illuminated by environmental ambient light that follows the cursor, revealing surface texture and subtle edge chamfering without decorative glow.",
+  "category": "surface",
+  "dependencies": [],
+  "variants": [
+    "default",
+    "tactile",
+    "recessed"
+  ],
+  "props": [
+    {
+      "name": "variant",
+      "type": "'default' | 'tactile' | 'recessed'",
+      "required": false,
+      "defaultValue": "'default'",
+      "description": "Base elevation and surface depth tier"
+    },
+    {
+      "name": "spotlightSize",
+      "type": "number",
+      "required": false,
+      "defaultValue": "420",
+      "description": "Radius in pixels for the ambient radial falloff"
+    },
+    {
+      "name": "ambientIntensity",
+      "type": "number",
+      "required": false,
+      "defaultValue": "0.045",
+      "description": "Max opacity of the ambient radial light"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Ambient Illuminated Card",
+      "description": "Quiet surface card revealing edge chamfers as the pointer traverses.",
+      "code": "<SpotlightCard variant=\"tactile\">\n  <SpotlightCardHeader>\n    <SpotlightCardTitle>Environmental Sensor</SpotlightCardTitle>\n    <SpotlightCardDescription>Thermal and airflow metrics</SpotlightCardDescription>\n  </SpotlightCardHeader>\n  <SpotlightCardContent>\n    Ambient atmosphere is treated as a global condition.\n  </SpotlightCardContent>\n</SpotlightCard>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {\n  variant?: 'default' | 'tactile' | 'recessed';\n  spotlightSize?: number;\n  spotlightColor?: string;\n  ambientIntensity?: number;\n}\n\nexport const SpotlightCard = React.forwardRef<HTMLDivElement, SpotlightCardProps>(\n  (\n    {\n      className,\n      children,\n      variant = 'default',\n      spotlightSize = 420,\n      spotlightColor,\n      ambientIntensity = 0.045,\n      ...props\n    },\n    ref\n  ) => {\n    const cardRef = React.useRef<HTMLDivElement | null>(null);\n    const [mousePos, setMousePos] = React.useState<{ x: number; y: number } | null>(null);\n    const [isHovered, setIsHovered] = React.useState(false);\n\n    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {\n      if (!cardRef.current) return;\n      const rect = cardRef.current.getBoundingClientRect();\n      setMousePos({\n        x: e.clientX - rect.left,\n        y: e.clientY - rect.top,\n      });\n    };\n\n    const handleMouseEnter = () => setIsHovered(true);\n    const handleMouseLeave = () => {\n      setIsHovered(false);\n      setMousePos(null);\n    };\n\n    const variantClasses = {\n      default: 'bg-card border border-border',\n      tactile: 'bg-card border border-border/80 shadow-tactile',\n      recessed: 'bg-secondary/70 border border-border/60 shadow-recessed',\n    };\n\n    return (\n      <div\n        ref={(el) => {\n          cardRef.current = el;\n          if (typeof ref === 'function') {\n            ref(el);\n          } else if (ref) {\n            ref.current = el;\n          }\n        }}\n        onMouseMove={handleMouseMove}\n        onMouseEnter={handleMouseEnter}\n        onMouseLeave={handleMouseLeave}\n        className={cn(\n          'relative rounded-xl p-6 overflow-hidden transition-colors duration-200',\n          variantClasses[variant],\n          className\n        )}\n        {...props}\n      >\n        {/* Ambient Radial Spotlight: gentle environmental condition, not decoration */}\n        <div\n          aria-hidden=\"true\"\n          className=\"pointer-events-none absolute -inset-px transition-opacity duration-500 ease-out\"\n          style={{\n            opacity: isHovered && mousePos ? 1 : 0,\n            background: mousePos\n              ? `radial-gradient(${spotlightSize}px circle at ${mousePos.x}px ${mousePos.y}px, ${\n                  spotlightColor || `var(--spotlight-color, rgba(255, 255, 255, ${ambientIntensity}))`\n                }, transparent 70%)`\n              : 'none',\n          }}\n        />\n\n        {/* Content Container */}\n        <div className=\"relative z-10\">{children}</div>\n      </div>\n    );\n  }\n);\n\nSpotlightCard.displayName = 'SpotlightCard';\n\nexport function SpotlightCardHeader({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return <div className={cn('flex flex-col space-y-1.5 mb-3', className)} {...props} />;\n}\n\nexport function SpotlightCardTitle({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLHeadingElement>) {\n  return (\n    <h3\n      className={cn('text-component-title text-text-primary font-medium tracking-tight', className)}\n      {...props}\n    />\n  );\n}\n\nexport function SpotlightCardDescription({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLParagraphElement>) {\n  return (\n    <p\n      className={cn('text-body text-text-muted leading-relaxed', className)}\n      {...props}\n    />\n  );\n}\n\nexport function SpotlightCardContent({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return <div className={cn('text-body text-text-secondary', className)} {...props} />;\n}\n\nexport function SpotlightCardFooter({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return (\n    <div\n      className={cn('pt-4 mt-4 border-t border-border/60 flex items-center', className)}\n      {...props}\n    />\n  );\n}\n"
+}

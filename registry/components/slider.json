@@ -1,0 +1,61 @@
+{
+  "name": "slider",
+  "slug": "slider",
+  "title": "Slider",
+  "description": "Tangible continuous track slider with recessed milled well, progress fill, and elevated cylindrical knob.",
+  "category": "interaction",
+  "dependencies": [],
+  "variants": [
+    "default"
+  ],
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": false,
+      "description": "Controlled slider value"
+    },
+    {
+      "name": "defaultValue",
+      "type": "number",
+      "required": false,
+      "defaultValue": "50",
+      "description": "Initial value"
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": false,
+      "defaultValue": "0",
+      "description": "Minimum range limit"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": false,
+      "defaultValue": "100",
+      "description": "Maximum range limit"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "required": false,
+      "defaultValue": "1",
+      "description": "Step interval"
+    },
+    {
+      "name": "onChange",
+      "type": "(val: number) => void",
+      "required": false,
+      "description": "Change callback"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Audio Gain / Brightness Slider",
+      "description": "Continuous slider controlling numerical parameters.",
+      "code": "<div className=\"space-y-2 max-w-xs\">\n  <div className=\"flex justify-between text-xs font-mono text-text-muted\">\n    <span>Grain Opacity</span>\n    <span>25%</span>\n  </div>\n  <Slider defaultValue={25} min={0} max={100} />\n</div>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface SliderProps {\n  value?: number;\n  defaultValue?: number;\n  min?: number;\n  max?: number;\n  step?: number;\n  onChange?: (val: number) => void;\n  disabled?: boolean;\n  className?: string;\n  'aria-label'?: string;\n}\n\nexport function Slider({\n  value: controlledValue,\n  defaultValue = 50,\n  min = 0,\n  max = 100,\n  step = 1,\n  onChange,\n  disabled = false,\n  className,\n  'aria-label': ariaLabel = 'Slider',\n}: SliderProps) {\n  const [internalValue, setInternalValue] = React.useState(defaultValue);\n  const isControlled = controlledValue !== undefined;\n  const currentVal = isControlled ? controlledValue : internalValue;\n\n  const trackRef = React.useRef<HTMLDivElement>(null);\n  const percentage = Math.min(100, Math.max(0, ((currentVal - min) / (max - min)) * 100));\n\n  const updateValue = (clientX: number) => {\n    if (disabled || !trackRef.current) return;\n    const rect = trackRef.current.getBoundingClientRect();\n    const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));\n    const rawVal = min + pos * (max - min);\n    const steppedVal = Math.round(rawVal / step) * step;\n    const finalVal = Math.min(max, Math.max(min, steppedVal));\n\n    if (!isControlled) setInternalValue(finalVal);\n    onChange?.(finalVal);\n  };\n\n  const handleMouseDown = (e: React.MouseEvent) => {\n    updateValue(e.clientX);\n    const onMouseMove = (moveEvent: MouseEvent) => updateValue(moveEvent.clientX);\n    const onMouseUp = () => {\n      window.removeEventListener('mousemove', onMouseMove);\n      window.removeEventListener('mouseup', onMouseUp);\n    };\n    window.addEventListener('mousemove', onMouseMove);\n    window.addEventListener('mouseup', onMouseUp);\n  };\n\n  return (\n    <div\n      ref={trackRef}\n      onMouseDown={handleMouseDown}\n      role=\"slider\"\n      aria-valuemin={min}\n      aria-valuemax={max}\n      aria-valuenow={currentVal}\n      aria-label={ariaLabel}\n      tabIndex={disabled ? -1 : 0}\n      className={cn(\n        'relative flex items-center w-full h-6 cursor-pointer select-none touch-none',\n        disabled && 'opacity-40 cursor-not-allowed pointer-events-none',\n        className\n      )}\n    >\n      {/* Recessed Well Track */}\n      <div className=\"relative w-full h-2 rounded-full bg-secondary tactile-well border border-border/60 overflow-hidden\">\n        {/* Filled Progress Bar */}\n        <div\n          className=\"absolute left-0 top-0 h-full bg-primary transition-all duration-75\"\n          style={{ width: `${percentage}%` }}\n        />\n      </div>\n\n      {/* Tactile Thumb Knob */}\n      <div\n        className=\"absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-card border border-border/80 tactile-surface shadow-md transition-transform duration-100 hover:scale-110 active:scale-95\"\n        style={{ left: `${percentage}%` }}\n      >\n        <div className=\"absolute inset-1 rounded-full border border-black/5 dark:border-white/10\" />\n      </div>\n    </div>\n  );\n}\n"
+}

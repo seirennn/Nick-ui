@@ -1,0 +1,69 @@
+{
+  "name": "otp-input",
+  "slug": "otp-input",
+  "title": "OTP Input",
+  "description": "Tactile split verification code input with recessed key wells, auto-focus progression, clipboard paste support, and full keyboard navigation.",
+  "category": "interaction",
+  "dependencies": [],
+  "variants": [
+    "default",
+    "tactile",
+    "recessed"
+  ],
+  "props": [
+    {
+      "name": "length",
+      "type": "number",
+      "required": false,
+      "defaultValue": "6",
+      "description": "Number of input slots"
+    },
+    {
+      "name": "variant",
+      "type": "'default' | 'tactile' | 'recessed'",
+      "required": false,
+      "defaultValue": "'tactile'",
+      "description": "Surface tier: clean default, raised tactile, or milled recessed well"
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "required": false,
+      "defaultValue": "'md'",
+      "description": "Dimensions and font size"
+    },
+    {
+      "name": "mask",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false",
+      "description": "Hides numeric characters behind privacy dots"
+    },
+    {
+      "name": "hasSeparator",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "true",
+      "description": "Renders a subtle midline separator"
+    },
+    {
+      "name": "onComplete",
+      "type": "(code: string) => void",
+      "required": false,
+      "description": "Callback triggered when all digits are populated"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Tactile Verification Code",
+      "description": "6-digit verification code with tactile keycap depth and clipboard support.",
+      "code": "<OtpInput\n  length={6}\n  variant=\"tactile\"\n  onComplete={(code) => console.log('Entered code:', code)}\n/>"
+    },
+    {
+      "title": "Recessed Well Tier",
+      "description": "Milled surface tier for high-security pin entry.",
+      "code": "<OtpInput\n  length={4}\n  variant=\"recessed\"\n  size=\"lg\"\n  hasSeparator={false}\n/>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport type OtpInputVariant = 'default' | 'tactile' | 'recessed';\nexport type OtpInputSize = 'sm' | 'md' | 'lg';\n\nexport interface OtpInputProps {\n  length?: number;\n  value?: string;\n  defaultValue?: string;\n  onChange?: (value: string) => void;\n  onComplete?: (value: string) => void;\n  disabled?: boolean;\n  autoFocus?: boolean;\n  mask?: boolean;\n  variant?: OtpInputVariant;\n  size?: OtpInputSize;\n  hasSeparator?: boolean;\n  separatorIndex?: number;\n  error?: boolean;\n  className?: string;\n  'aria-label'?: string;\n}\n\nexport const OtpInput = React.forwardRef<HTMLDivElement, OtpInputProps>(\n  (\n    {\n      length = 6,\n      value: controlledValue,\n      defaultValue = '',\n      onChange,\n      onComplete,\n      disabled = false,\n      autoFocus = false,\n      mask = false,\n      variant = 'tactile',\n      size = 'md',\n      hasSeparator = true,\n      separatorIndex,\n      error = false,\n      className,\n      'aria-label': ariaLabel = 'Verification Code',\n    },\n    ref\n  ) => {\n    const isControlled = controlledValue !== undefined;\n    const [internalValue, setInternalValue] = React.useState<string>(defaultValue);\n    const currentValue = isControlled ? controlledValue : internalValue;\n\n    const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);\n    const sepIndex = separatorIndex ?? Math.floor(length / 2);\n\n    React.useEffect(() => {\n      if (autoFocus && inputRefs.current[0]) {\n        inputRefs.current[0].focus();\n      }\n    }, [autoFocus]);\n\n    const digits = React.useMemo(() => {\n      const arr = new Array(length).fill('');\n      for (let i = 0; i < length; i++) {\n        arr[i] = currentValue[i] || '';\n      }\n      return arr;\n    }, [currentValue, length]);\n\n    const updateValue = (newVal: string) => {\n      const sanitized = newVal.slice(0, length);\n      if (!isControlled) {\n        setInternalValue(sanitized);\n      }\n      onChange?.(sanitized);\n      if (sanitized.length === length) {\n        onComplete?.(sanitized);\n      }\n    };\n\n    const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {\n      if (e.key === 'Backspace') {\n        e.preventDefault();\n        const currentDigit = digits[index];\n        if (currentDigit) {\n          const nextVal = digits.map((d, i) => (i === index ? '' : d)).join('');\n          updateValue(nextVal);\n        } else if (index > 0) {\n          inputRefs.current[index - 1]?.focus();\n          const nextVal = digits.map((d, i) => (i === index - 1 ? '' : d)).join('');\n          updateValue(nextVal);\n        }\n      } else if (e.key === 'ArrowLeft') {\n        e.preventDefault();\n        if (index > 0) {\n          inputRefs.current[index - 1]?.focus();\n        }\n      } else if (e.key === 'ArrowRight') {\n        e.preventDefault();\n        if (index < length - 1) {\n          inputRefs.current[index + 1]?.focus();\n        }\n      }\n    };\n\n    const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {\n      const val = e.target.value;\n      const char = val.slice(-1);\n\n      if (!/^\\d*$/.test(char)) {\n        return;\n      }\n\n      const nextDigits = [...digits];\n      nextDigits[index] = char;\n      const nextVal = nextDigits.join('');\n      updateValue(nextVal);\n\n      if (char && index < length - 1) {\n        inputRefs.current[index + 1]?.focus();\n      }\n    };\n\n    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {\n      e.preventDefault();\n      const pastedData = e.clipboardData.getData('text/plain').replace(/\\D/g, '').slice(0, length);\n      if (pastedData) {\n        updateValue(pastedData);\n        const focusIdx = Math.min(pastedData.length, length - 1);\n        inputRefs.current[focusIdx]?.focus();\n      }\n    };\n\n    const sizeClasses = {\n      sm: 'w-8 h-10 text-sm font-medium rounded-lg',\n      md: 'w-11 h-13 text-lg font-mono rounded-xl',\n      lg: 'w-14 h-16 text-xl font-mono rounded-xl',\n    };\n\n    const variantClasses = {\n      default:\n        'bg-background border border-border text-foreground focus:border-foreground/50 focus:ring-1 focus:ring-ring/40',\n      tactile:\n        'bg-card border border-border/80 text-foreground shadow-tactile focus:border-foreground/40 focus:ring-1 focus:ring-ring/30 focus:-translate-y-0.5 transition-all duration-150',\n      recessed:\n        'bg-secondary/70 border border-border/60 text-foreground shadow-recessed focus:border-foreground/40 focus:ring-1 focus:ring-ring/30 transition-all duration-150',\n    };\n\n    return (\n      <div\n        ref={ref}\n        role=\"group\"\n        aria-label={ariaLabel}\n        className={cn('inline-flex items-center gap-2', className)}\n      >\n        {digits.map((digit, idx) => {\n          const isCurrentActive =\n            !disabled && (digits.findIndex((d) => d === '') === idx || (idx === length - 1 && digits[idx] !== ''));\n\n          return (\n            <React.Fragment key={idx}>\n              {hasSeparator && idx === sepIndex && (\n                <div\n                  aria-hidden=\"true\"\n                  className=\"w-2.5 h-[1.5px] bg-border mx-1 self-center rounded-full opacity-60\"\n                />\n              )}\n              <input\n                ref={(el) => {\n                  inputRefs.current[idx] = el;\n                }}\n                type=\"text\"\n                inputMode=\"numeric\"\n                pattern=\"[0-9]*\"\n                maxLength={1}\n                value={mask && digit ? '•' : digit}\n                disabled={disabled}\n                aria-label={`Digit ${idx + 1} of ${length}`}\n                onChange={(e) => handleChange(idx, e)}\n                onKeyDown={(e) => handleKeyDown(idx, e)}\n                onPaste={handlePaste}\n                onFocus={(e) => e.target.select()}\n                className={cn(\n                  'text-center select-none outline-none transition-all',\n                  sizeClasses[size],\n                  variantClasses[variant],\n                  disabled && 'opacity-40 cursor-not-allowed shadow-none',\n                  error && 'border-destructive/60 text-destructive focus:border-destructive focus:ring-destructive/30',\n                  !digit && isCurrentActive && !disabled && 'border-foreground/30'\n                )}\n              />\n            </React.Fragment>\n          );\n        })}\n      </div>\n    );\n  }\n);\n\nOtpInput.displayName = 'OtpInput';\n"
+}

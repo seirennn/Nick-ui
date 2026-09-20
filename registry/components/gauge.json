@@ -1,0 +1,67 @@
+{
+  "name": "gauge",
+  "slug": "gauge",
+  "title": "Gauge",
+  "description": "Precision analog radial meter with SVG arc, tick marks, digital readout, and fluid spring animations.",
+  "category": "foundations",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "default",
+    "accent",
+    "success",
+    "warning",
+    "danger"
+  ],
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true,
+      "description": "Current numeric metric value"
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": false,
+      "defaultValue": "0",
+      "description": "Minimum scale lower bound"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": false,
+      "defaultValue": "100",
+      "description": "Maximum scale upper bound"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Center subtitle label"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'%'",
+      "description": "Readout unit suffix"
+    },
+    {
+      "name": "variant",
+      "type": "'default' | 'accent' | 'success' | 'warning' | 'danger'",
+      "required": false,
+      "defaultValue": "'default'",
+      "description": "Stroke color style"
+    }
+  ],
+  "examples": [
+    {
+      "title": "CPU Load Dial",
+      "description": "Radial dial monitoring processor saturation.",
+      "code": "<Gauge value={72} label=\"CPU UTIL\" unit=\"%\" variant=\"accent\" size={140} />"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\nexport interface GaugeProps extends React.HTMLAttributes<HTMLDivElement> {\n  value: number;\n  min?: number;\n  max?: number;\n  label?: string;\n  unit?: string;\n  size?: number;\n  strokeWidth?: number;\n  variant?: 'default' | 'accent' | 'success' | 'warning' | 'danger';\n  showTicks?: boolean;\n}\n\nexport const Gauge = React.forwardRef<HTMLDivElement, GaugeProps>(\n  (\n    {\n      value,\n      min = 0,\n      max = 100,\n      label,\n      unit = '%',\n      size = 140,\n      strokeWidth = 10,\n      variant = 'default',\n      showTicks = true,\n      className,\n      ...props\n    },\n    ref\n  ) => {\n    // Clamp value\n    const clampedValue = Math.min(Math.max(value, min), max);\n    const percentage = (clampedValue - min) / (max - min);\n\n    // Geometry: 240 degree arc starting at 150deg (bottom-left) to 390deg (bottom-right)\n    const startAngle = 135;\n    const endAngle = 405;\n    const angleRange = endAngle - startAngle; // 270 degrees\n    const currentAngle = startAngle + percentage * angleRange;\n\n    const center = size / 2;\n    const radius = center - strokeWidth - 4;\n\n    const polarToCartesian = (cx: number, cy: number, r: number, angleInDegrees: number) => {\n      const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;\n      return {\n        x: cx + r * Math.cos(angleInRadians),\n        y: cy + r * Math.sin(angleInRadians),\n      };\n    };\n\n    const describeArc = (x: number, y: number, r: number, startA: number, endA: number) => {\n      const start = polarToCartesian(x, y, r, endA);\n      const end = polarToCartesian(x, y, r, startA);\n      const largeArcFlag = endA - startA <= 180 ? '0' : '1';\n      return ['M', start.x, start.y, 'A', r, r, 0, largeArcFlag, 0, end.x, end.y].join(' ');\n    };\n\n    const backgroundArc = describeArc(center, center, radius, startAngle, endAngle);\n    const valueArc = describeArc(center, center, radius, startAngle, Math.max(startAngle + 0.1, currentAngle));\n\n    const colorVariants = {\n      default: 'stroke-primary text-text-primary',\n      accent: 'stroke-[#38bdf8] text-[#38bdf8]',\n      success: 'stroke-[#10b981] text-[#10b981]',\n      warning: 'stroke-[#f59e0b] text-[#f59e0b]',\n      danger: 'stroke-[#ef4444] text-[#ef4444]',\n    };\n\n    // Calculate tick marks\n    const ticks = React.useMemo(() => {\n      if (!showTicks) return [];\n      const tickCount = 9;\n      return Array.from({ length: tickCount }).map((_, i) => {\n        const tickPct = i / (tickCount - 1);\n        const tickAngle = startAngle + tickPct * angleRange;\n        const outerPt = polarToCartesian(center, center, radius - strokeWidth / 2 - 2, tickAngle);\n        const innerPt = polarToCartesian(center, center, radius - strokeWidth / 2 - 6, tickAngle);\n        return { x1: innerPt.x, y1: innerPt.y, x2: outerPt.x, y2: outerPt.y, active: tickPct <= percentage };\n      });\n    }, [showTicks, center, radius, strokeWidth, startAngle, angleRange, percentage]);\n\n    return (\n      <div\n        ref={ref}\n        className={cn(\n          'relative inline-flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 tactile-surface select-none',\n          className\n        )}\n        style={{ width: size + 24 }}\n        {...props}\n      >\n        {/* Recessed Bezel Dish */}\n        <div className=\"relative flex items-center justify-center\">\n          <svg width={size} height={size} className=\"overflow-visible\">\n            {/* Defs for subtle glow/bevel */}\n            <defs>\n              <filter id=\"gauge-shadow\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\n                <feDropShadow dx=\"0\" dy=\"1\" stdDeviation=\"1\" floodColor=\"#000\" floodOpacity=\"0.25\" />\n              </filter>\n            </defs>\n\n            {/* Background Track Arc (recessed groove) */}\n            <path\n              d={backgroundArc}\n              fill=\"none\"\n              stroke=\"currentColor\"\n              className=\"text-secondary opacity-80\"\n              strokeWidth={strokeWidth}\n              strokeLinecap=\"round\"\n            />\n\n            {/* Subtle Tick Marks */}\n            {ticks.map((t, idx) => (\n              <line\n                key={idx}\n                x1={t.x1}\n                y1={t.y1}\n                x2={t.x2}\n                y2={t.y2}\n                stroke=\"currentColor\"\n                strokeWidth={1.5}\n                strokeLinecap=\"round\"\n                className={t.active ? 'text-text-secondary' : 'text-border'}\n              />\n            ))}\n\n            {/* Active Value Progress Arc */}\n            <motion.path\n              d={valueArc}\n              fill=\"none\"\n              strokeWidth={strokeWidth}\n              strokeLinecap=\"round\"\n              className={colorVariants[variant].split(' ')[0]}\n              initial={{ pathLength: 0 }}\n              animate={{ pathLength: 1 }}\n              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}\n            />\n          </svg>\n\n          {/* Centered Readout Value */}\n          <div className=\"absolute inset-0 flex flex-col items-center justify-center mt-2 pointer-events-none\">\n            <div className=\"flex items-baseline gap-0.5\">\n              <span className=\"text-2xl font-mono font-bold tracking-tight text-text-primary\">\n                {Math.round(clampedValue)}\n              </span>\n              {unit && <span className=\"text-xs font-mono text-text-muted\">{unit}</span>}\n            </div>\n            {label && (\n              <span className=\"text-[10px] font-mono uppercase tracking-widest text-text-muted mt-0.5\">\n                {label}\n              </span>\n            )}\n          </div>\n        </div>\n\n        {/* Min / Max bounds footer */}\n        <div className=\"flex items-center justify-between w-full px-2 mt-1 text-[10px] font-mono text-text-muted\">\n          <span>{min}{unit}</span>\n          <span>{max}{unit}</span>\n        </div>\n      </div>\n    );\n  }\n);\n\nGauge.displayName = 'Gauge';\n"
+}

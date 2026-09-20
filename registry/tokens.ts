@@ -1,0 +1,62 @@
+import { DesignTokens } from './schema';
+
+export const designTokens: DesignTokens = {
+  colors: {
+    light: [
+      { token: '--background', value: '#f5f2eb', description: 'Base canvas warm unbleached linen' },
+      { token: '--foreground', value: '#1c1b18', description: 'Primary high-contrast text and dark active indicators' },
+      { token: '--text-primary', value: '#1c1b18', description: 'Headings, primary labels, emphasized titles' },
+      { token: '--text-secondary', value: '#5c5952', description: 'Subtitles, secondary descriptions, body paragraphs' },
+      { token: '--text-muted', value: '#8c887e', description: 'Metadata, timestamps, inactive states, mono tags' },
+      { token: '--card', value: '#faf8f3', description: 'Elevated surface containers, dialogs, cards' },
+      { token: '--primary', value: '#1c1b18', description: 'Primary button fill, high-emphasis interactive states' },
+      { token: '--secondary', value: '#ebe7de', description: 'Secondary buttons, subtle pill backgrounds' },
+      { token: '--accent', value: '#eae5da', description: 'Hover states, selected rows, active segment pills' },
+      { token: '--border', value: '#e2ddd2', description: '1px hairline borders for cards, inputs, dividers' },
+      { token: '--sidebar', value: '#faf8f3', description: 'Navigation container and floating navigation bar' },
+      { token: '--sidebar-border', value: '#e2ddd2', description: 'Floating navigation boundary' },
+    ],
+    dark: [
+      { token: '--background', value: '#101010', description: 'Base canvas deep studio dark' },
+      { token: '--foreground', value: '#f4f4f7', description: 'Primary high-contrast text and bright active indicators' },
+      { token: '--text-primary', value: '#f4f4f7', description: 'Headings, titles, high-contrast labels' },
+      { token: '--text-secondary', value: '#a0a0b0', description: 'Body copy, secondary descriptions' },
+      { token: '--text-muted', value: '#6c6c7c', description: 'Metadata, timestamps, inactive labels' },
+      { token: '--card', value: '#171717', description: 'Card surface, panel background, dialog surface' },
+      { token: '--primary', value: '#f4f4f7', description: 'Primary button fill, active solid indicators' },
+      { token: '--secondary', value: '#1c1c1c', description: 'Secondary button fill, subtle card surfaces' },
+      { token: '--accent', value: '#242424', description: 'Hover fill, active pill background' },
+      { token: '--border', value: '#242424', description: '1px boundary lines, dividers, input borders' },
+      { token: '--sidebar', value: '#161616', description: 'Navigation bar fill, sidebar backdrop' },
+      { token: '--sidebar-border', value: '#262626', description: 'Navigation bar boundary' },
+    ],
+  },
+  typography: [
+    { token: '.text-major-title', value: '20px / 25px, weight 500, -0.14px', description: 'Section lead intros, hero subtitles' },
+    { token: '.text-component-title', value: '16px / 20px, weight 500, -0.14px', description: 'Card titles, modal headers, section headers' },
+    { token: '.text-body', value: '14px / 19.5px, weight 400, -0.14px', description: 'General documentation copy, descriptions' },
+    { token: '.text-ui', value: '13px / 16px, weight 500, -0.14px', description: 'Buttons, tabs, nav links, form labels' },
+    { token: '.text-metadata', value: '13px / 16.5px, weight 400, -0.14px', description: 'Captions, dates, secondary notes' },
+    { token: '.text-sidebar-category', value: '11.5px / 15px, weight 500, 0.05em caps', description: 'Category headers, tag labels, trackers' },
+  ],
+  radii: [
+    { token: '--radius-sm', value: 'calc(var(--radius) * 0.6) ~6px', description: 'Badges, tooltips, nested status tags' },
+    { token: '--radius-md', value: 'calc(var(--radius) * 0.8) ~8px', description: 'Text inputs, small buttons, segmented controls' },
+    { token: '--radius-lg', value: 'var(--radius) = 10px', description: 'Primary buttons, menu panels' },
+    { token: '--radius-xl', value: 'calc(var(--radius) * 1.4) ~14px', description: 'Cards, floating navbars, modals' },
+  ],
+  shadows: [
+    { token: 'shadow-2xs', value: '0 1px 2px rgba(0,0,0,0.05)', description: 'Micro card elevation' },
+    { token: 'shadow-tactile', value: '0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.85)', description: 'Physical tactile surface bevel highlight' },
+    { token: 'shadow-recessed', value: 'inset 0 2px 4px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.6)', description: 'Recessed groove well for switches and sliders' },
+    { token: 'shadow-keycap', value: '0 2.5px 0 #dcd6c9, inset 0 1px 0 rgba(255,255,255,0.85)', description: '3D mechanical keycap profile' },
+    { token: 'light-ambient', value: 'shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]', description: 'Light mode floating navbar idle' },
+    { token: 'dark-ambient', value: 'shadow-[0_4px_20px_-4px_rgba(0,0,0,0.3)]', description: 'Dark mode floating navbar idle' },
+    { token: 'dialog-elevation', value: 'shadow-2xl shadow-black/50', description: 'Modals and command palettes' },
+  ],
+  motion: [
+    { token: 'quintic-ease', value: 'cubic-bezier(0.16, 1, 0.3, 1)', description: 'Natural physical deceleration' },
+    { token: 'spring-button', value: 'stiffness: 400, damping: 25', description: 'Micro-spring button hover scale 1.02 and tap scale 0.98' },
+    { token: 'ambient-breath', value: '28s ease-in-out infinite alternate', description: 'Slow background atmosphere luminance cycle' },
+  ],
+};

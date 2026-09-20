@@ -1,0 +1,36 @@
+{
+  "name": "separator",
+  "slug": "separator",
+  "title": "Separator",
+  "description": "Delicate 1px hairline division line for establishing vertical and horizontal rhythm.",
+  "category": "foundations",
+  "dependencies": [],
+  "variants": [
+    "horizontal",
+    "vertical"
+  ],
+  "props": [
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "required": false,
+      "defaultValue": "'horizontal'",
+      "description": "Axis of the divider"
+    },
+    {
+      "name": "decorative",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "true",
+      "description": "Whether the separator is purely visual or structural"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Horizontal and Vertical Dividers",
+      "description": "Dividing content rows and toolbar items.",
+      "code": "<Separator className=\"my-4\" />\n<div className=\"flex items-center h-5 gap-2\">\n  <span>Home</span>\n  <Separator orientation=\"vertical\" />\n  <span>Docs</span>\n</div>"
+    }
+  ],
+  "sourceCode": "import * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {\n  orientation?: 'horizontal' | 'vertical';\n  decorative?: boolean;\n}\n\nexport function Separator({\n  className,\n  orientation = 'horizontal',\n  decorative = true,\n  ...props\n}: SeparatorProps) {\n  return (\n    <div\n      role={decorative ? 'none' : 'separator'}\n      aria-orientation={orientation}\n      className={cn(\n        'shrink-0 bg-border/80',\n        orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',\n        className\n      )}\n      {...props}\n    />\n  );\n}\n"
+}
