@@ -1,6 +1,6 @@
 # NickUI
 
-[![npm version](https://img.shields.io/npm/v/nickui.svg?style=flat-square)](https://www.npmjs.com/package/@seirennn/nickui)
+[![npm version](https://img.shields.io/npm/v/nickui.svg?style=flat-square)](https://www.npmjs.com/package/@sehrennn/nickui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![GitHub](https://img.shields.io/badge/GitHub-seirennn%2FNick--ui-black?style=flat-square&logo=github)](https://github.com/seirennn/Nick-ui)
 
