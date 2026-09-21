@@ -39,8 +39,8 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
       <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-foreground pt-20">
         <div className="max-w-7xl mx-auto flex">
           {/* Docs Left Navigation Sidebar */}
-          <div className="hidden lg:block sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
-            <DocsSidebar />
+          <div className="hidden lg:block sticky top-20 h-[calc(100vh-5rem)] w-64 shrink-0 overflow-hidden">
+            <DocsSidebar className="h-full" />
           </div>
 
           {/* Main Content Pane */}

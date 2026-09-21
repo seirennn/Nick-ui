@@ -1,4 +1,4 @@
-export type ComponentCategory = 'foundations' | 'surface' | 'navigation' | 'interaction';
+export type ComponentCategory = 'foundations' | 'primitives' | 'surface' | 'navigation' | 'interaction';
 
 export interface PropDefinition {
   name: string;

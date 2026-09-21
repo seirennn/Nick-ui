@@ -34,6 +34,7 @@ import {
   HeatmapCell,
   CandleDataPoint,
 } from '@/components/ui/charts';
+import { Sidebar } from '@/components/ui/sidebar';
 import { RailSidebar } from '@/components/ui/rail-sidebar';
 import { StudioSidebar } from '@/components/ui/studio-sidebar';
 import { OtpInput, OtpInputVariant } from '@/components/ui/otp-input';
@@ -82,6 +83,9 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
 
   // Navbar demo state
   const [activeNavTab, setActiveNavTab] = React.useState('overview');
+
+  // Sidebar demo state
+  const [sidebarActiveId, setSidebarActiveId] = React.useState('primitives');
 
   // Checkbox & Radio state
   const [chk1, setChk1] = React.useState(true);
@@ -557,30 +561,99 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'sidebar':
       return (
         <ComponentPreview
-          code={`<Sidebar\n  groups={[\n    {\n      title: "Architecture",\n      items: [\n        { id: "1", label: "System Primitives", href: "#", icon: Cpu },\n        { id: "2", label: "Network Transport", href: "#", icon: RadioIcon },\n        { id: "3", label: "Bayesian BKT Model", href: "#", icon: Activity, badge: "v2" }\n      ]\n    }\n  ]}\n/>`}
+          code={`<div className="h-[480px] w-72 border border-border/80 rounded-2xl overflow-hidden shadow-tactile">
+  <Sidebar
+    activeId={activeId}
+    onSelect={setActiveId}
+    header={
+      <div className="flex items-center gap-2.5 px-1 py-0.5">
+        <div className="w-6 h-6 rounded-md bg-secondary flex items-center justify-center text-xs font-mono font-bold text-text-primary border border-border/80">
+          N
+        </div>
+        <div>
+          <div className="text-xs font-medium text-text-primary">NickUI Core</div>
+          <div className="text-[10px] font-mono text-text-muted">Production Node</div>
+        </div>
+      </div>
+    }
+    footer={
+      <div className="text-[11px] font-mono text-text-muted space-y-1">
+        <div className="flex items-center justify-between">
+          <span>Cluster Status</span>
+          <span className="text-emerald-500 font-medium">Nominal</span>
+        </div>
+        <div className="text-[10px] opacity-60">Latency: 1.4ms · 99.98% uptime</div>
+      </div>
+    }
+    groups={[
+      {
+        title: 'Platform Architecture',
+        items: [
+          { id: 'primitives', label: 'System Primitives', href: '#', icon: Cpu },
+          { id: 'bkt', label: 'Bayesian Engine', href: '#', icon: Activity, badge: 'v2.4' },
+          { id: 'mesh', label: 'Distributed Mesh', href: '#', icon: Layers },
+          { id: 'telemetry', label: 'Telemetry & Streams', href: '#', icon: RadioIcon, badge: 'Live' },
+        ],
+      },
+      {
+        title: 'Operations & Ops',
+        items: [
+          { id: 'storage', label: 'Storage Arrays', href: '#', icon: HardDrive },
+          { id: 'security', label: 'Security & Access', href: '#', icon: ShieldCheck },
+          { id: 'terminal', label: 'Terminal Console', href: '#', icon: Terminal },
+          { id: 'settings', label: 'System Settings', href: '#', icon: Settings },
+        ],
+      },
+    ]}
+  />
+</div>`}
         >
-          <div className="w-64 p-3 rounded-xl border border-border/80 bg-card/60 space-y-3">
-            <div className="text-[10px] font-mono font-medium uppercase tracking-wider text-text-muted/80 px-2.5">
-              Architecture
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs bg-secondary text-text-primary font-medium border border-border/70 shadow-2xs">
-                <Cpu className="w-3.5 h-3.5 text-text-primary shrink-0" />
-                <span>System Primitives</span>
-              </div>
-              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-text-secondary hover:text-text-primary hover:bg-secondary/40 transition-colors">
-                <RadioIcon className="w-3.5 h-3.5 text-text-muted shrink-0" />
-                <span>Network Transport</span>
-              </div>
-              <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs text-text-secondary hover:text-text-primary hover:bg-secondary/40 transition-colors">
-                <div className="flex items-center gap-2 min-w-0">
-                  <Activity className="w-3.5 h-3.5 text-text-muted shrink-0" />
-                  <span className="truncate">Bayesian BKT Model</span>
-                </div>
-                <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-secondary/80 text-text-muted border border-border/50">
-                  v2
-                </span>
-              </div>
+          <div className="h-[480px] w-full flex justify-center py-4">
+            <div className="h-full w-72 border border-border/80 rounded-2xl overflow-hidden shadow-tactile">
+              <Sidebar
+                activeId={sidebarActiveId}
+                onSelect={setSidebarActiveId}
+                header={
+                  <div className="flex items-center gap-2.5 px-1 py-0.5">
+                    <div className="w-6 h-6 rounded-md bg-secondary flex items-center justify-center text-xs font-mono font-bold text-text-primary border border-border/80">
+                      N
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-text-primary">NickUI Core</div>
+                      <div className="text-[10px] font-mono text-text-muted">Production Node</div>
+                    </div>
+                  </div>
+                }
+                footer={
+                  <div className="text-[11px] font-mono text-text-muted space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span>Cluster Status</span>
+                      <span className="text-emerald-500 font-medium">Nominal</span>
+                    </div>
+                    <div className="text-[10px] opacity-60">Latency: 1.4ms · 99.98% uptime</div>
+                  </div>
+                }
+                groups={[
+                  {
+                    title: 'Platform Architecture',
+                    items: [
+                      { id: 'primitives', label: 'System Primitives', href: '#', icon: Cpu },
+                      { id: 'bkt', label: 'Bayesian Engine', href: '#', icon: Activity, badge: 'v2.4' },
+                      { id: 'mesh', label: 'Distributed Mesh', href: '#', icon: Layers },
+                      { id: 'telemetry', label: 'Telemetry & Streams', href: '#', icon: RadioIcon, badge: 'Live' },
+                    ],
+                  },
+                  {
+                    title: 'Operations & Ops',
+                    items: [
+                      { id: 'storage', label: 'Storage Arrays', href: '#', icon: HardDrive },
+                      { id: 'security', label: 'Security & Access', href: '#', icon: ShieldCheck },
+                      { id: 'terminal', label: 'Terminal Console', href: '#', icon: Terminal },
+                      { id: 'settings', label: 'System Settings', href: '#', icon: Settings },
+                    ],
+                  },
+                ]}
+              />
             </div>
           </div>
         </ComponentPreview>
