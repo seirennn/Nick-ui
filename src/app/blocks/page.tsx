@@ -292,6 +292,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Architectural Workstation Console"
+              slug="workstation-dashboard"
               category="Flagship Workstation · Resizable Architecture Sidebar"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add workstation-dashboard"
@@ -311,6 +312,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Technical Documentation & Config Layout"
+              slug="technical-docs-layout"
               category="Three-Column Technical · Sculpted Tab Notch"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add technical-docs-layout"
@@ -330,6 +332,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
             <BlockViewer
               title="Mission Control High-Density Grid Console"
+              slug="mission-control-dashboard"
               category="Operations Console · 16px Spatial Gaps"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add mission-control-dashboard"
@@ -349,6 +352,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Editorial Architecture & Knowledge Codex"
+              slug="editorial-workspace-dashboard"
               category="Editorial Architecture · Generous Whitespace"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add editorial-workspace-dashboard"
@@ -368,6 +372,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Tactile Studio Dashboard"
+              slug="tactile-studio-dashboard"
               category="Monolithic Shell · Rail Sidebar"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-studio-dashboard"
@@ -385,6 +390,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
             <BlockViewer
               title="Executive Studio Console"
+              slug="executive-studio-console"
               category="Floating Island · Studio Sidebar"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add executive-studio-console"
@@ -402,6 +408,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Revenue & Telemetry Analytics Suite"
+              slug="analytics-dashboard"
               category="Analytics Dashboard"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add analytics-dashboard"
@@ -419,6 +426,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
             <BlockViewer
               title="Cluster Infrastructure Telemetry Console"
+              slug="infrastructure-console"
               category="Operations Console"
               cliCommand="pnpm dlx @sehrennn/nickui add infrastructure-console"
               code={getBlockSource('infrastructure-console')}
@@ -435,6 +443,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'tactile') && (
             <BlockViewer
               title="Tactile Financial Metrics (Balance & Income)"
+              slug="tactile-metric-card"
               category="Tactile Widgets"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-metric-card"
@@ -468,6 +477,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'tactile') && (
             <BlockViewer
               title="Protocol Volume Trend Curve"
+              slug="tactile-trend-card"
               category="Tactile Widgets"
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-trend-card"
               code={getBlockSource('tactile-trend-card')}
@@ -491,6 +501,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'tactile') && (
             <BlockViewer
               title="Dot Matrix Revenue Velocity Equalizer"
+              slug="dot-matrix-chart"
               category="Tactile Charts"
               cliCommand="pnpm dlx @sehrennn/nickui add dot-matrix-chart"
               code={getBlockSource('dot-matrix-chart')}
@@ -516,6 +527,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Centered Hero Section Layout"
+              slug="centered-hero-layout"
               category="Landing Layouts"
               cliCommand="pnpm dlx @sehrennn/nickui add centered-hero-layout"
               code={getBlockSource('centered-hero-layout')}
@@ -533,6 +545,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Bento Grid Capabilities Layout"
+              slug="bento-showcase-layout"
               category="Landing Layouts"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add bento-showcase-layout"
@@ -551,6 +564,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Feature Grid Section Layout"
+              slug="feature-grid-layout"
               category="Landing Layouts"
               cliCommand="pnpm dlx @sehrennn/nickui add feature-grid-layout"
               code={getBlockSource('feature-grid-layout')}
@@ -568,6 +582,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Split Interactive Showcase Layout"
+              slug="split-showcase-layout"
               category="Landing Layouts"
               cliCommand="pnpm dlx @sehrennn/nickui add split-showcase-layout"
               code={getBlockSource('split-showcase-layout')}
@@ -598,6 +613,7 @@ export default function BlocksPage() {
           {(activeTab === 'all' || activeTab === 'settings') && (
             <BlockViewer
               title="Enterprise Governance & Security Workspace"
+              slug="workspace-settings-block"
               category="Settings"
               cliCommand="pnpm dlx @sehrennn/nickui add workspace-settings-block"
               code={getBlockSource('workspace-settings-block')}
