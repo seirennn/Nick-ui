@@ -133,14 +133,12 @@ export function CenteredHeroLayout({
       {previewContent && (
         <div className="mt-12 sm:mt-16 w-full max-w-5xl rounded-2xl border border-border/80 bg-card/60 shadow-xl overflow-hidden backdrop-blur-sm">
           {/* Window Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/70 bg-secondary/40">
-            <div className="flex items-center gap-1.5 opacity-60">
-              <span className="w-2.5 h-2.5 rounded-full bg-border" />
-              <span className="w-2.5 h-2.5 rounded-full bg-border" />
-              <span className="w-2.5 h-2.5 rounded-full bg-border" />
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/70 bg-secondary/40">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
+              <span className="text-[11px] font-mono text-text-muted">app.nickui.dev</span>
             </div>
-            <div className="text-[11px] font-mono text-text-muted">app.nickui.dev</div>
-            <div className="w-10" />
+            <div className="text-[10px] font-mono text-text-muted/60 uppercase">Interactive Studio</div>
           </div>
           {/* Inner Content Canvas */}
           <div className="p-6 sm:p-10 bg-background/50">

@@ -113,20 +113,13 @@ export function CodeBlock({
     <div className={cn('rounded-xl bg-[#faf8f5] dark:bg-[#0e0e0e] border border-border overflow-hidden shadow-2xs group', className)}>
       {/* Editorial Header Bar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border/70 bg-secondary/30 dark:bg-black/20">
-        <div className="flex items-center gap-2.5">
-          {/* Subtle macOS window controls */}
-          <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
-            <span className="w-2.5 h-2.5 rounded-full bg-border" />
-            <span className="w-2.5 h-2.5 rounded-full bg-border" />
-            <span className="w-2.5 h-2.5 rounded-full bg-border" />
-          </div>
-          <span className="w-px h-3 bg-border/60 ml-1" />
+        <div className="flex items-center gap-2">
           <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted font-medium select-none">
             {language}
           </span>
           {title && (
             <>
-              <span className="w-px h-3 bg-border/60 ml-1" />
+              <span className="w-px h-3 bg-border/60" />
               <span className="font-mono text-[11px] text-text-secondary select-none">
                 {title}
               </span>

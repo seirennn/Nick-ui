@@ -14,6 +14,7 @@ export function DocsSidebar({ className }: { className?: string }) {
     { id: 'foundations-typography', label: 'Typography Scale', href: '/foundations#typography' },
     { id: 'foundations-atmosphere', label: 'Atmosphere & Grain', href: '/foundations#atmosphere' },
     { id: 'foundations-motion', label: 'Motion Principles', href: '/foundations#motion' },
+    { id: 'foundations-depth', label: 'Tactile Depth Tiers', href: '/foundations#depth' },
   ];
 
   const devItems = [

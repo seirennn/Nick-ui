@@ -6,8 +6,9 @@ import { SiteNavbar } from '@/components/docs/SiteNavbar';
 import { DocsSidebar } from '@/components/docs/DocsSidebar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { designTokens } from '@/registry/tokens';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Layers } from 'lucide-react';
 
 export default function FoundationsPage() {
   const [copiedToken, setCopiedToken] = React.useState<string | null>(null);
@@ -258,7 +259,7 @@ animation: ambientBreath 28s ease-in-out infinite alternate;`}
             {/* ═══════════════════════════════════════════
                 4. MOTION & PHYSICS
             ═══════════════════════════════════════════ */}
-            <section id="motion" className="space-y-6 scroll-mt-24 pb-16">
+            <section id="motion" className="space-y-6 scroll-mt-24">
               <div className="space-y-1">
                 <h2 className="text-component-title text-text-primary">Motion Principles & Easing</h2>
                 <p className="text-body text-text-muted">
@@ -281,6 +282,145 @@ animation: ambientBreath 28s ease-in-out infinite alternate;`}
                     <p className="text-xs text-text-secondary">
                       Tight, responsive micro-spring used across buttons and interactive cards (`scale: 1.02` hover, `0.98` tap).
                     </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <Separator />
+
+            {/* ═══════════════════════════════════════════
+                5. TACTILE SKEUOMORPHIC DEPTH & INTENSITY TIERS
+            ═══════════════════════════════════════════ */}
+            <section id="depth" className="space-y-8 scroll-mt-24 pb-16">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-primary" />
+                  <h2 className="text-component-title text-text-primary">Tactile Depth & Intensity Tiers</h2>
+                </div>
+                <p className="text-body text-text-muted">
+                  Physical depth in NickUI is divided into two architectural types (Raised Tactile and Recessed Well) across three calibrated intensity levels (Subtle, Medium, Deep). Depth conveys mass, travel, and spatial hierarchy without ornamentation.
+                </p>
+              </div>
+
+              {/* Architectural Depth Types */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Tactile (Raised Surface) */}
+                <div className="p-6 rounded-2xl border border-border bg-card space-y-4 shadow-tactile">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-ui font-medium text-text-primary">Type 1: Tactile (Raised Surface)</h3>
+                      <p className="text-xs text-text-muted">Stands proud above the canvas</p>
+                    </div>
+                    <Badge variant="mono">Raised Keycap</Badge>
+                  </div>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Employs a top hairline specular rim (<code className="font-mono text-[11px]">inset 0 1px 0 rgba(255,255,255,...)</code>) combined with an ambient bottom drop shadow. Gives controls physical mass and tactile affordance.
+                  </p>
+                  <div className="p-4 rounded-xl bg-secondary/20 border border-border/60 flex items-center justify-center gap-3 flex-wrap">
+                    <Button variant="tactile" depth="subtle" size="sm">Subtle</Button>
+                    <Button variant="tactile" depth="medium" size="sm">Medium</Button>
+                    <Button variant="tactile" depth="deep" size="sm">Deep</Button>
+                  </div>
+                </div>
+
+                {/* Recessed (Sunken Well) */}
+                <div className="p-6 rounded-2xl border border-border bg-secondary/40 space-y-4 shadow-recessed">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-ui font-medium text-text-primary">Type 2: Recessed (Sunken Well)</h3>
+                      <p className="text-xs text-text-muted">Carved inward into the canvas</p>
+                    </div>
+                    <Badge variant="mono">Sunken Well</Badge>
+                  </div>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Employs a top inner shadow (<code className="font-mono text-[11px]">inset 0 2px 4px rgba(0,0,0,...)</code>) and bottom specular highlight. Defines receptor chassis, input wells, and gauge bezels.
+                  </p>
+                  <div className="p-4 rounded-xl bg-secondary/20 border border-border/60 flex items-center justify-center gap-3 flex-wrap">
+                    <Button variant="recessed" depth="subtle" size="sm">Subtle</Button>
+                    <Button variant="recessed" depth="medium" size="sm">Medium</Button>
+                    <Button variant="recessed" depth="deep" size="sm">Deep</Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3 Intensity Levels Matrix */}
+              <div className="space-y-4">
+                <h3 className="text-ui font-medium text-text-primary">Depth Intensity Tiers</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Level 1: Subtle */}
+                  <div className="p-5 rounded-xl border border-border/70 bg-card space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-xs text-text-primary">Subtle (Level 1)</span>
+                      <Badge variant="mono">1px Depth</Badge>
+                    </div>
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      Micro-elevation for dense tables, quiet status pills, and secondary actions. Gentle 0.5px physical travel.
+                    </p>
+                    <div className="space-y-1.5 pt-2 border-t border-border/50 text-[11px] font-mono text-text-muted">
+                      <div className="flex justify-between items-center">
+                        <span>Button:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">depth="subtle"</code>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Surface:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">.tactile-surface-subtle</code>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Well:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">.tactile-well-subtle</code>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Level 2: Medium */}
+                  <div className="p-5 rounded-xl border border-border/90 bg-card space-y-3 shadow-tactile">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-xs text-text-primary">Medium (Level 2)</span>
+                      <Badge variant="mono">2–3px Depth</Badge>
+                    </div>
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      Standard calibrated depth for primary actions, cards, and modal dialogs. 1px physical key travel.
+                    </p>
+                    <div className="space-y-1.5 pt-2 border-t border-border/50 text-[11px] font-mono text-text-muted">
+                      <div className="flex justify-between items-center">
+                        <span>Button:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">depth="medium"</code>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Surface:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">.tactile-surface</code>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Well:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">.tactile-well</code>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Level 3: Deep */}
+                  <div className="p-5 rounded-xl border border-border bg-card space-y-3 shadow-tactile-deep">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-xs text-text-primary">Deep (Level 3)</span>
+                      <Badge variant="mono">4–6px Depth</Badge>
+                    </div>
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      Pronounced mechanical milled bevel for hardware dials, prominent hero triggers, and tactile chassis. 2px physical key travel.
+                    </p>
+                    <div className="space-y-1.5 pt-2 border-t border-border/50 text-[11px] font-mono text-text-muted">
+                      <div className="flex justify-between items-center">
+                        <span>Button:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">depth="deep"</code>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Surface:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">.tactile-surface-deep</code>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Well:</span>
+                        <code className="text-text-primary bg-secondary/60 px-1.5 py-0.5 rounded">.tactile-well-deep</code>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

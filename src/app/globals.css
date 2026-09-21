@@ -64,10 +64,18 @@ html {
   --font-inter: "Inter", sans-serif;
 
   /* Tactile / Skeuomorphic Tokens (Light) */
-  --shadow-tactile: 0 1.5px 3px rgba(0, 0, 0, 0.08), 0 1px 1.5px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  --shadow-tactile-subtle: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.75), inset 0 -0.5px 0 rgba(0, 0, 0, 0.04);
+  --shadow-tactile-medium: 0 1.5px 3px rgba(0, 0, 0, 0.08), 0 1px 1.5px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  --shadow-tactile-deep: 0 3px 0 #dcd6c9, 0 4.5px 9px rgba(0, 0, 0, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 1), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  --shadow-tactile: var(--shadow-tactile-medium);
   --shadow-tactile-hover: 0 3px 8px rgba(0, 0, 0, 0.1), 0 1.5px 3px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1), inset 0 -1px 0 rgba(0, 0, 0, 0.06);
   --shadow-tactile-pressed: inset 0 2px 4px rgba(0, 0, 0, 0.14), inset 0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.6);
-  --shadow-recessed: inset 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 1.5px rgba(0, 0, 0, 0.06), 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  --shadow-recessed-subtle: inset 0 1px 2px rgba(0, 0, 0, 0.06), 0 0.5px 0 rgba(255, 255, 255, 0.5);
+  --shadow-recessed-medium: inset 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 1.5px rgba(0, 0, 0, 0.06), 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-recessed-deep: inset 0 3.5px 8px rgba(0, 0, 0, 0.16), inset 0 1.5px 3px rgba(0, 0, 0, 0.1), 0 1.5px 0 rgba(255, 255, 255, 0.9);
+  --shadow-recessed: var(--shadow-recessed-medium);
+
   --shadow-keycap: 0 2.5px 0 #dcd6c9, 0 3.5px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   --shadow-keycap-pressed: 0 0.5px 0 #dcd6c9, inset 0 1.5px 3px rgba(0, 0, 0, 0.14);
 }
@@ -121,10 +129,18 @@ html {
   --sidebar-ring: #5f5f5f;
 
   /* Tactile / Skeuomorphic Tokens (Dark) */
-  --shadow-tactile: 0 3px 6px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  --shadow-tactile-subtle: 0 1.5px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -0.5px 0 rgba(0, 0, 0, 0.4);
+  --shadow-tactile-medium: 0 3px 6px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  --shadow-tactile-deep: 0 3px 0 #0a0a0a, 0 6px 14px rgba(0, 0, 0, 0.7), inset 0 1.5px 0 rgba(255, 255, 255, 0.22), inset 0 -1.5px 0 rgba(0, 0, 0, 0.8);
+  --shadow-tactile: var(--shadow-tactile-medium);
   --shadow-tactile-hover: 0 5px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.5);
   --shadow-tactile-pressed: inset 0 2.5px 5px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.04);
-  --shadow-recessed: inset 0 2.5px 6px rgba(0, 0, 0, 0.65), inset 0 1px 2px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --shadow-recessed-subtle: inset 0 1.5px 3px rgba(0, 0, 0, 0.45), 0 0.5px 0 rgba(255, 255, 255, 0.03);
+  --shadow-recessed-medium: inset 0 2.5px 6px rgba(0, 0, 0, 0.65), inset 0 1px 2px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-recessed-deep: inset 0 4px 10px rgba(0, 0, 0, 0.85), inset 0 1.5px 3px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-recessed: var(--shadow-recessed-medium);
+
   --shadow-keycap: 0 2.5px 0 #0d0d0d, 0 4px 8px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14);
   --shadow-keycap-pressed: 0 0.5px 0 #0d0d0d, inset 0 2px 5px rgba(0, 0, 0, 0.8);
 }
@@ -433,29 +449,102 @@ html {
 }
 
 /* =========================================================
-   TACTILE SKEUOMORPHIC UTILITIES
+   TACTILE SKEUOMORPHIC UTILITIES (INTENSITY TIERS)
    ========================================================= */
 
-.tactile-surface {
-  box-shadow: var(--shadow-tactile);
+/* Surface (Raised / Convex) Intensities */
+.tactile-surface-subtle {
+  box-shadow: var(--shadow-tactile-subtle);
 }
 
-.tactile-well {
-  box-shadow: var(--shadow-recessed);
+.tactile-surface,
+.tactile-surface-medium {
+  box-shadow: var(--shadow-tactile-medium);
 }
 
-.tactile-btn {
-  box-shadow: var(--shadow-tactile);
+.tactile-surface-deep {
+  box-shadow: var(--shadow-tactile-deep);
+}
+
+/* Well (Recessed / Concave) Intensities */
+.tactile-well-subtle {
+  box-shadow: var(--shadow-recessed-subtle);
+}
+
+.tactile-well,
+.tactile-well-medium {
+  box-shadow: var(--shadow-recessed-medium);
+}
+
+.tactile-well-deep {
+  box-shadow: var(--shadow-recessed-deep);
+}
+
+/* Button Raised Intensities */
+.tactile-btn-subtle {
+  box-shadow: var(--shadow-tactile-subtle);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.tactile-btn:hover {
-  box-shadow: var(--shadow-tactile-hover);
+.tactile-btn-subtle:hover {
+  box-shadow: var(--shadow-tactile-medium);
+}
+.tactile-btn-subtle:active {
+  box-shadow: var(--shadow-tactile-pressed);
+  transform: translateY(0.5px);
 }
 
-.tactile-btn:active {
+.tactile-btn,
+.tactile-btn-medium {
+  box-shadow: var(--shadow-tactile-medium);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tactile-btn:hover,
+.tactile-btn-medium:hover {
+  box-shadow: var(--shadow-tactile-hover);
+}
+.tactile-btn:active,
+.tactile-btn-medium:active {
   box-shadow: var(--shadow-tactile-pressed);
   transform: translateY(1px);
+}
+
+.tactile-btn-deep {
+  box-shadow: var(--shadow-tactile-deep);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tactile-btn-deep:hover {
+  filter: brightness(1.03);
+}
+.tactile-btn-deep:active {
+  box-shadow: var(--shadow-keycap-pressed);
+  transform: translateY(2px);
+}
+
+/* Button Recessed Intensities */
+.tactile-recessed-subtle {
+  box-shadow: var(--shadow-recessed-subtle);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tactile-recessed-subtle:active {
+  transform: translateY(0.5px);
+}
+
+.tactile-recessed,
+.tactile-recessed-medium {
+  box-shadow: var(--shadow-recessed-medium);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tactile-recessed:active,
+.tactile-recessed-medium:active {
+  transform: translateY(1px);
+}
+
+.tactile-recessed-deep {
+  box-shadow: var(--shadow-recessed-deep);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tactile-recessed-deep:active {
+  transform: translateY(1.5px);
 }
 
 .tactile-keycap {

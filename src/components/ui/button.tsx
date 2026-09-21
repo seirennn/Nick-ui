@@ -6,11 +6,13 @@ import { cn } from '@/lib/utils';
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'subtle' | 'tactile' | 'recessed';
 export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonDepth = 'subtle' | 'medium' | 'deep';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children?: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
+  depth?: ButtonDepth;
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
@@ -28,9 +30,35 @@ const variantStyles: Record<ButtonVariant, string> = {
   subtle:
     'bg-secondary/80 border border-border/60 text-text-primary hover:bg-secondary font-medium',
   tactile:
-    'tactile-btn bg-card border border-border/80 text-text-primary font-medium hover:border-foreground/30',
+    'bg-card border border-border/80 text-text-primary font-medium hover:border-foreground/30',
   recessed:
-    'tactile-well bg-secondary text-text-secondary hover:text-text-primary font-medium active:translate-y-[0.5px]',
+    'bg-secondary text-text-secondary hover:text-text-primary font-medium',
+};
+
+const getDepthClass = (variant: ButtonVariant, depth: ButtonDepth = 'medium') => {
+  if (variant === 'tactile') {
+    switch (depth) {
+      case 'subtle':
+        return 'tactile-btn-subtle';
+      case 'deep':
+        return 'tactile-btn-deep';
+      case 'medium':
+      default:
+        return 'tactile-btn';
+    }
+  }
+  if (variant === 'recessed') {
+    switch (depth) {
+      case 'subtle':
+        return 'tactile-recessed-subtle';
+      case 'deep':
+        return 'tactile-recessed-deep';
+      case 'medium':
+      default:
+        return 'tactile-recessed';
+    }
+  }
+  return '';
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -45,6 +73,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant = 'default',
       size = 'md',
+      depth = 'medium',
       isLoading = false,
       leftIcon,
       rightIcon,
@@ -59,7 +88,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <motion.button
         ref={ref}
-        whileTap={isDisabled ? undefined : { scale: 0.98 }}
+        whileTap={isDisabled ? undefined : { scale: depth === 'deep' ? 0.96 : 0.98 }}
         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
         disabled={isDisabled}
         className={cn(
@@ -67,6 +96,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50',
           'disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed',
           variantStyles[variant],
+          getDepthClass(variant, depth),
           sizeStyles[size],
           className
         )}

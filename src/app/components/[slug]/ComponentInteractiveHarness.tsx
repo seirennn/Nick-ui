@@ -1,13 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { Button, ButtonVariant, ButtonSize } from '@/components/ui/button';
+import { Button, ButtonVariant, ButtonSize, ButtonDepth } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge, BadgeStatus } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardDepth } from '@/components/ui/card';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Dropdown, DropdownTrigger, DropdownContent, DropdownItem, DropdownSeparator, DropdownLabel } from '@/components/ui/dropdown';
 import { CommandPalette, CommandItem } from '@/components/ui/command-palette';
@@ -28,13 +28,14 @@ import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Knob } from '@/components/ui/knob';
-import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity, Radio as RadioIcon } from 'lucide-react';
+import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity, Radio as RadioIcon, Layers } from 'lucide-react';
 import { ComponentPreview } from '@/components/docs/ComponentPreview';
 
 export function ComponentInteractiveHarness({ slug }: { slug: string }) {
   // Button state
-  const [btnVariant, setBtnVariant] = React.useState<ButtonVariant>('default');
+  const [btnVariant, setBtnVariant] = React.useState<ButtonVariant>('tactile');
   const [btnSize, setBtnSize] = React.useState<ButtonSize>('md');
+  const [btnDepth, setBtnDepth] = React.useState<ButtonDepth>('medium');
   const [btnLoading, setBtnLoading] = React.useState(false);
 
   // Badge state
@@ -67,7 +68,8 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
   const [gaugeVal, setGaugeVal] = React.useState(68);
 
   // Card state
-  const [cardVariant, setCardVariant] = React.useState<'default' | 'tactile' | 'recessed'>('default');
+  const [cardVariant, setCardVariant] = React.useState<'default' | 'tactile' | 'recessed'>('tactile');
+  const [cardDepth, setCardDepth] = React.useState<CardDepth>('medium');
 
   // New components state
   const [otpVal, setOtpVal] = React.useState('7492');
@@ -97,11 +99,11 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
   switch (slug) {
     case 'button':
       return (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-text-muted font-medium">Variant:</span>
-              {(['default', 'secondary', 'outline', 'ghost', 'tactile', 'recessed'] as ButtonVariant[]).map((v) => (
+              {(['tactile', 'recessed', 'default', 'secondary', 'outline', 'ghost'] as ButtonVariant[]).map((v) => (
                 <button
                   key={v}
                   onClick={() => setBtnVariant(v)}
@@ -116,7 +118,26 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
               ))}
             </div>
 
-            <div className="flex items-center gap-1.5">
+            {(btnVariant === 'tactile' || btnVariant === 'recessed') && (
+              <div className="flex items-center gap-1.5 border-l border-border/60 pl-3">
+                <span className="text-text-muted font-medium">Depth Intensity:</span>
+                {(['subtle', 'medium', 'deep'] as ButtonDepth[]).map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setBtnDepth(d)}
+                    className={`px-2 py-0.5 rounded-md text-xs capitalize transition-colors cursor-pointer ${
+                      btnDepth === d
+                        ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center gap-1.5 border-l border-border/60 pl-3">
               <span className="text-text-muted font-medium">Size:</span>
               {(['sm', 'md', 'lg'] as ButtonSize[]).map((s) => (
                 <button
@@ -145,13 +166,13 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
           </div>
 
           <ComponentPreview
-            code={`<div className="flex items-center gap-3">\n  <Button variant="${btnVariant}" size="${btnSize}"${btnLoading ? ' isLoading' : ''}>\n    Deploy Changes\n  </Button>\n  <Button variant="secondary" size="${btnSize}">\n    Cancel\n  </Button>\n</div>`}
+            code={`<div className="flex items-center gap-3">\n  <Button variant="${btnVariant}"${(btnVariant === 'tactile' || btnVariant === 'recessed') ? ` depth="${btnDepth}"` : ''} size="${btnSize}"${btnLoading ? ' isLoading' : ''}>\n    Deploy Changes\n  </Button>\n  <Button variant="secondary" size="${btnSize}">\n    Cancel\n  </Button>\n</div>`}
           >
             <div className="flex items-center gap-4 flex-wrap justify-center p-4">
-              <Button variant={btnVariant} size={btnSize} isLoading={btnLoading}>
+              <Button variant={btnVariant} depth={btnDepth} size={btnSize} isLoading={btnLoading}>
                 Deploy Changes
               </Button>
-              <Button variant={btnVariant} size={btnSize} leftIcon={<Download className="w-3.5 h-3.5" />}>
+              <Button variant={btnVariant} depth={btnDepth} size={btnSize} leftIcon={<Download className="w-3.5 h-3.5" />}>
                 Export Schema
               </Button>
               <Button variant="secondary" size={btnSize}>
@@ -159,6 +180,69 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
               </Button>
             </div>
           </ComponentPreview>
+
+          {/* 3-Tier Depth Comparison */}
+          <div className="p-4 rounded-xl border border-border/80 bg-card/50 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Layers className="w-3.5 h-3.5 text-text-muted" />
+                <span className="text-xs font-medium text-text-primary">3-Tier Depth Intensity Matrix</span>
+              </div>
+              <span className="text-[11px] text-text-muted font-mono">
+                {btnVariant === 'recessed' ? 'Recessed Wells' : 'Tactile Raised Keycaps'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              {/* Subtle */}
+              <div className="p-3 rounded-lg border border-border/60 bg-secondary/20 space-y-2 text-center">
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span className="font-medium text-text-primary">Subtle (Level 1)</span>
+                  <span className="font-mono text-[10px]">1px depth</span>
+                </div>
+                <div className="py-2 flex justify-center">
+                  <Button variant={btnVariant === 'recessed' ? 'recessed' : 'tactile'} depth="subtle" size="sm">
+                    Subtle Action
+                  </Button>
+                </div>
+                <p className="text-[10px] text-text-secondary leading-tight">
+                  Hairline specular edge, gentle travel, quiet presence.
+                </p>
+              </div>
+
+              {/* Medium */}
+              <div className="p-3 rounded-lg border border-border/80 bg-secondary/30 space-y-2 text-center">
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span className="font-medium text-text-primary">Medium (Level 2)</span>
+                  <span className="font-mono text-[10px]">2-3px depth</span>
+                </div>
+                <div className="py-2 flex justify-center">
+                  <Button variant={btnVariant === 'recessed' ? 'recessed' : 'tactile'} depth="medium" size="sm">
+                    Medium Action
+                  </Button>
+                </div>
+                <p className="text-[10px] text-text-secondary leading-tight">
+                  Calibrated tactile ambient drop shadow and balanced well.
+                </p>
+              </div>
+
+              {/* Deep */}
+              <div className="p-3 rounded-lg border border-border bg-secondary/40 space-y-2 text-center">
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span className="font-medium text-text-primary">Deep (Level 3)</span>
+                  <span className="font-mono text-[10px]">4-6px depth</span>
+                </div>
+                <div className="py-2 flex justify-center">
+                  <Button variant={btnVariant === 'recessed' ? 'recessed' : 'tactile'} depth="deep" size="sm">
+                    Deep Action
+                  </Button>
+                </div>
+                <p className="text-[10px] text-text-secondary leading-tight">
+                  Pronounced mechanical milled bevel with deliberate keycap travel.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       );
 
@@ -265,29 +349,50 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
 
     case 'card':
       return (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
-            <span className="text-text-muted font-medium">Card Depth Variant:</span>
-            {(['default', 'tactile', 'recessed'] as ('default' | 'tactile' | 'recessed')[]).map((v) => (
-              <button
-                key={v}
-                onClick={() => setCardVariant(v)}
-                className={`px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer ${
-                  cardVariant === v
-                    ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
-                }`}
-              >
-                {v}
-              </button>
-            ))}
+        <div className="space-y-6">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Card Depth Variant:</span>
+              {(['tactile', 'recessed', 'default'] as ('default' | 'tactile' | 'recessed')[]).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setCardVariant(v)}
+                  className={`px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer ${
+                    cardVariant === v
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            {(cardVariant === 'tactile' || cardVariant === 'recessed') && (
+              <div className="flex items-center gap-1.5 border-l border-border/60 pl-3">
+                <span className="text-text-muted font-medium">Depth Intensity:</span>
+                {(['subtle', 'medium', 'deep'] as CardDepth[]).map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setCardDepth(d)}
+                    className={`px-2 py-0.5 rounded-md text-xs capitalize transition-colors cursor-pointer ${
+                      cardDepth === d
+                        ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <ComponentPreview
-            code={`<Card variant="${cardVariant}">\n  <CardHeader>\n    <div className="flex items-center justify-between">\n      <Badge variant="status" status="success">Operational</Badge>\n      <span className="text-metadata text-text-muted">Edge Node</span>\n    </div>\n    <CardTitle>Autonomous Ingress Controller</CardTitle>\n    <CardDescription>\n      Deterministic routing layer with automated cluster failover.\n    </CardDescription>\n  </CardHeader>\n  <CardContent>\n    <p className="text-xs text-text-secondary">All endpoints healthy across 4 regional clusters.</p>\n  </CardContent>\n  <CardFooter className="justify-between">\n    <span className="text-metadata text-text-muted">v2.4.0</span>\n    <Button size="sm" variant="${cardVariant === 'tactile' ? 'tactile' : 'default'}">Inspect Node</Button>\n  </CardFooter>\n</Card>`}
+            code={`<Card variant="${cardVariant}"${(cardVariant === 'tactile' || cardVariant === 'recessed') ? ` depth="${cardDepth}"` : ''}>\n  <CardHeader>\n    <div className="flex items-center justify-between">\n      <Badge variant="status" status="success">Operational</Badge>\n      <span className="text-metadata text-text-muted">Edge Node</span>\n    </div>\n    <CardTitle>Autonomous Ingress Controller</CardTitle>\n    <CardDescription>\n      Deterministic routing layer with automated cluster failover.\n    </CardDescription>\n  </CardHeader>\n  <CardContent>\n    <p className="text-xs text-text-secondary">All endpoints healthy across 4 regional clusters.</p>\n  </CardContent>\n  <CardFooter className="justify-between">\n    <span className="text-metadata text-text-muted">v2.4.0</span>\n    <Button size="sm" variant="${cardVariant === 'tactile' ? 'tactile' : cardVariant === 'recessed' ? 'recessed' : 'default'}">Inspect Node</Button>\n  </CardFooter>\n</Card>`}
           >
             <div className="max-w-md w-full p-2">
-              <Card variant={cardVariant}>
+              <Card variant={cardVariant} depth={cardDepth}>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <Badge variant="status" status="success">Operational</Badge>
@@ -305,13 +410,61 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                 </CardContent>
                 <CardFooter className="justify-between">
                   <span className="text-metadata text-text-muted">v2.4.0</span>
-                  <Button size="sm" variant={cardVariant === 'tactile' ? 'tactile' : 'default'}>
+                  <Button size="sm" variant={cardVariant === 'tactile' ? 'tactile' : cardVariant === 'recessed' ? 'recessed' : 'default'}>
                     Inspect Node
                   </Button>
                 </CardFooter>
               </Card>
             </div>
           </ComponentPreview>
+
+          {/* 3-Tier Depth Comparison Matrix for Card */}
+          <div className="p-4 rounded-xl border border-border/80 bg-card/50 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Layers className="w-3.5 h-3.5 text-text-muted" />
+                <span className="text-xs font-medium text-text-primary">3-Tier Depth Intensity Matrix</span>
+              </div>
+              <span className="text-[11px] text-text-muted font-mono">
+                {cardVariant === 'recessed' ? 'Recessed Chassis Wells' : 'Tactile Raised Surfaces'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+              {/* Subtle */}
+              <Card variant={cardVariant === 'recessed' ? 'recessed' : 'tactile'} depth="subtle" className="p-4 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span className="font-medium text-text-primary">Subtle (Level 1)</span>
+                  <Badge variant="mono">1px depth</Badge>
+                </div>
+                <p className="text-xs text-text-secondary">
+                  Hairline specular perimeter with low-contrast ambient boundary.
+                </p>
+              </Card>
+
+              {/* Medium */}
+              <Card variant={cardVariant === 'recessed' ? 'recessed' : 'tactile'} depth="medium" className="p-4 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span className="font-medium text-text-primary">Medium (Level 2)</span>
+                  <Badge variant="mono">2-3px depth</Badge>
+                </div>
+                <p className="text-xs text-text-secondary">
+                  Calibrated tactile ambient drop shadow and balanced well depth.
+                </p>
+              </Card>
+
+              {/* Deep */}
+              <Card variant={cardVariant === 'recessed' ? 'recessed' : 'tactile'} depth="deep" className="p-4 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span className="font-medium text-text-primary">Deep (Level 3)</span>
+                  <Badge variant="mono">4-6px depth</Badge>
+                </div>
+                <p className="text-xs text-text-secondary">
+                  Milled enclosure shadow, high-mass physical weight and depth.
+                </p>
+              </Card>
+            </div>
+          </div>
         </div>
       );
 

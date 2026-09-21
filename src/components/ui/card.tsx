@@ -1,23 +1,53 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
+export type CardDepth = 'subtle' | 'medium' | 'deep';
+
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hoverable?: boolean;
   variant?: 'default' | 'tactile' | 'recessed';
+  depth?: CardDepth;
 }
 
-export function Card({ className, hoverable = true, variant = 'default', ...props }: CardProps) {
-  const variantClasses = {
+const getCardDepthClass = (variant: 'default' | 'tactile' | 'recessed', depth: CardDepth = 'medium') => {
+  if (variant === 'tactile') {
+    switch (depth) {
+      case 'subtle':
+        return 'tactile-surface-subtle border-border/70';
+      case 'deep':
+        return 'tactile-surface-deep border-border/90';
+      case 'medium':
+      default:
+        return 'tactile-surface border-border/80';
+    }
+  }
+  if (variant === 'recessed') {
+    switch (depth) {
+      case 'subtle':
+        return 'tactile-well-subtle border-border/50';
+      case 'deep':
+        return 'tactile-well-deep border-border/70';
+      case 'medium':
+      default:
+        return 'tactile-well border-border/60';
+    }
+  }
+  return 'border-border';
+};
+
+export function Card({ className, hoverable = true, variant = 'default', depth = 'medium', ...props }: CardProps) {
+  const baseVariant = {
     default: 'bg-card border border-border',
-    tactile: 'bg-card border border-border/80 tactile-surface',
-    recessed: 'bg-secondary/70 border border-border/60 tactile-well',
+    tactile: 'bg-card border',
+    recessed: 'bg-secondary/70 border',
   };
 
   return (
     <div
       className={cn(
         'rounded-xl p-5 transition-all',
-        variantClasses[variant],
+        baseVariant[variant],
+        getCardDepthClass(variant, depth),
         hoverable && variant === 'default' && 'hover:border-foreground/20',
         hoverable && variant === 'tactile' && 'hover:border-foreground/30 shadow-xs',
         className
