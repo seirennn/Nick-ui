@@ -33,7 +33,7 @@ export function AreaChart({
   ...props
 }: AreaChartProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [width, setWidth] = React.useState(600);
+  const [width, setWidth] = React.useState(0);
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
 
   const rawId = React.useId();
@@ -43,8 +43,15 @@ export function AreaChart({
 
   React.useEffect(() => {
     if (!containerRef.current) return;
+    const updateWidth = () => {
+      if (containerRef.current) {
+        const clientW = containerRef.current.clientWidth;
+        if (clientW > 0) setWidth(clientW);
+      }
+    };
+    updateWidth();
     const observer = new ResizeObserver((entries) => {
-      if (entries[0]) {
+      if (entries[0] && entries[0].contentRect.width > 0) {
         setWidth(entries[0].contentRect.width);
       }
     });
@@ -64,12 +71,14 @@ export function AreaChart({
     );
   }
 
-  const paddingLeft = showAxes ? 48 : 16;
-  const paddingRight = 20;
-  const paddingTop = 28;
-  const paddingBottom = showAxes ? 36 : 16;
+  const effectiveWidth = width > 0 ? width : 600;
 
-  const chartWidth = Math.max(10, width - paddingLeft - paddingRight);
+  const paddingLeft = showAxes ? 56 : 16;
+  const paddingRight = 24;
+  const paddingTop = 32;
+  const paddingBottom = showAxes ? 38 : 16;
+
+  const chartWidth = Math.max(10, effectiveWidth - paddingLeft - paddingRight);
   const chartHeight = Math.max(10, height - paddingTop - paddingBottom);
 
   const values = data.map((d) => d.value);
@@ -113,10 +122,10 @@ export function AreaChart({
     <div
       ref={containerRef}
       className={cn(
-        'relative w-full rounded-[24px] border border-border/70 bg-card select-none shadow-tactile transition-colors overflow-hidden',
+        'relative w-full max-w-full rounded-[24px] border border-border/70 bg-card select-none shadow-tactile transition-colors overflow-hidden',
         className
       )}
-      style={{ height }}
+      style={{ height, minHeight: height }}
       onMouseLeave={() => setHoveredIndex(null)}
       {...props}
     >
@@ -128,18 +137,24 @@ export function AreaChart({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-3 right-4 z-20 px-3 py-1.5 rounded-xl bg-card/95 backdrop-blur-md border border-border/90 text-xs font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-2"
+            className="absolute top-3 right-4 z-20 px-3 py-1.5 rounded-xl bg-card/95 backdrop-blur-md border border-border/90 text-xs font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-2 max-w-[calc(100%-32px)] truncate"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span className="text-text-muted">{hoveredPoint.item.label}:</span>
-            <span className="font-semibold text-text-primary">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+            <span className="text-text-muted shrink-0">{hoveredPoint.item.label}:</span>
+            <span className="font-semibold text-text-primary shrink-0">
               {hoveredPoint.item.formattedValue || `${hoveredPoint.item.value.toLocaleString()}${unit}`}
             </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <svg width={width} height={height} className="overflow-visible block">
+      <svg
+        width="100%"
+        height={height}
+        viewBox={`0 0 ${effectiveWidth} ${height}`}
+        className="block overflow-hidden max-w-full"
+        style={{ width: '100%', height: `${height}px` }}
+      >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={color} stopOpacity="0.22" />
