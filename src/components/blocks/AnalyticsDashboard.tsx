@@ -8,7 +8,11 @@ import { Input } from '@/components/ui/input';
 import { AreaChart, AreaChartDataPoint } from '@/components/ui/charts/area-chart';
 import { BarChart, BarChartDataPoint } from '@/components/ui/charts/bar-chart';
 import { Sparkline } from '@/components/ui/charts/sparkline';
-import { Gauge } from '@/components/ui/gauge';
+import { RadarChart } from '@/components/ui/charts/radar-chart';
+import { RadialMeter } from '@/components/ui/charts/radial-meter';
+import { AnalyticsHeatmap, HeatmapCell } from '@/components/ui/charts/analytics-heatmap';
+import { DotMatrixChart } from '@/components/ui/charts/dot-matrix-chart';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import {
   TrendingUp,
   DollarSign,
@@ -25,6 +29,8 @@ import {
   Database,
   Radio,
   Layers,
+  Globe,
+  Brain,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -55,12 +61,45 @@ const REVENUE_TIMELINE_90D: AreaChartDataPoint[] = [
 
 const REGIONAL_INGRESS_DATA: BarChartDataPoint[] = [
   { label: 'US-East', value: 88, formattedValue: '88.4 GB/s' },
-  { label: 'EU-Central', value: 72, formattedValue: '72.1 GB/s' },
+  { label: 'EU-Cent', value: 72, formattedValue: '72.1 GB/s' },
   { label: 'AP-Tokyo', value: 61, formattedValue: '61.5 GB/s' },
-  { label: 'AP-Singapore', value: 45, formattedValue: '45.0 GB/s' },
+  { label: 'AP-Sing', value: 45, formattedValue: '45.0 GB/s' },
   { label: 'SA-East', value: 34, formattedValue: '34.2 GB/s' },
   { label: 'AF-South', value: 21, formattedValue: '21.8 GB/s' },
 ];
+
+const REGIONAL_RADAR_DATA = [
+  { axis: 'Throughput', value: 94 },
+  { axis: 'Latency', value: 88 },
+  { axis: 'Reliability', value: 99 },
+  { axis: 'Coherence', value: 82 },
+  { axis: 'Precision', value: 95 },
+  { axis: 'Redundancy', value: 90 },
+];
+
+const ANNUAL_HEATMAP_DATA: HeatmapCell[] = Array.from({ length: 364 }, (_, i) => {
+  const d = new Date(2025, 0, 1);
+  d.setDate(d.getDate() + i);
+  const dateStr = d.toISOString().split('T')[0];
+  const rand = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  const val = Math.abs(rand - Math.floor(rand));
+  let level: 0 | 1 | 2 | 3 | 4 = 0;
+  let count = 0;
+  if (val > 0.85) {
+    level = 4;
+    count = Math.floor(val * 45) + 30;
+  } else if (val > 0.65) {
+    level = 3;
+    count = Math.floor(val * 30) + 15;
+  } else if (val > 0.4) {
+    level = 2;
+    count = Math.floor(val * 20) + 8;
+  } else if (val > 0.2) {
+    level = 1;
+    count = Math.floor(val * 10) + 2;
+  }
+  return { date: dateStr, count, level };
+});
 
 interface Transaction {
   id: string;
@@ -73,23 +112,23 @@ interface Transaction {
 }
 
 const TRANSACTIONS: Transaction[] = [
-  { id: 'tx-01', customer: 'Vanguard Systems', plan: 'Enterprise', amount: '$4,800.00', date: 'Just now', hash: '0x8f2a...c10b', status: 'Completed' },
-  { id: 'tx-02', customer: 'Northwind Medical', plan: 'Enterprise', amount: '$3,200.00', date: '2h ago', hash: '0x3e1d...94fa', status: 'Verified' },
-  { id: 'tx-03', customer: 'Krypton Labs', plan: 'Scale', amount: '$1,400.00', date: '5h ago', hash: '0x7c90...a821', status: 'Completed' },
-  { id: 'tx-04', customer: 'Linearity Software', plan: 'Pro', amount: '$680.00', date: 'Yesterday', hash: '0x1b44...d590', status: 'Settling' },
-  { id: 'tx-05', customer: 'Aura Robotics', plan: 'Scale', amount: '$1,400.00', date: '2d ago', hash: '0x99a2...fe33', status: 'Verified' },
-  { id: 'tx-06', customer: 'Helios Data Grid', plan: 'Enterprise', amount: '$6,400.00', date: '3d ago', hash: '0x44cd...71bb', status: 'Completed' },
+  { id: '1', customer: 'Axiom Aerospace', plan: 'Enterprise', amount: '$42,500.00', date: 'Just now', hash: '0x8f2a...c391', status: 'Completed' },
+  { id: '2', customer: 'Linear Dynamics', plan: 'Scale', amount: '$12,800.00', date: '3m ago', hash: '0x1b4c...9d2e', status: 'Verified' },
+  { id: '3', customer: 'Vortex Protocol', plan: 'Enterprise', amount: '$68,200.00', date: '12m ago', hash: '0x7e8f...2a4b', status: 'Completed' },
+  { id: '4', customer: 'Helios Analytics', plan: 'Pro', amount: '$4,200.00', date: '28m ago', hash: '0x3d1a...8e5c', status: 'Settling' },
+  { id: '5', customer: 'Prism Health Systems', plan: 'Scale', amount: '$18,450.00', date: '1h ago', hash: '0x9c2b...1f4e', status: 'Completed' },
+  { id: '6', customer: 'QuantCore Research', plan: 'Enterprise', amount: '$94,000.00', date: '2h ago', hash: '0x4a7e...6d3c', status: 'Verified' },
 ];
 
 export function AnalyticsDashboard() {
   const [timeframe, setTimeframe] = React.useState<'90d' | '12m'>('12m');
-  const [metricTab, setMetricTab] = React.useState<'revenue' | 'bandwidth' | 'compute'>('revenue');
+  const [telemetryTab, setTelemetryTab] = React.useState<'ingress' | 'radar' | 'heatmap'>('ingress');
+  const [statusFilter, setStatusFilter] = React.useState<string>('All');
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<'All' | 'Completed' | 'Verified' | 'Settling'>('All');
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`import { AnalyticsDashboard } from '@/components/blocks/AnalyticsDashboard';`);
+    navigator.clipboard.writeText(JSON.stringify(TRANSACTIONS, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -237,7 +276,7 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* 3. Dual-Panel Visual Telemetry: Historical Area Spline + Regional Bar Wells */}
+      {/* 3. Dual-Panel Visual Telemetry: Historical Area Spline + Multi-View Telemetry */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left (7 cols): Historical Net Revenue Progression */}
         <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-secondary/20 border border-border/60 space-y-4">
@@ -260,73 +299,122 @@ export function AnalyticsDashboard() {
           <div className="pt-2">
             <AreaChart
               data={timeframe === '12m' ? REVENUE_TIMELINE_12M : REVENUE_TIMELINE_90D}
-              height={220}
+              height={260}
               unit="k"
+              className="border-0 bg-transparent shadow-none p-0"
             />
           </div>
         </div>
 
-        {/* Right (5 cols): Regional Ingress Traffic Distribution */}
+        {/* Right (5 cols): Multi-Modal Telemetry Panel */}
         <div className="lg:col-span-5 p-5 sm:p-6 rounded-2xl bg-secondary/20 border border-border/60 space-y-4">
           <div className="flex items-center justify-between pb-2 border-b border-border/40">
             <div>
               <h4 className="text-sm font-medium text-text-primary tracking-tight">
-                Regional Ingress Distribution
+                {telemetryTab === 'ingress' && 'Regional Ingress Traffic'}
+                {telemetryTab === 'radar' && 'Consensus Quality Web'}
+                {telemetryTab === 'heatmap' && 'Consensus Density'}
               </h4>
               <span className="text-xs text-text-muted">
-                Recessed tactile guide channels (GB/s bandwidth)
+                {telemetryTab === 'ingress' && 'Recessed tactile guide channels (GB/s)'}
+                {telemetryTab === 'radar' && '6-axis multi-dimensional verification'}
+                {telemetryTab === 'heatmap' && '52-week distributed ledger activity'}
               </span>
             </div>
-            <span className="text-xs font-mono text-text-muted">6 Regions</span>
+
+            <SegmentedControl
+              size="sm"
+              variant="recessed"
+              value={telemetryTab}
+              onChange={(v) => setTelemetryTab(v as any)}
+              options={[
+                { value: 'ingress', label: 'Ingress' },
+                { value: 'radar', label: 'Radar' },
+                { value: 'heatmap', label: 'Matrix' },
+              ]}
+            />
           </div>
 
-          <div className="pt-2">
-            <BarChart
-              data={REGIONAL_INGRESS_DATA}
-              height={220}
-              unit=" GB/s"
-            />
+          <div className="pt-2 flex items-center justify-center min-h-[260px]">
+            {telemetryTab === 'ingress' && (
+              <BarChart
+                data={REGIONAL_INGRESS_DATA}
+                height={260}
+                unit=" GB/s"
+                className="border-0 bg-transparent shadow-none p-0 w-full"
+              />
+            )}
+            {telemetryTab === 'radar' && (
+              <RadarChart
+                data={REGIONAL_RADAR_DATA}
+                size={240}
+                className="border-0 bg-transparent shadow-none p-0"
+              />
+            )}
+            {telemetryTab === 'heatmap' && (
+              <AnalyticsHeatmap
+                data={ANNUAL_HEATMAP_DATA}
+                title="Consensus Validations"
+                totalLabel="Annual Ops"
+                className="border-0 bg-transparent shadow-none p-0 w-full"
+              />
+            )}
           </div>
         </div>
       </div>
 
-      {/* 4. Secondary Performance Row: Dual Mechanical Gauges + Operational Headroom */}
+      {/* 4. Secondary Performance Row: Radial Capacity Meter + Dot Matrix Histogram + Jitter Telemetry */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {/* Gauge 1: Edge Cache Hit Ratio */}
-        <div className="p-5 rounded-2xl bg-card border border-border/70 shadow-sm flex flex-col items-center justify-between space-y-3">
+        {/* Card 1: Multi-Tier Cluster Capacity Radial Meter */}
+        <div className="p-5 rounded-2xl bg-card border border-border/70 shadow-tactile flex flex-col items-center justify-between space-y-3">
           <div className="w-full flex items-center justify-between pb-2 border-b border-border/50 text-xs">
-            <span className="font-mono uppercase tracking-wider text-text-muted">Edge Cache</span>
-            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-medium">99.4%</span>
+            <span className="font-mono uppercase tracking-wider text-text-muted">Cluster Infrastructure</span>
+            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-medium">99.4% Uptime</span>
           </div>
-          <Gauge value={99} label="CACHE HIT" unit="%" size={135} variant="tactile" />
+          <RadialMeter
+            centerLabel="Total Load"
+            size={190}
+            strokeWidth={8}
+            showLegend={true}
+            className="border-0 bg-transparent shadow-none p-0"
+            series={[
+              { id: 'cache', label: 'Edge Cache', value: 99, color: 'var(--text-primary)' },
+              { id: 'storage', label: 'Datastore', value: 73, color: 'var(--text-muted)' },
+              { id: 'ingress', label: 'Optical Ingress', value: 88, color: 'var(--border)' },
+            ]}
+          />
           <div className="w-full text-center text-[11px] font-mono text-text-muted">
-            0.8ms average origin round-trip
+            0.8ms average origin round-trip across 12 edge nodes
           </div>
         </div>
 
-        {/* Gauge 2: Storage Datastore Headroom */}
-        <div className="p-5 rounded-2xl bg-card border border-border/70 shadow-sm flex flex-col items-center justify-between space-y-3">
+        {/* Card 2: Dot Matrix Histogram */}
+        <div className="p-5 rounded-2xl bg-card border border-border/70 shadow-tactile flex flex-col justify-between space-y-3">
           <div className="w-full flex items-center justify-between pb-2 border-b border-border/50 text-xs">
-            <span className="font-mono uppercase tracking-wider text-text-muted">Pool Headroom</span>
-            <span className="font-mono text-text-primary font-medium">72.8%</span>
+            <span className="font-mono uppercase tracking-wider text-text-muted">Transaction Inflow</span>
+            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-medium">+326% YoY</span>
           </div>
-          <Gauge value={73} label="STORAGE" unit="%" size={135} variant="recessed" />
-          <div className="w-full text-center text-[11px] font-mono text-text-muted">
-            14.2 TB used of 20 TB volume
-          </div>
+          <DotMatrixChart
+            title="SETTLEMENTS"
+            metric="+326%"
+            previousLabel="MAY $3,250"
+            currentLabel="JUN $12,392"
+            timeframe="MONTHLY"
+            className="border-0 bg-transparent shadow-none p-0"
+          />
         </div>
 
-        {/* Third Card: Jitter & Packet Loss Telemetry */}
-        <div className="p-5 rounded-2xl bg-card border border-border/70 shadow-sm flex flex-col justify-between space-y-3 sm:col-span-2 lg:col-span-1">
+        {/* Card 3: Jitter & Packet Loss Telemetry */}
+        <div className="p-5 rounded-2xl bg-card border border-border/70 shadow-tactile flex flex-col justify-between space-y-3 sm:col-span-2 lg:col-span-1">
           <div className="w-full flex items-center justify-between pb-2 border-b border-border/50 text-xs">
-            <span className="font-mono uppercase tracking-wider text-text-muted">Jitter Telemetry</span>
+            <span className="font-mono uppercase tracking-wider text-text-muted">Backbone Jitter</span>
             <span className="font-mono text-emerald-600 dark:text-emerald-400 font-medium">Nominal</span>
           </div>
           <div className="space-y-2">
             <div className="text-2xl font-mono font-medium text-text-primary">
               0.02 <span className="text-xs font-normal text-text-muted">ms</span>
             </div>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-text-muted leading-relaxed">
               Zero jitter spikes observed across the 800 Gbps core optical backbone in 48 hours.
             </p>
           </div>

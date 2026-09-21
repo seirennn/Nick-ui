@@ -214,14 +214,16 @@ export function BarChart({
               {showAxes && (
                 <text
                   x={x + barWidth / 2}
-                  y={paddingTop + chartHeight + 20}
+                  y={paddingTop + chartHeight + 18}
                   textAnchor="middle"
                   className={cn(
                     'text-[10.5px] font-mono transition-colors select-none',
                     isHovered ? 'fill-text-primary font-medium' : 'fill-text-muted/60'
                   )}
                 >
-                  {item.label}
+                  {barSlotWidth < 48 && item.label.length > 7
+                    ? `${item.label.slice(0, 5)}…`
+                    : item.label}
                 </text>
               )}
             </g>

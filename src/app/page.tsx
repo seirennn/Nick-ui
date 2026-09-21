@@ -214,17 +214,17 @@ export default function HomePage() {
           {/* ═══════════════════════════════════════════
               PRECISION HARDWARE & TACTILE STUDIO DECK
           ═══════════════════════════════════════════ */}
-          <section className="px-6 md:px-12 py-16 border-b border-border/80 space-y-8 bg-card/25">
+          <section className="px-6 md:px-12 py-20 border-b border-border/80 space-y-8 bg-card/25">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span className="text-sidebar-category uppercase tracking-wider text-text-muted block font-medium">
                   Physical Calibration & Ergonomics
                 </span>
-                <h2 className="text-component-title text-text-primary mt-1">
+                <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-text-primary mt-1">
                   Precision Hardware Console
                 </h2>
               </div>
-              <p className="text-metadata text-text-muted max-w-sm text-xs sm:text-[13px] leading-relaxed">
+              <p className="text-xs sm:text-sm text-text-secondary max-w-md leading-relaxed">
                 Milled rotary encoders, spring-damped telemetry dials, recessed tactile wells, and live harmonic oscilloscopes reacting with real physical travel.
               </p>
             </div>
@@ -316,36 +316,135 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Column 2: Analog Mechanical Meter (4 cols) */}
-                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col items-center justify-between space-y-4">
-                  <div className="w-full flex items-center justify-between">
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                      Mechanical Dial
-                    </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
-                      Live Peak
-                    </span>
+                {/* Column 2: Calibrated Ballistic VU/RMS Telemetry Dial (4 cols) */}
+                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col justify-between space-y-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
+                        Mechanical Telemetry
+                      </span>
+                      <Badge variant="engraved" className="text-[10px]">Ballistic Meter</Badge>
+                    </div>
+                    <p className="text-xs text-text-secondary">
+                      Spring-damped needle dynamics calibrated to studio reference level with instant peak hold.
+                    </p>
                   </div>
 
-                  <div className="py-1">
-                    <Gauge
-                      value={computedRms}
-                      label="RMS OUTPUT"
-                      unit="%"
-                      size={130}
-                      variant="tactile"
-                      className="border-0 bg-transparent p-0 shadow-none"
-                    />
+                  {/* Precision Analog Meter Face */}
+                  <div className="py-1 flex flex-col items-center justify-center">
+                    <div className="relative w-full max-w-[240px] aspect-[240/125] flex flex-col items-center justify-center">
+                      <svg viewBox="0 0 240 125" className="w-full h-full overflow-visible">
+                        <defs>
+                          <radialGradient id="dialFaceGrad" cx="50%" cy="100%" r="95%">
+                            <stop offset="0%" stopColor="currentColor" stopOpacity="0.08" />
+                            <stop offset="80%" stopColor="currentColor" stopOpacity="0.02" />
+                            <stop offset="100%" stopColor="transparent" />
+                          </radialGradient>
+                          <filter id="needleShadow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="currentColor" floodOpacity="0.3" />
+                          </filter>
+                        </defs>
+
+                        {/* Dial Face Arc Background */}
+                        <path
+                          d="M 28,112 A 96,96 0 0,1 212,112 L 120,112 Z"
+                          fill="url(#dialFaceGrad)"
+                        />
+
+                        {/* Outer Precision Scale Arc */}
+                        <path
+                          d="M 32,112 A 92,92 0 0,1 208,112"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.25"
+                          strokeOpacity="0.3"
+                        />
+
+                        {/* Dial Scale Ticks */}
+                        {[-60, -45, -30, -15, 0, 15, 30, 45, 60].map((deg, idx) => {
+                          const rad = (deg - 90) * (Math.PI / 180);
+                          const x1 = 120 + 92 * Math.cos(rad);
+                          const y1 = 112 + 92 * Math.sin(rad);
+                          const tickLen = idx % 2 === 0 ? 8 : 4;
+                          const x2 = 120 + (92 - tickLen) * Math.cos(rad);
+                          const y2 = 112 + (92 - tickLen) * Math.sin(rad);
+                          const isHot = deg >= 30;
+
+                          return (
+                            <line
+                              key={deg}
+                              x1={x1}
+                              y1={y1}
+                              x2={x2}
+                              y2={y2}
+                              stroke="currentColor"
+                              strokeWidth={idx % 2 === 0 ? "1.5" : "1"}
+                              strokeOpacity={isHot ? "0.85" : "0.45"}
+                              className={isHot ? "text-amber-500 dark:text-amber-400" : "text-foreground"}
+                            />
+                          );
+                        })}
+
+                        {/* Dial Scale Labels */}
+                        <text x="34" y="107" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/75 select-none">-20</text>
+                        <text x="64" y="58" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/75 select-none">-10</text>
+                        <text x="120" y="34" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/90 font-medium select-none">0 dB</text>
+                        <text x="176" y="58" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/75 select-none">+3</text>
+                        <text x="206" y="107" textAnchor="middle" className="text-[8px] font-mono fill-amber-500 font-medium select-none">+6</text>
+
+                        {/* Smooth Ballistic Needle */}
+                        <g
+                          style={{
+                            transformOrigin: '120px 112px',
+                            transform: `rotate(${-60 + (computedRms / 100) * 120}deg)`,
+                            transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                          }}
+                        >
+                          <polygon
+                            points="118.5,112 120,26 121.5,112"
+                            fill="currentColor"
+                            className="text-foreground"
+                            filter="url(#needleShadow)"
+                          />
+                          <line
+                            x1="120"
+                            y1="26"
+                            x2="120"
+                            y2="44"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="text-amber-500"
+                            strokeLinecap="round"
+                          />
+                        </g>
+
+                        {/* Milled Brass/Steel Pivot Hub */}
+                        <circle cx="120" cy="112" r="9" fill="currentColor" className="text-card" stroke="currentColor" strokeWidth="2" strokeOpacity="0.4" />
+                        <circle cx="120" cy="112" r="5" fill="currentColor" className="text-foreground/80" />
+                        <circle cx="120" cy="112" r="2" fill="currentColor" className="text-background" />
+                      </svg>
+                    </div>
+
+                    {/* Digital Telemetry Readout */}
+                    <div className="mt-1 flex items-baseline gap-1.5">
+                      <span className="text-xl font-mono font-medium text-text-primary tracking-tight">
+                        {computedRms}
+                      </span>
+                      <span className="text-[11px] font-mono text-text-muted">% RMS</span>
+                      <span className="text-[10px] font-mono ml-2 px-1.5 py-0.5 rounded bg-secondary/80 border border-border/50 text-text-muted">
+                        {computedRms > 85 ? 'PEAK' : computedRms > 50 ? 'NOMINAL' : 'LOW'}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[10px] font-mono text-center">
                     <div className="p-1.5 rounded-lg bg-secondary/60 border border-border/50">
-                      <span className="text-text-muted block">RMS LEVEL</span>
+                      <span className="text-text-muted block">BALLISTIC RMS</span>
                       <span className="text-text-primary font-medium text-xs">{computedRms}%</span>
                     </div>
                     <div className="p-1.5 rounded-lg bg-secondary/60 border border-border/50">
-                      <span className="text-text-muted block">HEADROOM</span>
-                      <span className="text-text-primary font-medium text-xs">{100 - computedRms}%</span>
+                      <span className="text-text-muted block">PEAK HEADROOM</span>
+                      <span className="text-text-primary font-medium text-xs">{(100 - computedRms).toFixed(0)}%</span>
                     </div>
                   </div>
                 </div>
@@ -480,16 +579,16 @@ export default function HomePage() {
                   <span>FREQUENCY: {tactileFreq} Hz</span>
                   <span>AMPLITUDE: {tactileGain}%</span>
                   <span>DAMPING: {tactileDamping ? 'QUINTIC (ACTIVE)' : 'OFF'}</span>
-                  <span>PEAK HEADROOM: {100 - computedRms}%</span>
+                  <span>PEAK HEADROOM: {(100 - computedRms).toFixed(0)}%</span>
                 </div>
               </div>
             </div>
           </section>
- 
+
           {/* ═══════════════════════════════════════════
               ARCHITECTURAL MICRO-INTERACTIONS SHOWCASE
           ═══════════════════════════════════════════ */}
-          <section className="px-6 md:px-12 py-16 border-b border-border/80 space-y-10">
+          <section className="px-6 md:px-12 py-20 border-b border-border/80 space-y-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span className="text-sidebar-category uppercase tracking-wider text-text-muted block font-medium">
@@ -509,10 +608,10 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Grid of 3 High-Fidelity Showcases */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* 2x2 Architectural Grid of High-Fidelity Showcases */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* 1. Ambient Spotlight Sensor Card */}
-              <SpotlightCard variant="tactile" className="flex flex-col justify-between">
+              <SpotlightCard variant="tactile" className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between">
                 <SpotlightCardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -526,8 +625,8 @@ export default function HomePage() {
                     Light functions as an environmental condition, softly illuminating the surface texture without explicit border tracing.
                   </SpotlightCardDescription>
                 </SpotlightCardHeader>
-                <SpotlightCardContent className="my-3">
-                  <div className="p-3 rounded-lg bg-secondary/40 border border-border/50 space-y-1.5 text-xs">
+                <SpotlightCardContent className="my-4">
+                  <div className="p-3.5 rounded-xl bg-secondary/40 border border-border/50 space-y-2 text-xs">
                     <div className="flex justify-between text-text-muted">
                       <span>Ambient Light Radius</span>
                       <span className="font-mono text-text-primary">420px soft falloff</span>
@@ -547,56 +646,155 @@ export default function HomePage() {
               </SpotlightCard>
 
               {/* 2. Interactive Archival Folder Preview */}
-              <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-card border border-border/80 shadow-tactile">
-                <FolderPreview
-                  title="Avionics Schematics"
-                  category="ARCHIVAL BUNDLE // 2026"
-                  triggerMode="both"
-                  files={[
-                    { id: '1', title: 'Power Regulation Bus', subtitle: '48V DC bus conversion', badge: 'Spec 01' },
-                    { id: '2', title: 'Fiber Backplane Topo', subtitle: '800 Gbps optical link', badge: 'Spec 02' },
-                    { id: '3', title: 'Cryo-Manifold Study', subtitle: 'Zero thermal creep test', badge: 'Spec 03' },
-                  ]}
-                />
+              <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Archival Stacks</span>
+                    <Badge variant="engraved" className="text-[10px]">Fanned Cards</Badge>
+                  </div>
+                  <h4 className="text-base font-medium text-text-primary">Interactive Archival Folder</h4>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Cascading schematic bundles fanning dynamically upon hover and tactile click.
+                  </p>
+                </div>
+
+                <div className="py-2 flex items-center justify-center">
+                  <FolderPreview
+                    title="Avionics Schematics"
+                    category="ARCHIVAL BUNDLE // 2026"
+                    triggerMode="both"
+                    files={[
+                      { id: '1', title: 'Power Regulation Bus', subtitle: '48V DC bus conversion', badge: 'Spec 01' },
+                      { id: '2', title: 'Fiber Backplane Topo', subtitle: '800 Gbps optical link', badge: 'Spec 02' },
+                      { id: '3', title: 'Cryo-Manifold Study', subtitle: 'Zero thermal creep test', badge: 'Spec 03' },
+                    ]}
+                  />
+                </div>
+
+                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                  <span>FOLDER PREVIEW</span>
+                  <Link href="/components/folder-preview" className="hover:text-text-primary transition-colors">
+                    View Spec →
+                  </Link>
+                </div>
               </div>
 
-              {/* 3. Tactile Verification & Magnetic Deck */}
-              <div className="p-5 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-6">
-                <div className="space-y-3">
+              {/* 3. Dedicated Milled OTP Verification */}
+              <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-text-muted uppercase">Tactile Wells</span>
-                    <Badge variant="engraved">Skeuomorphic</Badge>
+                    <Badge variant="engraved" className="text-[10px]">6-Digit Auth</Badge>
                   </div>
                   <h4 className="text-base font-medium text-text-primary">Milled OTP Verification</h4>
                   <p className="text-xs text-text-secondary leading-relaxed">
-                    Tactile milled key wells with spring elevation and auto-advance focus.
+                    Tactile recessed key wells with spring elevation, automatic progression, and cryptographic token verification.
                   </p>
-                  <div className="pt-2 flex justify-center">
-                    <OtpInput
-                      length={6}
-                      variant="tactile"
-                      value={homeOtp}
-                      onChange={setHomeOtp}
-                    />
+                </div>
+
+                <div className="py-4 flex flex-col items-center justify-center space-y-3">
+                  <OtpInput
+                    length={6}
+                    variant="tactile"
+                    value={homeOtp}
+                    onChange={setHomeOtp}
+                  />
+                  <div className="flex items-center gap-2 text-[11px] font-mono">
+                    {homeOtp.length === 6 ? (
+                      <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                        <Check className="w-3 h-3" />
+                        TOKEN VERIFIED // SEC_OK
+                      </span>
+                    ) : (
+                      <span className="text-text-muted bg-secondary/60 px-2.5 py-1 rounded-full border border-border/50">
+                        ENTER {6 - homeOtp.length} MORE DIGITS
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-border/60 space-y-3">
-                  <div className="flex items-center justify-between text-xs text-text-muted">
-                    <span>Magnetic Deck Switcher</span>
-                    <span className="font-mono text-[10px]">SPRING PHYSICS</span>
+                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                  <span>OTP INPUT</span>
+                  <Link href="/components/otp-input" className="hover:text-text-primary transition-colors">
+                    View Spec →
+                  </Link>
+                </div>
+              </div>
+
+              {/* 4. Dedicated Magnetic Deck Switcher */}
+              <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Spring Dynamics</span>
+                    <Badge variant="outline" className="text-[10px]">Magnetic Physics</Badge>
                   </div>
-                  <MagneticTabs
-                    variant="recessed"
-                    size="sm"
-                    value={homeTab}
-                    onValueChange={setHomeTab}
-                    tabs={[
-                      { id: 'schematics', label: 'Schematics' },
-                      { id: 'telemetry', label: 'Telemetry', badge: '12' },
-                      { id: 'specs', label: 'Specs' }
-                    ]}
-                  />
+                  <h4 className="text-base font-medium text-text-primary">Magnetic Deck Switcher</h4>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Frictionless tab navigation with spring-damped magnetic tension, driving stacked depth layers.
+                  </p>
+                </div>
+
+                <div className="py-2 space-y-3">
+                  <div className="flex justify-center">
+                    <MagneticTabs
+                      variant="tactile"
+                      size="sm"
+                      value={homeTab}
+                      onValueChange={setHomeTab}
+                      tabs={[
+                        { id: 'schematics', label: 'Schematics' },
+                        { id: 'telemetry', label: 'Telemetry', badge: 'Live' },
+                        { id: 'specs', label: 'Specs' }
+                      ]}
+                    />
+                  </div>
+
+                  {/* Active Deck Telemetry Layer */}
+                  <div className="p-3.5 rounded-xl bg-secondary/40 border border-border/50 text-xs font-mono space-y-2">
+                    {homeTab === 'schematics' && (
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-text-muted text-[11px]">
+                          <span>ACTIVE LAYER</span>
+                          <span className="text-text-primary font-medium">REV_04_BUS.CAD</span>
+                        </div>
+                        <div className="flex justify-between text-text-muted text-[11px]">
+                          <span>GEOMETRY NODES</span>
+                          <span className="text-text-primary font-medium">1,420 VECTORS</span>
+                        </div>
+                      </div>
+                    )}
+                    {homeTab === 'telemetry' && (
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-text-muted text-[11px]">
+                          <span>INGRESS LATENCY</span>
+                          <span className="text-emerald-500 font-medium">0.42 ms</span>
+                        </div>
+                        <div className="flex justify-between text-text-muted text-[11px]">
+                          <span>SAMPLING JITTER</span>
+                          <span className="text-text-primary font-medium">±0.02%</span>
+                        </div>
+                      </div>
+                    )}
+                    {homeTab === 'specs' && (
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-text-muted text-[11px]">
+                          <span>THERMAL DISSIPATION</span>
+                          <span className="text-text-primary font-medium">14.8 W / m²</span>
+                        </div>
+                        <div className="flex justify-between text-text-muted text-[11px]">
+                          <span>SPRING CONSTANT</span>
+                          <span className="text-text-primary font-medium">k = 240 N/m</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                  <span>MAGNETIC TABS</span>
+                  <Link href="/components/magnetic-tabs" className="hover:text-text-primary transition-colors">
+                    View Spec →
+                  </Link>
                 </div>
               </div>
             </div>
