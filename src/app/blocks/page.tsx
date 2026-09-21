@@ -18,6 +18,8 @@ import { TactileMetricCard, TactileBarCard } from '@/components/ui/charts/tactil
 import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDescription, SpotlightCardContent } from '@/components/ui/spotlight-card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import componentsData from '@/registry/components.json';
+import blocksData from '@/registry/blocks.json';
 import {
   Activity,
   Layers,
@@ -27,6 +29,14 @@ import {
   LayoutTemplate,
   Cpu,
 } from 'lucide-react';
+
+const getBlockSource = (slug: string) => {
+  return blocksData.find((b) => b.slug === slug)?.sourceCode || '';
+};
+
+const getSource = (slug: string) => {
+  return componentsData.find((c) => c.slug === slug)?.sourceCode || '';
+};
 
 const FLAGSHIP_CODE = `import { TactileStudioDashboard } from '@/components/blocks/TactileStudioDashboard';
 
@@ -241,8 +251,10 @@ export default function BlocksPage() {
               category="Rail Sidebar Dashboard"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-studio-dashboard"
-              code={FLAGSHIP_CODE}
+              code={getBlockSource('tactile-studio-dashboard')}
               codeFileName="TactileStudioDashboard.tsx"
+              usageCode={FLAGSHIP_CODE}
+              usageFileName="page.tsx"
               description="Unified executive operations dashboard with RailSidebar, dot-matrix revenue equalizer, organic trend curve, and live settlement table."
             >
               <TactileStudioDashboard />
@@ -256,8 +268,10 @@ export default function BlocksPage() {
               category="Collapsible Studio Sidebar"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add executive-studio-console"
-              code={EXECUTIVE_CONSOLE_CODE}
+              code={getBlockSource('executive-studio-console')}
               codeFileName="ExecutiveStudioConsole.tsx"
+              usageCode={EXECUTIVE_CONSOLE_CODE}
+              usageFileName="page.tsx"
               description="A distinct architectural dashboard style featuring the collapsible StudioSidebar, 4 top KPI sparkline cards, and distributed cluster nodes table."
             >
               <ExecutiveStudioConsole />
@@ -271,16 +285,18 @@ export default function BlocksPage() {
               category="Tactile Widgets"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-metric-card"
-              code={METRIC_CARDS_CODE}
-              codeFileName="TactileMetricCard.tsx"
-              description="Skeuomorphic cards with tactile depth, vertical color indicator bars, node trajectory beams, and average threshold reference lines."
+              code={getBlockSource('tactile-metric-card')}
+              codeFileName="tactile-metric-card.tsx"
+              usageCode={METRIC_CARDS_CODE}
+              usageFileName="page.tsx"
+              description="Skeuomorphic cards with tactile depth, node trajectory beams, and average threshold reference lines."
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
                 <TactileMetricCard
                   title="Balance"
                   periodLabel="2024"
                   value="$94,127"
-                  deltaText="increase 13%"
+                  deltaText="+13%"
                   deltaSubtext="vs last year"
                   className="w-full max-w-none"
                 />
@@ -288,7 +304,7 @@ export default function BlocksPage() {
                   title="Income"
                   periodLabel="This Month"
                   value="$12,532"
-                  deltaText="increase 12%"
+                  deltaText="+12%"
                   deltaSubtext="vs last month"
                   className="w-full max-w-none"
                 />
@@ -302,8 +318,10 @@ export default function BlocksPage() {
               title="Protocol Volume Trend Curve"
               category="Tactile Widgets"
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-trend-card"
-              code={TREND_CARD_CODE}
-              codeFileName="TactileTrendCard.tsx"
+              code={getBlockSource('tactile-trend-card')}
+              codeFileName="tactile-trend-card.tsx"
+              usageCode={TREND_CARD_CODE}
+              usageFileName="page.tsx"
               description="Organic bezier wave chart with capsule timeframe switcher, dashed grid, keyword capsules, and active terminal node."
             >
               <TactileTrendCard
@@ -324,8 +342,10 @@ export default function BlocksPage() {
               title="Dot Matrix Revenue Velocity Equalizer"
               category="Tactile Charts"
               cliCommand="pnpm dlx @sehrennn/nickui add dot-matrix-chart"
-              code={DOT_MATRIX_CODE}
-              codeFileName="DotMatrixChart.tsx"
+              code={getBlockSource('dot-matrix-chart')}
+              codeFileName="dot-matrix-chart.tsx"
+              usageCode={DOT_MATRIX_CODE}
+              usageFileName="page.tsx"
               description="Interactive dot-matrix columns with hover tooltips, period comparisons, and architectural footer."
             >
               <div className="w-full max-w-2xl mx-auto">
@@ -348,8 +368,10 @@ export default function BlocksPage() {
               category="Landing Layouts"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add bento-showcase-layout"
-              code={BENTO_LAYOUT_CODE}
+              code={getBlockSource('bento-showcase-layout')}
               codeFileName="BentoShowcaseLayout.tsx"
+              usageCode={BENTO_LAYOUT_CODE}
+              usageFileName="page.tsx"
               description="Multi-tier architectural bento grid featuring live throughput telemetry sparkline, analog spring physics sliders, and AI MCP badge."
             >
               <div className="w-full max-w-5xl">
@@ -364,8 +386,10 @@ export default function BlocksPage() {
               title="Centered Hero Section Layout"
               category="Landing Layouts"
               cliCommand="pnpm dlx @sehrennn/nickui add centered-hero-layout"
-              code={HERO_CODE}
+              code={getBlockSource('centered-hero-layout')}
               codeFileName="CenteredHeroLayout.tsx"
+              usageCode={HERO_CODE}
+              usageFileName="page.tsx"
               description="Commanding centered hero section with official BrandLogo glyph, release announcement badge, and interactive CLI copy pill."
             >
               <div className="w-full max-w-4xl">
@@ -380,8 +404,10 @@ export default function BlocksPage() {
               title="Feature Grid Section Layout"
               category="Landing Layouts"
               cliCommand="pnpm dlx @sehrennn/nickui add feature-grid-layout"
-              code={FEATURE_GRID_CODE}
+              code={getBlockSource('feature-grid-layout')}
               codeFileName="FeatureGridLayout.tsx"
+              usageCode={FEATURE_GRID_CODE}
+              usageFileName="page.tsx"
               description="Four-column architectural capability cards with hairline borders and tactile hover response."
             >
               <div className="w-full max-w-5xl">
@@ -396,8 +422,10 @@ export default function BlocksPage() {
               title="Split Interactive Showcase Layout"
               category="Landing Layouts"
               cliCommand="pnpm dlx @sehrennn/nickui add split-showcase-layout"
-              code={SPLIT_SHOWCASE_CODE}
+              code={getBlockSource('split-showcase-layout')}
               codeFileName="SplitShowcaseLayout.tsx"
+              usageCode={SPLIT_SHOWCASE_CODE}
+              usageFileName="page.tsx"
               description="Asymmetrical layout pairing editorial design principles with an interactive live optical spotlight widget."
             >
               <div className="w-full max-w-5xl">
@@ -424,8 +452,10 @@ export default function BlocksPage() {
               title="Revenue Financial Telemetry Dashboard"
               category="Analytics Dashboard"
               cliCommand="pnpm dlx @sehrennn/nickui add analytics-dashboard"
-              code={ANALYTICS_CODE}
+              code={getBlockSource('analytics-dashboard')}
               codeFileName="AnalyticsDashboard.tsx"
+              usageCode={ANALYTICS_CODE}
+              usageFileName="page.tsx"
               description="ARR performance graphs, real-time transaction ledgers, sparkline metrics, and billing analytics."
             >
               <div className="w-full max-w-5xl">
@@ -440,8 +470,10 @@ export default function BlocksPage() {
               title="Cluster Infrastructure Telemetry Console"
               category="Infrastructure"
               cliCommand="pnpm dlx @sehrennn/nickui add infrastructure-console"
-              code={INFRASTRUCTURE_CODE}
+              code={getBlockSource('infrastructure-console')}
               codeFileName="InfrastructureConsole.tsx"
+              usageCode={INFRASTRUCTURE_CODE}
+              usageFileName="page.tsx"
               description="Distributed node health monitoring, CPU/RAM utilization gauges, throughput telemetry, and live terminal stream."
             >
               <div className="w-full max-w-5xl">
@@ -456,8 +488,10 @@ export default function BlocksPage() {
               title="Enterprise Governance & Security Workspace"
               category="Settings"
               cliCommand="pnpm dlx @sehrennn/nickui add workspace-settings-block"
-              code={SETTINGS_CODE}
+              code={getBlockSource('workspace-settings-block')}
               codeFileName="WorkspaceSettingsBlock.tsx"
+              usageCode={SETTINGS_CODE}
+              usageFileName="page.tsx"
               description="Isolation tiers, mandatory 2FA policies, compliance audit streams, and tenant safeguards."
             >
               <div className="w-full max-w-5xl">

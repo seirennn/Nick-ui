@@ -42,36 +42,138 @@ export default function McpDocPage() {
               </p>
             </div>
 
-            {/* How It Works Diagram */}
+            {/* Architectural Side-by-Side Diagnostic Comparison */}
             <section className="space-y-6">
-              <h2 className="text-2xl font-medium tracking-tight text-text-primary">
-                Why AI Needs the NickUI MCP
-              </h2>
+              <div>
+                <h2 className="text-2xl font-medium tracking-tight text-text-primary">
+                  Why AI Agents Need the NickUI MCP
+                </h2>
+                <p className="text-xs text-text-secondary mt-1 max-w-xl leading-relaxed">
+                  Without schema awareness, LLMs default to generic rainbow gradients and invent fake props. NickUI MCP grounds agents directly into the verified registry.
+                </p>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-xl bg-card border border-destructive/30 space-y-3">
-                  <div className="text-destructive font-mono text-xs font-semibold uppercase">
-                    Without NickUI MCP (Hallucination)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                {/* 1. Unassisted AI Hallucination */}
+                <div className="rounded-[22px] border border-border/80 bg-card shadow-tactile overflow-hidden flex flex-col justify-between">
+                  {/* Window Bar */}
+                  <div className="px-4 py-3 border-b border-border/70 flex items-center justify-between bg-secondary/40">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-destructive/70" />
+                      <span className="font-mono text-[11px] text-text-muted">unassisted-agent.tsx</span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20 font-medium">
+                      Hallucinated
+                    </span>
                   </div>
-                  <ul className="text-xs text-text-muted space-y-2 list-disc list-inside">
-                    <li>AI invents non-existent components and fake props.</li>
-                    <li>Defaults to generic, saturated rainbow gradients.</li>
-                    <li>Misses tactile depth tiers (recessed wells, specular rims).</li>
-                    <li>Uses incorrect import paths and broken syntax.</li>
-                  </ul>
+
+                  {/* Bad Code Editor */}
+                  <div className="p-4 bg-background/60 font-mono text-[11.5px] leading-relaxed overflow-x-auto text-text-secondary border-b border-border/50 space-y-1">
+                    <div className="text-text-muted/60 italic">// ⚠️ AI invents fake components and saturated gradients</div>
+                    <div>
+                      <span className="text-destructive">{'<RainbowGlowCard'}</span>{' '}
+                      <span className="text-text-muted">{'glowColor="neon-pink"'}</span>{' '}
+                      <span className="text-text-muted">{'animate="bounce"'}</span>
+                      <span className="text-destructive">{'>'}</span>
+                    </div>
+                    <div className="pl-4">
+                      <span className="text-destructive">{'<AnimatedButton'}</span>{' '}
+                      <span className="text-text-muted">{'variant="electric"'}</span>
+                      <span className="text-destructive">{'>'}</span>
+                    </div>
+                    <div className="pl-8 text-text-primary">Generate Magic</div>
+                    <div className="pl-4">
+                      <span className="text-destructive">{'</AnimatedButton>'}</span>
+                    </div>
+                    <div>
+                      <span className="text-destructive">{'</RainbowGlowCard>'}</span>
+                    </div>
+                  </div>
+
+                  {/* Diagnostic Warnings */}
+                  <div className="p-4 bg-card space-y-2 text-xs">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-destructive font-medium">
+                      Diagnostic Failures
+                    </div>
+                    <div className="space-y-1.5 font-mono text-[11px] text-text-muted">
+                      <div className="flex items-start gap-2">
+                        <span className="text-destructive shrink-0">✖</span>
+                        <span>Non-existent components <code className="text-text-primary">RainbowGlowCard</code> not in registry.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-destructive shrink-0">✖</span>
+                        <span>Violates atmospheric rules: saturated gradients & bouncing motion forbidden.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-destructive shrink-0">✖</span>
+                        <span>Misses physical tactile depth tiers (<code className="text-text-primary">variant="tactile"</code>).</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="p-5 rounded-xl bg-card border border-border/80 tactile-surface space-y-3">
-                  <div className="text-text-primary font-mono text-xs font-semibold uppercase flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-                    With NickUI MCP (Verified Precision)
+                {/* 2. NickUI MCP Verified Precision */}
+                <div className="rounded-[22px] border border-border/80 bg-card shadow-tactile overflow-hidden flex flex-col justify-between">
+                  {/* Window Bar */}
+                  <div className="px-4 py-3 border-b border-border/70 flex items-center justify-between bg-secondary/40">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="font-mono text-[11px] text-text-primary font-medium">mcp-verified.tsx</span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
+                      Verified Precision
+                    </span>
                   </div>
-                  <ul className="text-xs text-text-secondary space-y-2 list-disc list-inside">
-                    <li>AI queries the registry to find the exact component.</li>
-                    <li>Enforces authentic portfolio guidelines (atmosphere over ornament).</li>
-                    <li>Correctly specifies depth tiers: <code className="font-mono text-text-primary">variant="tactile"</code>.</li>
-                    <li>Generates verified, accessible code with proper types.</li>
-                  </ul>
+
+                  {/* Clean Code Editor */}
+                  <div className="p-4 bg-background/60 font-mono text-[11.5px] leading-relaxed overflow-x-auto text-text-secondary border-b border-border/50 space-y-1">
+                    <div className="text-text-muted/60 italic">// ✔ Resolved via nickui_get_component_schema</div>
+                    <div>
+                      <span className="text-text-primary font-medium">{'<Card'}</span>{' '}
+                      <span className="text-text-muted">{'variant="tactile"'}</span>
+                      <span className="text-text-primary font-medium">{'>'}</span>
+                    </div>
+                    <div className="pl-4">
+                      <span className="text-text-primary font-medium">{'<CardHeader>'}</span>
+                      <span className="text-text-primary font-medium">{'<CardTitle>'}</span>
+                      <span className="text-text-primary">Telemetry Node</span>
+                      <span className="text-text-primary font-medium">{'</CardTitle>'}</span>
+                      <span className="text-text-primary font-medium">{'</CardHeader>'}</span>
+                    </div>
+                    <div className="pl-4">
+                      <span className="text-text-primary font-medium">{'<Button'}</span>{' '}
+                      <span className="text-text-muted">{'variant="tactile" size="md"'}</span>
+                      <span className="text-text-primary font-medium">{'>'}</span>
+                    </div>
+                    <div className="pl-8 text-text-primary">Confirm Consensus</div>
+                    <div className="pl-4">
+                      <span className="text-text-primary font-medium">{'</Button>'}</span>
+                    </div>
+                    <div>
+                      <span className="text-text-primary font-medium">{'</Card>'}</span>
+                    </div>
+                  </div>
+
+                  {/* Verification Passes */}
+                  <div className="p-4 bg-card space-y-2 text-xs">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-medium">
+                      Verification Telemetry
+                    </div>
+                    <div className="space-y-1.5 font-mono text-[11px] text-text-muted">
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-500 shrink-0">✔</span>
+                        <span>Schema-validated against <code className="text-text-primary">@sehrennn/nickui</code> registry.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-500 shrink-0">✔</span>
+                        <span>Enforces authentic calm atmosphere, hairline borders & tactile tiers.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-500 shrink-0">✔</span>
+                        <span>Generates verified accessible code with strict TypeScript prop types.</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>

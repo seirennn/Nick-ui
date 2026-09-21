@@ -32,18 +32,23 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
   };
 
   return (
-    <div className={cn('rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs', className)}>
+    <div
+      className={cn(
+        'rounded-[22px] border border-border/75 bg-card overflow-hidden shadow-tactile transition-all',
+        className
+      )}
+    >
       {/* Precision Integrated Toolbar */}
-      <div className="flex items-center justify-between px-3.5 py-2 border-b border-border/70 bg-secondary/30">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/70 bg-secondary/35">
         {/* Left: Preview / Code Segmented Switcher */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 p-0.5 rounded-lg bg-secondary/60 border border-border/60 text-xs">
           <button
             type="button"
             onClick={() => setActiveTab('preview')}
             className={cn(
-              'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer select-none',
+              'flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all cursor-pointer select-none',
               activeTab === 'preview'
-                ? 'bg-background text-text-primary shadow-xs border border-border/70'
+                ? 'bg-card text-text-primary shadow-2xs font-medium'
                 : 'text-text-muted hover:text-text-primary'
             )}
           >
@@ -54,9 +59,9 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
             type="button"
             onClick={() => setActiveTab('code')}
             className={cn(
-              'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer select-none',
+              'flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all cursor-pointer select-none',
               activeTab === 'code'
-                ? 'bg-background text-text-primary shadow-xs border border-border/70'
+                ? 'bg-card text-text-primary shadow-2xs font-medium'
                 : 'text-text-muted hover:text-text-primary'
             )}
           >
@@ -66,7 +71,7 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
         </div>
 
         {/* Right: Viewport Controls & Quick Actions */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {activeTab === 'preview' && (
             <>
               <div className="hidden sm:flex items-center gap-0.5 p-0.5 rounded-md bg-secondary/60 border border-border/50 text-xs">
@@ -75,36 +80,36 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
                   onClick={() => setViewport('desktop')}
                   title="Desktop Viewport (100%)"
                   className={cn(
-                    'p-1 rounded text-text-muted transition-colors cursor-pointer',
-                    viewport === 'desktop' ? 'bg-background text-text-primary shadow-xs' : 'hover:text-text-primary'
+                    'p-1.5 rounded text-text-muted transition-colors cursor-pointer',
+                    viewport === 'desktop' ? 'bg-card text-text-primary shadow-2xs' : 'hover:text-text-primary'
                   )}
                   aria-label="Desktop viewport"
                 >
-                  <Monitor className="w-3 h-3" />
+                  <Monitor className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewport('tablet')}
                   title="Tablet Viewport (768px)"
                   className={cn(
-                    'p-1 rounded text-text-muted transition-colors cursor-pointer',
-                    viewport === 'tablet' ? 'bg-background text-text-primary shadow-xs' : 'hover:text-text-primary'
+                    'p-1.5 rounded text-text-muted transition-colors cursor-pointer',
+                    viewport === 'tablet' ? 'bg-card text-text-primary shadow-2xs' : 'hover:text-text-primary'
                   )}
                   aria-label="Tablet viewport"
                 >
-                  <Tablet className="w-3 h-3" />
+                  <Tablet className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewport('mobile')}
                   title="Mobile Viewport (380px)"
                   className={cn(
-                    'p-1 rounded text-text-muted transition-colors cursor-pointer',
-                    viewport === 'mobile' ? 'bg-background text-text-primary shadow-xs' : 'hover:text-text-primary'
+                    'p-1.5 rounded text-text-muted transition-colors cursor-pointer',
+                    viewport === 'mobile' ? 'bg-card text-text-primary shadow-2xs' : 'hover:text-text-primary'
                   )}
                   aria-label="Mobile viewport"
                 >
-                  <Smartphone className="w-3 h-3" />
+                  <Smartphone className="w-3.5 h-3.5" />
                 </button>
               </div>
 
@@ -112,10 +117,10 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
                 type="button"
                 onClick={() => setResetKey((k) => k + 1)}
                 title="Reset Component State"
-                className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-secondary/60 transition-colors cursor-pointer"
+                className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-secondary/70 border border-border/50 transition-colors cursor-pointer"
                 aria-label="Reset state"
               >
-                <RotateCcw className="w-3 h-3" />
+                <RotateCcw className="w-3.5 h-3.5" />
               </button>
             </>
           )}
@@ -123,7 +128,7 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-mono text-text-muted hover:text-text-primary hover:bg-secondary/60 transition-colors cursor-pointer select-none"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono text-text-muted hover:text-text-primary hover:bg-secondary/70 border border-border/60 transition-colors cursor-pointer select-none"
             aria-label="Copy snippet"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -134,28 +139,30 @@ export function ComponentPreview({ children, code, className }: ComponentPreview
 
       {/* Main Canvas / Code Body */}
       {activeTab === 'preview' ? (
-        <div className="w-full flex justify-center p-4 sm:p-8 bg-background/50">
+        <div className="w-full flex justify-center p-6 sm:p-12 bg-background/60 relative overflow-hidden min-h-[300px]">
+          {/* Refined subtle ambient dot lattice */}
           <div
+            className="absolute inset-0 pointer-events-none opacity-[0.22] dark:opacity-[0.16]"
+            style={{
+              backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)',
+              backgroundSize: '18px 18px',
+            }}
+          />
+
+          <div
+            key={resetKey}
             className={cn(
-              'w-full transition-all duration-300 ease-out flex justify-center',
-              viewportWidths[viewport]
+              'w-full transition-all duration-300 ease-out flex items-center justify-center relative z-10',
+              viewportWidths[viewport],
+              viewport !== 'desktop' && 'border border-border/70 rounded-xl p-4 bg-card/60 shadow-tactile'
             )}
           >
-            <div
-              key={resetKey}
-              className={cn(
-                'min-h-[260px] w-full rounded-lg border border-border/50 p-6 sm:p-10',
-                'flex items-center justify-center relative overflow-visible z-10 bg-card/60',
-                'bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px]'
-              )}
-            >
-              {children}
-            </div>
+            {children}
           </div>
         </div>
       ) : (
         <div className="border-t border-border/60">
-          <CodeBlock code={code} className="border-0 rounded-none shadow-none" />
+          <CodeBlock code={code} className="border-0 rounded-none shadow-none bg-transparent" />
         </div>
       )}
     </div>

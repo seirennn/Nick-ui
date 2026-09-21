@@ -52,6 +52,8 @@ export const TactileTrendCard = React.forwardRef<HTMLDivElement, TactileTrendCar
     },
     ref
   ) => {
+    const id = React.useId();
+    const areaGradientId = `tactileTrendArea-${id.replace(/:/g, '')}`;
     const [internalTimeframe, setInternalTimeframe] = React.useState<'Week' | 'Month' | 'Max'>('Max');
     const [hoveredPoint, setHoveredPoint] = React.useState<TrendDataPoint | null>(null);
 
@@ -161,14 +163,14 @@ export const TactileTrendCard = React.forwardRef<HTMLDivElement, TactileTrendCar
             className="w-full h-36 overflow-visible relative z-10"
           >
             <defs>
-              <linearGradient id="tactileTrendArea" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={areaGradientId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--text-primary)" stopOpacity="0.12" />
                 <stop offset="100%" stopColor="var(--text-primary)" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
             {/* Area gradient */}
-            <path d={areaD} fill="url(#tactileTrendArea)" />
+            <path d={areaD} fill={`url(#${areaGradientId})`} />
 
             {/* Spline wave path */}
             <path

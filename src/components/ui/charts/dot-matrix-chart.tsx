@@ -8,7 +8,7 @@ export interface DotMatrixColumn {
   id: string;
   label: string;
   period: 'previous' | 'current';
-  dots: number; // number of dots in column (e.g. 1 to 14)
+  dots: number; // number of dots filled in column (1 to maxDots)
   value: string;
 }
 
@@ -25,51 +25,40 @@ export interface DotMatrixChartProps extends React.HTMLAttributes<HTMLDivElement
 }
 
 const DEFAULT_COLUMNS: DotMatrixColumn[] = [
-  // Previous period (e.g. May)
-  { id: 'm1', label: 'May 02', period: 'previous', dots: 2, value: '$1,200' },
-  { id: 'm2', label: 'May 06', period: 'previous', dots: 4, value: '$2,100' },
-  { id: 'm3', label: 'May 10', period: 'previous', dots: 7, value: '$3,800' },
-  { id: 'm4', label: 'May 14', period: 'previous', dots: 3, value: '$1,800' },
-  { id: 'm5', label: 'May 18', period: 'previous', dots: 2, value: '$1,100' },
-  { id: 'm6', label: 'May 22', period: 'previous', dots: 5, value: '$2,900' },
-  { id: 'm7', label: 'May 26', period: 'previous', dots: 6, value: '$3,250' },
-  { id: 'm8', label: 'May 30', period: 'previous', dots: 2, value: '$1,400' },
-  { id: 'm9', label: 'May 31', period: 'previous', dots: 4, value: '$2,200' },
-  { id: 'm10', label: 'May 31', period: 'previous', dots: 3, value: '$1,900' },
-  { id: 'm11', label: 'May 31', period: 'previous', dots: 4, value: '$2,400' },
-  { id: 'm12', label: 'May 31', period: 'previous', dots: 2, value: '$1,200' },
-  { id: 'm13', label: 'May 31', period: 'previous', dots: 4, value: '$2,100' },
+  // Previous period (8 columns)
+  { id: 'm1', label: 'May 04', period: 'previous', dots: 2, value: '$1,200' },
+  { id: 'm2', label: 'May 08', period: 'previous', dots: 4, value: '$2,100' },
+  { id: 'm3', label: 'May 12', period: 'previous', dots: 6, value: '$3,400' },
+  { id: 'm4', label: 'May 16', period: 'previous', dots: 3, value: '$1,800' },
+  { id: 'm5', label: 'May 20', period: 'previous', dots: 5, value: '$2,900' },
+  { id: 'm6', label: 'May 24', period: 'previous', dots: 7, value: '$3,800' },
+  { id: 'm7', label: 'May 28', period: 'previous', dots: 4, value: '$2,200' },
+  { id: 'm8', label: 'May 31', period: 'previous', dots: 3, value: '$1,600' },
 
-  // Current period (e.g. Jun) with prominent peak
-  { id: 'j1', label: 'Jun 02', period: 'current', dots: 6, value: '$4,500' },
-  { id: 'j2', label: 'Jun 05', period: 'current', dots: 12, value: '$9,800' },
-  { id: 'j3', label: 'Jun 08', period: 'current', dots: 10, value: '$8,400' },
-  { id: 'j4', label: 'Jun 12', period: 'current', dots: 8, value: '$6,700' },
-  { id: 'j5', label: 'Jun 15', period: 'current', dots: 6, value: '$5,100' },
-  { id: 'j6', label: 'Jun 18', period: 'current', dots: 5, value: '$4,200' },
-  { id: 'j7', label: 'Jun 20', period: 'current', dots: 4, value: '$3,400' },
-  { id: 'j8', label: 'Jun 22', period: 'current', dots: 2, value: '$1,800' },
-  { id: 'j9', label: 'Jun 24', period: 'current', dots: 2, value: '$1,900' },
-  { id: 'j10', label: 'Jun 25', period: 'current', dots: 6, value: '$5,200' },
-  { id: 'j11', label: 'Jun 26', period: 'current', dots: 3, value: '$2,700' },
-  { id: 'j12', label: 'Jun 28', period: 'current', dots: 5, value: '$4,300' },
-  { id: 'j13', label: 'Jun 29', period: 'current', dots: 5, value: '$4,400' },
-  { id: 'j14', label: 'Jun 30', period: 'current', dots: 4, value: '$3,800' },
+  // Current period (8 columns with prominent progression)
+  { id: 'j1', label: 'Jun 04', period: 'current', dots: 5, value: '$3,900' },
+  { id: 'j2', label: 'Jun 08', period: 'current', dots: 8, value: '$6,400' },
+  { id: 'j3', label: 'Jun 12', period: 'current', dots: 12, value: '$9,800' },
+  { id: 'j4', label: 'Jun 16', period: 'current', dots: 10, value: '$8,400' },
+  { id: 'j5', label: 'Jun 20', period: 'current', dots: 7, value: '$5,800' },
+  { id: 'j6', label: 'Jun 24', period: 'current', dots: 6, value: '$4,900' },
+  { id: 'j7', label: 'Jun 28', period: 'current', dots: 5, value: '$4,200' },
+  { id: 'j8', label: 'Jun 30', period: 'current', dots: 4, value: '$3,500' },
 ];
 
 export const DotMatrixChart = React.forwardRef<HTMLDivElement, DotMatrixChartProps>(
   (
     {
       className,
-      title = 'REVENUE',
+      title = 'REVENUE VELOCITY',
       metric = '+326%',
       timeframe: controlledTimeframe,
       onTimeframeChange,
       columns = DEFAULT_COLUMNS,
       previousLabel = 'MAY $3,250',
       currentLabel = 'JUN $12,392',
-      footerTagline = "DON'T OVERTHINK | AUG 2024 | SIMPLIFYING DIGITAL EXP.",
-      maxDots = 14,
+      footerTagline = 'HIGH THROUGHPUT | 2024 | ZERO LOSS',
+      maxDots = 12,
       ...props
     },
     ref
@@ -83,70 +72,68 @@ export const DotMatrixChart = React.forwardRef<HTMLDivElement, DotMatrixChartPro
       onTimeframeChange?.(tf);
     };
 
-    const previousCols = columns.filter((c) => c.period === 'previous');
-    const currentCols = columns.filter((c) => c.period === 'current');
-
     return (
       <div
         ref={ref}
         className={cn(
-          'relative w-full rounded-[28px] border border-border/70 bg-card p-6 sm:p-8',
-          'shadow-tactile select-none transition-colors overflow-hidden',
+          'relative w-full rounded-[26px] border border-border/70 bg-card p-6 sm:p-7',
+          'shadow-tactile select-none transition-colors overflow-hidden flex flex-col justify-between',
           className
         )}
         {...props}
       >
         {/* Header: Title / Metric & Timeframe Selector */}
-        <div className="flex items-start justify-between gap-4 pb-6 border-b border-border/40">
-          <div>
-            <span className="text-[11px] font-mono tracking-widest text-text-muted uppercase">
+        <div className="flex items-start justify-between gap-3 pb-4 border-b border-border/40">
+          <div className="min-w-0">
+            <span className="text-[10.5px] font-mono tracking-wider text-text-muted uppercase block truncate">
               {title}
             </span>
-            <div className="text-3xl sm:text-4xl font-medium tracking-tight text-text-primary mt-1">
+            <div className="text-2xl sm:text-3xl font-mono font-medium tracking-tight text-text-primary mt-1">
               {metric}
             </div>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-3 sm:gap-4 pt-1">
+          {/* Precision Capsule Filter Pills */}
+          <div className="inline-flex items-center p-0.5 rounded-lg bg-secondary/50 border border-border/60 shrink-0">
             {(['DAILY', 'WEEKLY', 'MONTHLY'] as const).map((tf) => {
               const isActive = activeTimeframe === tf;
+              const label = tf === 'MONTHLY' ? 'MTH' : tf === 'WEEKLY' ? 'WK' : 'DAY';
               return (
                 <button
                   key={tf}
                   type="button"
                   onClick={() => handleTimeframeClick(tf)}
                   className={cn(
-                    'text-[11px] font-mono tracking-wider transition-colors cursor-pointer',
+                    'px-2.5 py-1 text-[10px] font-mono tracking-wider rounded-md transition-all cursor-pointer select-none',
                     isActive
-                      ? 'text-text-primary font-semibold'
-                      : 'text-text-muted/60 hover:text-text-primary'
+                      ? 'bg-card text-text-primary font-medium shadow-2xs border border-border/50'
+                      : 'text-text-muted hover:text-text-primary'
                   )}
                 >
-                  {tf}
+                  {label}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Interactive Matrix Area */}
-        <div className="pt-8 pb-4">
-          <div className="relative flex items-end justify-between gap-1.5 sm:gap-2 h-44 sm:h-52 px-1">
+        {/* Interactive Hardware Matrix Area */}
+        <div className="pt-6 pb-2">
+          <div className="relative flex items-end justify-between gap-1 sm:gap-2 h-40 px-1">
             {/* Tooltip Overlay */}
             {hoveredColumn && (
               <motion.div
-                initial={{ opacity: 0, y: 4 }}
+                initial={{ opacity: 0, y: 2 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="absolute top-0 right-2 z-20 px-3 py-1.5 rounded-lg bg-popover/90 backdrop-blur-md border border-border/80 text-[11px] font-mono text-text-primary shadow-sm"
+                className="absolute top-0 right-1 z-20 px-2.5 py-1 rounded-lg bg-card border border-border/80 text-[11px] font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-1.5"
               >
-                <span className="text-text-muted mr-2">{hoveredColumn.label}:</span>
+                <span className="text-text-muted">{hoveredColumn.label}:</span>
                 <span className="font-semibold text-text-primary">{hoveredColumn.value}</span>
               </motion.div>
             )}
 
-            {/* Render Columns */}
+            {/* Render Matrix Columns */}
             {columns.map((col) => {
               const isHovered = hoveredColumn?.id === col.id;
               const isCurrent = col.period === 'current';
@@ -156,34 +143,30 @@ export const DotMatrixChart = React.forwardRef<HTMLDivElement, DotMatrixChartPro
                   key={col.id}
                   onMouseEnter={() => setHoveredColumn(col)}
                   onMouseLeave={() => setHoveredColumn(null)}
-                  className="flex-1 flex flex-col items-center justify-end h-full gap-1.5 cursor-pointer group py-1"
+                  className={cn(
+                    'flex-1 flex flex-col items-center justify-end h-full gap-1.5 cursor-pointer py-1.5 rounded-lg transition-colors',
+                    isHovered && 'bg-secondary/30'
+                  )}
                 >
-                  {/* Vertical stack of dots from top to bottom */}
+                  {/* Vertical stack of matrix dots */}
                   {Array.from({ length: maxDots }).map((_, index) => {
                     const dotIndexFromBottom = maxDots - 1 - index;
                     const isFilled = dotIndexFromBottom < col.dots;
-
-                    if (!isFilled) {
-                      return (
-                        <div
-                          key={index}
-                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full opacity-0"
-                        />
-                      );
-                    }
 
                     return (
                       <div
                         key={index}
                         className={cn(
-                          'w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-200',
-                          isCurrent
-                            ? isHovered
-                              ? 'bg-text-primary scale-125'
-                              : 'bg-text-primary/90'
-                            : isHovered
-                            ? 'bg-text-muted scale-110'
-                            : 'bg-text-muted/35'
+                          'w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-150',
+                          isFilled
+                            ? isCurrent
+                              ? isHovered
+                                ? 'bg-text-primary scale-125 shadow-[0_0_8px_rgba(var(--foreground-rgb),0.2)]'
+                                : 'bg-text-primary/85'
+                              : isHovered
+                              ? 'bg-text-muted scale-115'
+                              : 'bg-text-muted/50'
+                            : 'bg-foreground/[0.04] dark:bg-foreground/[0.08] border border-border/20'
                         )}
                       />
                     );
@@ -194,20 +177,20 @@ export const DotMatrixChart = React.forwardRef<HTMLDivElement, DotMatrixChartPro
           </div>
 
           {/* Period Labels */}
-          <div className="flex items-center justify-between text-xs font-mono text-text-muted pt-4 px-1">
-            <div className="tracking-wider text-text-muted/70">
+          <div className="flex items-center justify-between text-[11px] font-mono text-text-muted pt-3.5 px-1 border-t border-border/30 mt-2">
+            <div className="tracking-wider text-text-muted/70 truncate">
               {previousLabel}
             </div>
-            <div className="tracking-wider text-text-primary font-medium">
+            <div className="tracking-wider text-text-primary font-medium truncate">
               {currentLabel}
             </div>
           </div>
         </div>
 
-        {/* Footer Architectural Tagline */}
+        {/* Footer Tagline */}
         {footerTagline && (
-          <div className="pt-6 border-t border-border/30 flex items-center justify-end">
-            <div className="text-[10px] font-mono tracking-widest text-text-muted/60 uppercase">
+          <div className="pt-3 border-t border-border/30 flex items-center justify-end">
+            <div className="text-[9.5px] font-mono tracking-widest text-text-muted/60 uppercase truncate">
               {footerTagline}
             </div>
           </div>
