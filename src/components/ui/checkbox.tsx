@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
   checked?: boolean;
+  defaultChecked?: boolean;
   indeterminate?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   label?: React.ReactNode;
@@ -14,20 +15,46 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 }
 
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, checked = false, indeterminate = false, onCheckedChange, disabled, label, description, id, ...props }, ref) => {
+  (
+    {
+      className,
+      checked: controlledChecked,
+      defaultChecked = false,
+      indeterminate = false,
+      onCheckedChange,
+      disabled,
+      label,
+      description,
+      id,
+      ...props
+    },
+    ref
+  ) => {
+    const isControlled = controlledChecked !== undefined;
+    const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
+    const isChecked = isControlled ? controlledChecked : internalChecked;
+
     const generatedId = React.useId();
     const inputId = id || generatedId;
 
-    const handleClick = () => {
+    const toggle = () => {
       if (disabled) return;
-      onCheckedChange?.(!checked);
+      const next = !isChecked;
+      if (!isControlled) {
+        setInternalChecked(next);
+      }
+      onCheckedChange?.(next);
+    };
+
+    const handleClick = () => {
+      toggle();
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
       if (disabled) return;
       if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
-        onCheckedChange?.(!checked);
+        toggle();
       }
     };
 
@@ -35,14 +62,14 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       <div className={cn('inline-flex items-start gap-2.5 select-none', disabled && 'opacity-45 pointer-events-none')}>
         <div
           role="checkbox"
-          aria-checked={indeterminate ? 'mixed' : checked}
+          aria-checked={indeterminate ? 'mixed' : isChecked}
           tabIndex={disabled ? -1 : 0}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           className={cn(
             'relative flex items-center justify-center w-[18px] h-[18px] mt-0.5 rounded-[5px] transition-all cursor-pointer outline-hidden',
             'border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-            checked || indeterminate
+            isChecked || indeterminate
               ? 'bg-primary text-primary-foreground border-primary/90 shadow-xs'
               : 'bg-card border-border/80 tactile-well hover:border-text-muted/60',
             className
@@ -53,16 +80,21 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             ref={ref}
             type="checkbox"
             id={inputId}
-            checked={checked}
+            checked={isChecked}
             disabled={disabled}
-            onChange={(e) => onCheckedChange?.(e.target.checked)}
+            onChange={(e) => {
+              if (!isControlled) {
+                setInternalChecked(e.target.checked);
+              }
+              onCheckedChange?.(e.target.checked);
+            }}
             className="sr-only"
             tabIndex={-1}
             {...props}
           />
 
           <AnimatePresence initial={false}>
-            {checked && !indeterminate && (
+            {isChecked && !indeterminate && (
               <motion.span
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
