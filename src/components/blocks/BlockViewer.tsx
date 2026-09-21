@@ -397,7 +397,7 @@ export function BlockViewer({
             {/* Left: Metadata & Live Status */}
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                 <h2 className="text-sm font-medium text-text-primary tracking-tight truncate">
                   {title}
                 </h2>

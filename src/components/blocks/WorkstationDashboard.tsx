@@ -169,7 +169,7 @@ function WorkstationContent() {
               <span className="text-white font-medium truncate">CLUSTER-ALPHA-4</span>
             </div>
             <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/90 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
               99.98% Nominal
             </span>
           </div>

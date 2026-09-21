@@ -33,6 +33,7 @@ import {
   Brain,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useBlockViewer } from './BlockViewer';
 
 const REVENUE_TIMELINE_12M: AreaChartDataPoint[] = [
   { label: 'Jan', value: 74, formattedValue: '$74,000' },
@@ -121,6 +122,9 @@ const TRANSACTIONS: Transaction[] = [
 ];
 
 export function AnalyticsDashboard() {
+  const { isFullscreen, viewport } = useBlockViewer();
+  const isEdgeToEdge = isFullscreen && viewport === '100%';
+
   const [timeframe, setTimeframe] = React.useState<'90d' | '12m'>('12m');
   const [telemetryTab, setTelemetryTab] = React.useState<'ingress' | 'radar' | 'heatmap'>('ingress');
   const [statusFilter, setStatusFilter] = React.useState<string>('All');
@@ -142,7 +146,14 @@ export function AnalyticsDashboard() {
   });
 
   return (
-    <div className="w-full rounded-[28px] border border-border/80 bg-card p-6 md:p-8 space-y-8 shadow-tactile select-none">
+    <div
+      className={cn(
+        'w-full bg-card select-none transition-all duration-300',
+        isEdgeToEdge
+          ? 'h-full min-h-0 rounded-none border-0 shadow-none p-6 md:p-8 space-y-8 overflow-y-auto'
+          : 'rounded-[28px] border border-border/80 p-6 md:p-8 space-y-8 shadow-tactile'
+      )}
+    >
       {/* 1. Executive Telemetry Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/70">
         <div>

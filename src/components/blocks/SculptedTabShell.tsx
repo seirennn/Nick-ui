@@ -62,7 +62,7 @@ export function SculptedTabShell({
         <div className="relative h-14 w-full flex items-center justify-between px-6 border-b border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent">
           {/* Left subtle indicator */}
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80" />
             <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400">
               Axiom Autonomous Runtime · v2.4.0
             </span>

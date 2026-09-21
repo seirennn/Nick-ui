@@ -9,8 +9,13 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio';
 import { ShieldCheck, Lock, Globe, Server, Check, Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useBlockViewer } from './BlockViewer';
 
 export function WorkspaceSettingsBlock() {
+  const { isFullscreen, viewport } = useBlockViewer();
+  const isEdgeToEdge = isFullscreen && viewport === '100%';
+
   const [tier, setTier] = React.useState('dedicated');
   const [sessionTimeout, setSessionTimeout] = React.useState(30);
   const [mfaEnforced, setMfaEnforced] = React.useState(true);
@@ -23,7 +28,14 @@ export function WorkspaceSettingsBlock() {
   };
 
   return (
-    <div className="w-full rounded-2xl border border-border bg-card p-6 md:p-8 space-y-8">
+    <div
+      className={cn(
+        'w-full bg-card space-y-8 transition-all duration-300',
+        isEdgeToEdge
+          ? 'h-full min-h-0 rounded-none border-0 shadow-none p-6 md:p-8 overflow-y-auto'
+          : 'rounded-2xl border border-border p-6 md:p-8'
+      )}
+    >
       {/* Block Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>

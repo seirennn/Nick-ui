@@ -74,7 +74,7 @@ export function CenteredHeroLayout({
             href={badgeHref}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/60 hover:bg-secondary border border-border/70 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer select-none"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>{badgeText}</span>
             <ArrowRight className="w-3 h-3 text-text-muted" />
           </Link>
@@ -135,7 +135,7 @@ export function CenteredHeroLayout({
           {/* Window Header */}
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/70 bg-secondary/40">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80" />
               <span className="text-[11px] font-mono text-text-muted">app.nickui.dev</span>
             </div>
             <div className="text-[10px] font-mono text-text-muted/60 uppercase">Interactive Studio</div>

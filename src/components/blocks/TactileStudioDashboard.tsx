@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Download, RefreshCw, Copy, Check, ArrowUpRight, ShieldCheck, Database, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useBlockViewer } from './BlockViewer';
 
 interface StreamTransaction {
   id: string;
@@ -29,6 +30,9 @@ const STREAM_DATA: StreamTransaction[] = [
 ];
 
 export function TactileStudioDashboard() {
+  const { isFullscreen, viewport } = useBlockViewer();
+  const isEdgeToEdge = isFullscreen && viewport === '100%';
+
   const [activeNav, setActiveNav] = React.useState('overview');
   const [copied, setCopied] = React.useState(false);
 
@@ -43,7 +47,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="w-full rounded-[28px] border border-border/80 bg-card overflow-hidden shadow-tactile flex flex-col md:flex-row min-h-[850px]">
+    <div
+      className={cn(
+        'w-full bg-card overflow-hidden flex flex-col md:flex-row transition-all duration-300',
+        isEdgeToEdge
+          ? 'h-full min-h-0 rounded-none border-0 shadow-none'
+          : 'rounded-[28px] border border-border/80 shadow-tactile min-h-[850px]'
+      )}
+    >
       {/* 1. Architectural Rail Sidebar */}
       <RailSidebar
         activeId={activeNav}
@@ -65,7 +76,7 @@ export default function Dashboard() {
               </h2>
             </div>
             <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Live Stream
             </span>
           </div>

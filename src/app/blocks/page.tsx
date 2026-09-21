@@ -302,9 +302,7 @@ export default function BlocksPage() {
               usageFileName="page.tsx"
               description="Flagship architectural workstation dashboard featuring a resizable sidebar with drag-resize handle, multi-pane split-view canvas (Focus, 2-Split LR, 3-Pane Command), orderbook depth, harmonic area progression, and elevated user identity capsule."
             >
-              <div className="w-full">
-                <WorkstationDashboard />
-              </div>
+              <WorkstationDashboard />
             </BlockViewer>
           )}
 
@@ -322,9 +320,7 @@ export default function BlocksPage() {
               usageFileName="page.tsx"
               description="Three-column technical documentation & telemetry config layout with narrow left sidebar, centered content area with floating action pill, large code blocks, slim right-side table of contents, and a distinct sculpted top-right tab notch housing the user profile dropdown."
             >
-              <div className="w-full">
-                <TechnicalDocsLayout />
-              </div>
+              <TechnicalDocsLayout />
             </BlockViewer>
           )}
 
@@ -342,9 +338,7 @@ export default function BlocksPage() {
               usageFileName="page.tsx"
               description="High-density multi-pane operational console with 16px breathable spatial gaps, real-time orderbook depth, high-frequency area chart, hardware dials/knobs, and streaming execution logs."
             >
-              <div className="w-full">
-                <MissionControlDashboard />
-              </div>
+              <MissionControlDashboard />
             </BlockViewer>
           )}
 
@@ -362,9 +356,7 @@ export default function BlocksPage() {
               usageFileName="page.tsx"
               description="Understated, typography-first management dashboard with generous whitespace, subtle recessed chassis wells, segmented navigation, and publication codex."
             >
-              <div className="w-full">
-                <EditorialWorkspaceDashboard />
-              </div>
+              <EditorialWorkspaceDashboard />
             </BlockViewer>
           )}
 

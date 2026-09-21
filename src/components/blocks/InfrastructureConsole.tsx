@@ -27,6 +27,7 @@ import {
   Play,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useBlockViewer } from './BlockViewer';
 
 interface MicroService {
   name: string;
@@ -55,6 +56,9 @@ const TERMINAL_LOGS = [
 ];
 
 export function InfrastructureConsole() {
+  const { isFullscreen, viewport } = useBlockViewer();
+  const isEdgeToEdge = isFullscreen && viewport === '100%';
+
   const [autoScale, setAutoScale] = React.useState(true);
   const [tlsStrict, setTlsStrict] = React.useState(true);
   const [rateLimit, setRateLimit] = React.useState(2500);
@@ -85,7 +89,14 @@ export function InfrastructureConsole() {
   };
 
   return (
-    <div className="w-full rounded-[28px] border border-border/80 bg-card p-6 md:p-8 space-y-8 shadow-tactile select-none">
+    <div
+      className={cn(
+        'w-full bg-card select-none transition-all duration-300',
+        isEdgeToEdge
+          ? 'h-full min-h-0 rounded-none border-0 shadow-none p-6 md:p-8 space-y-8 overflow-y-auto'
+          : 'rounded-[28px] border border-border/80 p-6 md:p-8 space-y-8 shadow-tactile'
+      )}
+    >
       {/* 1. Infrastructure Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/70">
         <div>
@@ -280,7 +291,7 @@ export function InfrastructureConsole() {
               <span className="text-[11px] text-neutral-300 font-medium">Consensus Telemetry Log</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span className="text-[10px] text-neutral-400">Stream Active</span>
             </div>
           </div>

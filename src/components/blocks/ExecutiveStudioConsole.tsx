@@ -27,6 +27,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useBlockViewer } from './BlockViewer';
 
 interface ClusterNode {
   id: string;
@@ -47,6 +48,9 @@ const NODES_DATA: ClusterNode[] = [
 ];
 
 export function ExecutiveStudioConsole() {
+  const { isFullscreen, viewport } = useBlockViewer();
+  const isEdgeToEdge = isFullscreen && viewport === '100%';
+
   const [activeNav, setActiveNav] = React.useState('overview');
   const [copied, setCopied] = React.useState(false);
   const [activeRegion, setActiveRegion] = React.useState('all');
@@ -62,7 +66,14 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="w-full p-3 sm:p-5 md:p-6 rounded-[32px] border border-border/80 bg-secondary/20 dark:bg-card/40 flex flex-col md:flex-row gap-5 md:gap-6 min-h-[900px] shadow-tactile select-none">
+    <div
+      className={cn(
+        'w-full bg-secondary/20 dark:bg-card/40 flex flex-col md:flex-row select-none transition-all duration-300',
+        isEdgeToEdge
+          ? 'h-full min-h-0 rounded-none border-0 shadow-none p-4 gap-4 overflow-y-auto'
+          : 'p-3 sm:p-5 md:p-6 rounded-[32px] border border-border/80 gap-5 md:gap-6 min-h-[900px] shadow-tactile'
+      )}
+    >
       {/* 1. Detached Floating StudioSidebar Column */}
       <div className="shrink-0 hidden md:block">
         <StudioSidebar
@@ -86,7 +97,7 @@ export default function DashboardPage() {
               </h2>
             </div>
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/90 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
               Consensus Active
             </span>
           </div>

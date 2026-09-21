@@ -20,8 +20,12 @@ import {
   Clock,
   CheckCircle2,
 } from 'lucide-react';
+import { useBlockViewer } from './BlockViewer';
 
 export function EditorialWorkspaceDashboard() {
+  const { isFullscreen, viewport } = useBlockViewer();
+  const isEdgeToEdge = isFullscreen && viewport === '100%';
+
   const [activeTab, setActiveTab] = React.useState('publications');
   const [searchQuery, setSearchQuery] = React.useState('');
 
@@ -65,12 +69,19 @@ export function EditorialWorkspaceDashboard() {
   ];
 
   return (
-    <div className="w-full space-y-8 p-6 sm:p-10 rounded-[28px] border border-border/80 bg-[#0d0d0f] text-neutral-100 shadow-2xl">
+    <div
+      className={cn(
+        'w-full bg-[#0d0d0f] text-neutral-100 transition-all duration-300',
+        isEdgeToEdge
+          ? 'h-full min-h-0 rounded-none border-0 shadow-none p-6 sm:p-10 space-y-8 overflow-y-auto'
+          : 'rounded-[28px] border border-border/80 shadow-2xl p-6 sm:p-10 space-y-8 min-h-[850px]'
+      )}
+    >
       {/* ─── Asymmetrical Editorial Header ─── */}
       <div className="space-y-4 pb-8 border-b border-white/[0.08]">
         <div className="flex items-center justify-between flex-wrap gap-4 text-xs font-mono text-neutral-400">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-rose-500/80" />
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-400/80" />
             <span>EDITORIAL WORKSPACE // VOL. 04</span>
           </div>
           <div className="flex items-center gap-3">
