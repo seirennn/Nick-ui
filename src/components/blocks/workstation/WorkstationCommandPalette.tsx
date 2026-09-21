@@ -13,14 +13,14 @@ import {
   Home,
   Wallet,
   Activity,
-  Zap,
+  Workflow,
   BarChart3,
   Shield,
   Terminal,
   Moon,
   Sun,
   Sliders,
-  Sparkles,
+  Palette,
   ArrowRight,
   X,
 } from 'lucide-react';
@@ -54,7 +54,7 @@ export function WorkstationCommandPalette() {
     { id: 'nav-overview', group: 'Navigation', label: 'Overview & Mission', icon: Home, action: () => setActiveNav('overview') },
     { id: 'nav-accounts', group: 'Navigation', label: 'Multi-Cluster Accounts', icon: Wallet, action: () => setActiveNav('accounts') },
     { id: 'nav-strategies', group: 'Navigation', label: 'Algorithmic Strategies', icon: Activity, action: () => setActiveNav('strategies') },
-    { id: 'nav-execution', group: 'Navigation', label: 'Zero-Loss Routing Engine', icon: Zap, action: () => setActiveNav('execution') },
+    { id: 'nav-execution', group: 'Navigation', label: 'Zero-Loss Routing Engine', icon: Workflow, action: () => setActiveNav('execution') },
     { id: 'nav-telemetry', group: 'Navigation', label: 'Telemetry Stream', icon: BarChart3, action: () => setActiveNav('analytics') },
     { id: 'nav-terminal', group: 'Navigation', label: 'Cluster Logs Terminal', icon: Terminal, action: () => setActiveNav('terminal') },
 
@@ -71,7 +71,7 @@ export function WorkstationCommandPalette() {
 
     // Actions
     { id: 'act-collapse', group: 'Actions', label: 'Toggle Sidebar Collapse', icon: Sliders, action: () => toggleCollapsed() },
-    { id: 'act-appearance', group: 'Actions', label: 'Customize Themes & Appearance', icon: Sparkles, shortcut: '⌘T', action: () => setIsAppearanceOpen(true) },
+    { id: 'act-appearance', group: 'Actions', label: 'Customize Themes & Appearance', icon: Palette, shortcut: '⌘T', action: () => setIsAppearanceOpen(true) },
   ];
 
   const filteredCommands = query

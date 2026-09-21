@@ -13,7 +13,7 @@ import {
   Mic,
   X,
   ChevronDown,
-  Sparkles,
+  Cpu,
   FileText,
 } from 'lucide-react';
 
@@ -187,7 +187,7 @@ export function AiPromptBar({
               onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary/60 hover:bg-secondary border border-border/60 text-xs font-medium text-text-primary transition-colors cursor-pointer"
             >
-              <Sparkles className="w-3 h-3 text-text-muted" />
+              <Cpu className="w-3 h-3 text-text-muted" strokeWidth={1.5} />
               <span>{currentModel}</span>
               <ChevronDown className="w-3 h-3 text-text-muted" />
             </button>

@@ -25,7 +25,6 @@ import {
   Copy,
   Download,
   RefreshCw,
-  Zap,
   HardDrive,
   Globe,
   ChevronRight,

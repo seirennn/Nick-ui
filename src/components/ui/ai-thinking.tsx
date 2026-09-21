@@ -4,7 +4,7 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Sparkles,
+  RotateCcw,
   ChevronDown,
   CheckCircle2,
   Clock,
@@ -140,9 +140,9 @@ export function AiThinking({
           {/* Status Indicator Icon */}
           <div className="relative flex items-center justify-center w-5 h-5 rounded-md bg-secondary/80 border border-border/60 text-text-muted">
             {status === 'thinking' ? (
-              <Sparkles className="w-3 h-3 text-text-primary animate-spin" />
+              <RotateCcw className="w-3 h-3 text-text-primary animate-spin" strokeWidth={1.5} />
             ) : (
-              <Sparkles className="w-3 h-3 text-text-primary" />
+              <Activity className="w-3 h-3 text-text-primary" strokeWidth={1.5} />
             )}
           </div>
 
@@ -152,7 +152,7 @@ export function AiThinking({
           </span>
 
           {status === 'thinking' && (
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           )}
         </div>
 

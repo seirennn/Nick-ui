@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSidebar } from './SidebarContext';
-import { Sparkles, Check, X, Moon, Sun, Terminal, Compass, Palette } from 'lucide-react';
+import { Check, X, Moon, Sun, Terminal, Compass, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ThemeOption {

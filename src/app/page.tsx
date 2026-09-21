@@ -22,6 +22,7 @@ import { AiPromptBar } from '@/components/ui/ai-prompt-bar';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Knob } from '@/components/ui/knob';
+import { cn } from '@/lib/utils';
 import {
   Search,
   ChevronDown,
@@ -29,16 +30,16 @@ import {
   ArrowRight,
   Layers,
   Sliders,
+  SlidersHorizontal,
   Cpu,
   Copy,
-  Sparkles,
   Terminal,
   Activity,
   HardDrive,
   ShieldCheck,
   RotateCcw,
   Compass,
-  Zap,
+  Workflow,
   Radio as RadioIcon,
   Play,
   RefreshCw,
@@ -52,17 +53,10 @@ export default function HomePage() {
   const [demoStatus, setDemoStatus] = React.useState<'success' | 'warning' | 'neutral'>('success');
   const [copiedInstall, setCopiedInstall] = React.useState(false);
 
-  // Precision Tactile Ergonomics & Telemetry Console state
-  const [tactileTier, setTactileTier] = React.useState<'tactile' | 'recessed' | 'engraved' | 'flat'>('tactile');
-  const [tactileSlider, setTactileSlider] = React.useState(74);
-  const [tactileKnob, setTactileKnob] = React.useState(62);
-  const [dampingMode, setDampingMode] = React.useState<'quintic' | 'critical' | 'linear'>('quintic');
-  const [precisionMode, setPrecisionMode] = React.useState<'standard' | 'fine' | 'coarse'>('standard');
-  const [streamMode, setStreamMode] = React.useState<'continuous' | 'transient' | 'spectral'>('continuous');
-  const [activeSpecimen, setActiveSpecimen] = React.useState<'engraved' | 'flat' | 'recessed' | 'tactile'>('tactile');
-  const [isActuating, setIsActuating] = React.useState(false);
-  const [isImpulsing, setIsImpulsing] = React.useState(false);
-  const [timebase, setTimebase] = React.useState<'10ms' | '25ms' | '50ms'>('25ms');
+  // Calibrated Tactile Hierarchy state
+  const [tactileTier, setTactileTier] = React.useState<'engraved' | 'flat' | 'recessed' | 'tactile'>('tactile');
+  const [tactileSlider, setTactileSlider] = React.useState(68);
+  const [tactileKnob, setTactileKnob] = React.useState(55);
 
   // Signature Interactions state
   const [churningPattern, setChurningPattern] = React.useState<ChurningPattern>('wavefront');
@@ -71,102 +65,6 @@ export default function HomePage() {
   const [activeCommandId, setActiveCommandId] = React.useState<string | null>(null);
   const [aiPromptModel, setAiPromptModel] = React.useState('Claude 3.5 Sonnet');
   const [aiPromptLoading, setAiPromptLoading] = React.useState(false);
-
-  const computedCapacity = tactileSlider;
-  const computedHeadroom = 100 - Math.round(tactileSlider * 0.65);
-  const computedLatency = (1.8 - (tactileSlider / 100) * 0.9).toFixed(1);
-  const computedForce = (tactileKnob * 0.4 + 35).toFixed(1);
-  const computedRestitution = Math.round(
-    dampingMode === 'quintic' ? 94 : dampingMode === 'critical' ? 100 : 62
-  );
-
-  const triggerImpulsePulse = React.useCallback(() => {
-    setIsImpulsing(true);
-    setIsActuating(true);
-    setTimeout(() => setIsActuating(false), 240);
-    setTimeout(() => setIsImpulsing(false), 800);
-  }, []);
-
-  const waveformPoints = React.useMemo(() => {
-    const points: { chA: number; chB: number }[] = [];
-    const count = 48;
-    const timeFactor = timebase === '10ms' ? 3.6 : timebase === '25ms' ? 2.4 : 1.6;
-    const freqFactor = streamMode === 'continuous' ? timeFactor : streamMode === 'transient' ? timeFactor * 1.5 : timeFactor * 2.2;
-    const amp = (tactileSlider / 100) * 26 + (isImpulsing ? 18 : 6);
-
-    for (let i = 0; i < count; i++) {
-      const x = i / (count - 1);
-      const angle = x * Math.PI * 2 * freqFactor;
-      
-      let baseA = 0;
-      let baseB = 0;
-
-      if (streamMode === 'continuous') {
-        baseA = Math.sin(angle);
-        baseB = Math.cos(angle * 1.02);
-      } else if (streamMode === 'transient') {
-        const decay = Math.exp(-x * (dampingMode === 'critical' ? 4.5 : dampingMode === 'quintic' ? 3.0 : 1.8));
-        baseA = Math.sin(angle * 2) * decay;
-        baseB = Math.cos(angle * 2) * decay;
-      } else {
-        // Spectral mode
-        baseA = Math.sin(angle) * 0.7 + Math.sin(angle * 2.5) * 0.3;
-        baseB = Math.cos(angle * 1.5) * 0.6 + Math.sin(angle * 3) * 0.4;
-      }
-
-      const dampingFactor = dampingMode === 'quintic' ? 1 : dampingMode === 'critical' ? 0.75 : 1.25;
-      const valA = 50 + baseA * amp * dampingFactor;
-      const valB = 50 + baseB * (amp * 0.7) * dampingFactor;
-
-      points.push({
-        chA: Math.round(Math.max(10, Math.min(90, valA))),
-        chB: Math.round(Math.max(10, Math.min(90, valB))),
-      });
-    }
-    return points;
-  }, [tactileSlider, dampingMode, streamMode, timebase, isImpulsing]);
-
-  const { svgPathChA, svgPathChB, areaSvgPathChA } = React.useMemo(() => {
-    if (waveformPoints.length === 0) return { svgPathChA: '', svgPathChB: '', areaSvgPathChA: '' };
-    const width = 640;
-    const height = 96;
-    const step = width / (waveformPoints.length - 1);
-
-    let pathA = `M 0,${height - (waveformPoints[0].chA / 100) * height}`;
-    let pathB = `M 0,${height - (waveformPoints[0].chB / 100) * height}`;
-
-    for (let i = 1; i < waveformPoints.length; i++) {
-      const prevX = (i - 1) * step;
-      const prevYA = height - (waveformPoints[i - 1].chA / 100) * height;
-      const prevYB = height - (waveformPoints[i - 1].chB / 100) * height;
-      const currX = i * step;
-      const currYA = height - (waveformPoints[i].chA / 100) * height;
-      const currYB = height - (waveformPoints[i].chB / 100) * height;
-
-      const cp1X = prevX + step * 0.5;
-      const cp2X = prevX + step * 0.5;
-
-      pathA += ` C ${cp1X},${prevYA} ${cp2X},${currYA} ${currX},${currYA}`;
-      pathB += ` C ${cp1X},${prevYB} ${cp2X},${currYB} ${currX},${currYB}`;
-    }
-
-    return {
-      svgPathChA: pathA,
-      svgPathChB: pathB,
-      areaSvgPathChA: `${pathA} L 640,${height} L 0,${height} Z`,
-    };
-  }, [waveformPoints]);
-
-  const resetConsoleDefaults = () => {
-    setTactileTier('tactile');
-    setActiveSpecimen('tactile');
-    setTactileSlider(74);
-    setTactileKnob(62);
-    setDampingMode('quintic');
-    setPrecisionMode('standard');
-    setStreamMode('continuous');
-    setTimebase('25ms');
-  };
 
   const consoleCommands = [
     {
@@ -193,9 +91,9 @@ export default function HomePage() {
     {
       id: 'perf',
       title: 'Analyze Frame Bottlenecks',
-      category: 'AI',
+      category: 'Analysis',
       shortcut: '⌘A',
-      icon: <Sparkles className="w-3.5 h-3.5" />,
+      icon: <Activity className="w-3.5 h-3.5" strokeWidth={1.5} />,
     },
   ];
 
@@ -227,7 +125,7 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <BrandLogo size="md" variant="tactile" />
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                   <span className="text-sidebar-category uppercase tracking-wider text-text-muted font-medium">
                     NickUI v0.1.1 · Free & Open-Source Ecosystem
                   </span>
@@ -321,7 +219,7 @@ export default function HomePage() {
           {/* ═══════════════════════════════════════════
               SURFACE ERGONOMICS & TACTILE CALIBRATION
           ═══════════════════════════════════════════ */}
-          <section className="px-6 md:px-12 py-20 border-b border-border/80 space-y-8 bg-card/20">
+          <section className="px-6 md:px-12 py-20 border-b border-border/80 space-y-10 bg-card/20">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span className="text-sidebar-category uppercase tracking-wider text-text-muted block font-medium">
@@ -332,559 +230,207 @@ export default function HomePage() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-text-secondary max-w-md leading-relaxed">
-                Architectural depth tiers engineered for tactile feedback — raised reliefs, recessed wells, milled chamfers, and balanced spring damping.
+                Four physical elevation tiers engineered for spatial clarity without superficial ornamentation — raised reliefs, recessed wells, milled chamfers, and coplanar contact.
               </p>
             </div>
 
-            {/* Precision Console Master Workstation */}
-            <div className="rounded-[28px] border border-border/80 bg-card/90 shadow-tactile p-6 md:p-8 space-y-8 backdrop-blur-md relative overflow-hidden">
-              {/* Subtle Ambient Console Grid */}
+            {/* 4 Architectural Depth Tier Specimen Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Tier 0: Engraved Subsurface */}
               <div
-                className="absolute inset-0 opacity-[0.025] pointer-events-none"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
-                  backgroundSize: '40px 40px',
-                }}
-              />
-
-              {/* Console Top Instrument Header & Master Status */}
-              <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-secondary/80 border border-border/70 text-xs font-mono">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
-                    <span className="text-text-primary font-medium tracking-tight">STATUS: CALIBRATED</span>
-                    <span className="text-text-muted/60">·</span>
-                    <span className="text-text-muted">TIER: {tactileTier.toUpperCase()}</span>
+                onClick={() => setTactileTier('engraved')}
+                className={cn(
+                  'p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 select-none',
+                  tactileTier === 'engraved'
+                    ? 'bg-card border-foreground/30 shadow-tactile ring-1 ring-foreground/20'
+                    : 'bg-card/60 hover:bg-card border-border/70 hover:border-border'
+                )}
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Tier 0</span>
+                    <span className="text-[10px] font-mono text-text-muted px-1.5 py-0.5 rounded bg-secondary/60">-1.5mm</span>
                   </div>
-                  <div className="text-[11px] font-mono text-text-muted hidden md:flex items-center gap-2">
-                    <span>FORCE: <strong className="text-text-primary font-medium">{computedForce} cN</strong></span>
-                    <span>·</span>
-                    <span>LATENCY: <strong className="text-text-primary font-medium">{computedLatency}ms</strong></span>
-                    <span>·</span>
-                    <span>RESTITUTION: <strong className="text-text-primary font-medium">{computedRestitution}%</strong></span>
-                  </div>
+                  <h4 className="text-sm font-medium text-text-primary">Engraved Subsurface</h4>
+                  <p className="text-xs text-text-muted leading-relaxed">
+                    Negative elevation well with deep milled relief and subtle inner shadow.
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-3 self-end sm:self-auto">
-                  <SegmentedControl
-                    value={tactileTier}
-                    onChange={(val) => {
-                      setTactileTier(val as any);
-                      setActiveSpecimen(val as any);
-                    }}
-                    size="sm"
-                    variant="recessed"
-                    options={[
-                      { value: 'engraved', label: 'Engraved (-1.5mm)' },
-                      { value: 'flat', label: 'Flush (0.0mm)' },
-                      { value: 'recessed', label: 'Recessed (-0.8mm)' },
-                      { value: 'tactile', label: 'Tactile (+2.4mm)' },
-                    ]}
-                  />
+                <div className="pt-2">
+                  <Button variant="subtle" size="sm" className="w-full">
+                    Actuate Engraved
+                  </Button>
+                </div>
 
-                  <button
-                    type="button"
-                    onClick={resetConsoleDefaults}
-                    className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-secondary/70 border border-border/60 transition-colors cursor-pointer"
-                    title="Reset console to factory calibration"
-                    aria-label="Reset console"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                  </button>
+                <div className="pt-2 border-t border-border/40 text-[10px] font-mono text-text-muted flex justify-between">
+                  <span>Inner Sink: 1px</span>
+                  <span>Finish: Matte</span>
                 </div>
               </div>
 
-              {/* Central Instruments Deck (3 Precision Bays) */}
-              <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-                {/* Bay 1: Actuation Specimens & Micro-Elevation (4 cols) */}
-                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/25 border border-border/70 tactile-well flex flex-col justify-between space-y-5">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                        Actuation Specimens
-                      </span>
-                      <Badge variant="outline" className="text-[10px] font-mono">4 Depth Tiers</Badge>
-                    </div>
-                    <p className="text-xs text-text-secondary leading-relaxed">
-                      Physical relief, chamfered wells, and planar surfaces calibrated across microscopic elevation levels.
-                    </p>
+              {/* Tier 1: Flush Coplanar */}
+              <div
+                onClick={() => setTactileTier('flat')}
+                className={cn(
+                  'p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 select-none',
+                  tactileTier === 'flat'
+                    ? 'bg-card border-foreground/30 shadow-tactile ring-1 ring-foreground/20'
+                    : 'bg-card/60 hover:bg-card border-border/70 hover:border-border'
+                )}
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Tier 1</span>
+                    <span className="text-[10px] font-mono text-text-muted px-1.5 py-0.5 rounded bg-secondary/60">0.0mm</span>
                   </div>
-
-                  {/* 4 Tangible Specimen Actuators (2x2 Grid) */}
-                  <div className="grid grid-cols-2 gap-2.5 py-1">
-                    {/* Specimen 0: Engraved Subsurface */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveSpecimen('engraved');
-                        setTactileTier('engraved');
-                        triggerImpulsePulse();
-                      }}
-                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer select-none space-y-1.5 ${
-                        activeSpecimen === 'engraved'
-                          ? 'bg-background shadow-inner-tactile border-border text-text-primary ring-1 ring-primary/40'
-                          : 'bg-secondary/40 hover:bg-secondary/70 border-border/60 text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">Tier 0</span>
-                        <span className="text-[10px] font-mono text-text-muted">-1.5mm</span>
-                      </div>
-                      <div className="text-xs font-medium">Engraved</div>
-                      <div className="text-[10px] font-mono text-text-muted opacity-70">Deep Milled Relief</div>
-                    </button>
-
-                    {/* Specimen 1: Flush Coplanar */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveSpecimen('flat');
-                        setTactileTier('flat');
-                        triggerImpulsePulse();
-                      }}
-                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer select-none space-y-1.5 ${
-                        activeSpecimen === 'flat'
-                          ? 'bg-card border-border text-text-primary ring-1 ring-primary/40 shadow-2xs'
-                          : 'bg-secondary/40 hover:bg-secondary/70 border-border/60 text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">Tier 1</span>
-                        <span className="text-[10px] font-mono text-text-muted">0.0mm</span>
-                      </div>
-                      <div className="text-xs font-medium">Flush Planar</div>
-                      <div className="text-[10px] font-mono text-text-muted opacity-70">Coplanar Contact</div>
-                    </button>
-
-                    {/* Specimen 2: Recessed Milled Well */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveSpecimen('recessed');
-                        setTactileTier('recessed');
-                        triggerImpulsePulse();
-                      }}
-                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer select-none space-y-1.5 ${
-                        activeSpecimen === 'recessed'
-                          ? 'bg-secondary/90 shadow-inner-tactile border-border text-text-primary ring-1 ring-primary/40'
-                          : 'bg-secondary/40 hover:bg-secondary/70 border-border/60 text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">Tier 2</span>
-                        <span className="text-[10px] font-mono text-text-muted">-0.8mm</span>
-                      </div>
-                      <div className="text-xs font-medium">Recessed Well</div>
-                      <div className="text-[10px] font-mono text-text-muted opacity-70">Milled Chamfer</div>
-                    </button>
-
-                    {/* Specimen 3: Raised Tactile Relief */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveSpecimen('tactile');
-                        setTactileTier('tactile');
-                        triggerImpulsePulse();
-                      }}
-                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer select-none space-y-1.5 ${
-                        activeSpecimen === 'tactile'
-                          ? 'bg-card shadow-tactile border-border/90 text-text-primary ring-1 ring-primary/40'
-                          : 'bg-secondary/40 hover:bg-secondary/70 border-border/60 text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">Tier 3</span>
-                        <span className="text-[10px] font-mono text-text-muted">+2.4mm</span>
-                      </div>
-                      <div className="text-xs font-medium">Raised Relief</div>
-                      <div className="text-[10px] font-mono text-text-muted opacity-70">Specular Lip</div>
-                    </button>
-                  </div>
-
-                  {/* Damping Physics Selector */}
-                  <div className="space-y-2 pt-2 border-t border-border/50">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-text-muted">
-                      <span>SPRING DAMPING PHYSICS:</span>
-                      <span className="text-text-primary font-medium uppercase">{dampingMode}</span>
-                    </div>
-                    <SegmentedControl
-                      value={dampingMode}
-                      onChange={(v) => setDampingMode(v as any)}
-                      size="sm"
-                      variant="tactile"
-                      fullWidth
-                      options={[
-                        { value: 'quintic', label: 'Quintic Spring' },
-                        { value: 'critical', label: 'Critical' },
-                        { value: 'linear', label: 'Linear' },
-                      ]}
-                    />
-                  </div>
-
-                  <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                    <span>ACTIVE: <strong className="text-text-primary font-medium uppercase">{activeSpecimen}</strong></span>
-                    <span>RESTITUTION: <strong className="text-text-primary font-medium">{computedRestitution}%</strong></span>
-                  </div>
+                  <h4 className="text-sm font-medium text-text-primary">Flush Coplanar</h4>
+                  <p className="text-xs text-text-muted leading-relaxed">
+                    Coplanar surface contact with hairline border and zero artificial elevation.
+                  </p>
                 </div>
 
-                {/* Bay 2: Dual-Axis Attenuation & Rotary Encoder (4 cols) */}
-                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/25 border border-border/70 tactile-well flex flex-col justify-between space-y-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                        Dual-Axis Calibration
-                      </span>
-                      <Badge variant="engraved" className="text-[10px] font-mono">Milled Track</Badge>
-                    </div>
-                    <p className="text-xs text-text-secondary leading-relaxed">
-                      Rotary knurled dial and milled linear slider trough with etched millimeter graduation.
-                    </p>
-                  </div>
-
-                  {/* Dual-Axis Control Deck: Rotary Encoder + Linear Slider */}
-                  <div className="space-y-4 p-4 rounded-xl bg-card/70 border border-border/60">
-                    <div className="flex items-center justify-around gap-4 pb-2 border-b border-border/50">
-                      {/* Rotary Knob */}
-                      <div className="flex flex-col items-center gap-1.5">
-                        <Knob
-                          value={tactileKnob}
-                          onChange={setTactileKnob}
-                          min={0}
-                          max={100}
-                          step={1}
-                          size={70}
-                          variant="tactile"
-                          showTicks={true}
-                          showValue={false}
-                        />
-                        <div className="text-center font-mono">
-                          <span className="text-[10px] text-text-muted block uppercase tracking-wider">Spring Force</span>
-                          <span className="text-xs font-medium text-text-primary">{computedForce} cN</span>
-                        </div>
-                      </div>
-
-                      {/* Travel Attenuation Numerical Readout */}
-                      <div className="flex flex-col justify-center space-y-1.5 text-right font-mono">
-                        <div>
-                          <span className="text-[10px] text-text-muted uppercase block">Linear Travel</span>
-                          <span className="text-xl font-medium tracking-tight text-text-primary">{tactileSlider}mm</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-text-muted uppercase block">Attenuation</span>
-                          <span className="text-xs text-text-secondary">{tactileSlider}%</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Linear Slider Well */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-[9px] font-mono text-text-muted px-0.5">
-                        <span>0mm</span>
-                        <span>25mm</span>
-                        <span>50mm</span>
-                        <span>75mm</span>
-                        <span>100mm</span>
-                      </div>
-                      <Slider value={tactileSlider} min={0} max={100} onChange={setTactileSlider} />
-                    </div>
-
-                    {/* Discrete 32-Segment Optical Level Bar */}
-                    <div className="space-y-1 pt-1">
-                      <div className="flex items-center justify-between text-[9px] font-mono text-text-muted">
-                        <span>ATTENUATION DISPLACEMENT LEVEL</span>
-                        <span>{tactileSlider}%</span>
-                      </div>
-                      <div className="flex gap-0.5 h-1.5 w-full">
-                        {Array.from({ length: 32 }).map((_, i) => {
-                          const active = (i / 31) * 100 <= tactileSlider;
-                          const isPeak = Math.abs((i / 31) * 100 - tactileSlider) < 3.2;
-                          return (
-                            <div
-                              key={i}
-                              className={`flex-1 h-full rounded-[1px] transition-colors duration-150 ${
-                                isPeak
-                                  ? 'bg-text-primary'
-                                  : active
-                                  ? 'bg-foreground/75'
-                                  : 'bg-muted/35'
-                              }`}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Resolution Mode Switcher */}
-                  <div className="pt-2 border-t border-border/50 flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-text-muted uppercase">Resolution:</span>
-                    <SegmentedControl
-                      value={precisionMode}
-                      onChange={(v) => setPrecisionMode(v as any)}
-                      size="sm"
-                      variant="tactile"
-                      options={[
-                        { value: 'fine', label: '0.1x Fine' },
-                        { value: 'standard', label: '1x Std' },
-                        { value: 'coarse', label: '5x Coarse' },
-                      ]}
-                    />
-                  </div>
+                <div className="pt-2">
+                  <Button variant="secondary" size="sm" className="w-full">
+                    Actuate Planar
+                  </Button>
                 </div>
 
-                {/* Bay 3: Surface Haptic & Acoustic Telemetry (4 cols) */}
-                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/25 border border-border/70 tactile-well flex flex-col justify-between space-y-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                        Surface Telemetry
-                      </span>
-                      <Badge variant="status" status="success" className="text-[10px] font-mono">Nominal</Badge>
-                    </div>
-                    <p className="text-xs text-text-secondary leading-relaxed">
-                      Real-time optical travel, return velocity, and tactile headroom feedback.
-                    </p>
-                  </div>
-
-                  {/* Multi-Layer Concentric Telemetry Arcs */}
-                  <div className="py-2 flex flex-col items-center justify-center">
-                    <div className="relative w-36 h-36 flex items-center justify-center">
-                      <svg viewBox="0 0 140 140" className="w-full h-full -rotate-90">
-                        {/* Outer Track: Travel Capacity */}
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r="54"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="5"
-                          className="text-muted/20"
-                        />
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r="54"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="5"
-                          strokeDasharray={2 * Math.PI * 54}
-                          strokeDashoffset={2 * Math.PI * 54 * (1 - tactileSlider / 100)}
-                          strokeLinecap="round"
-                          className="text-foreground transition-all duration-300"
-                        />
-
-                        {/* Middle Track: Restitution Velocity */}
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r="44"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          className="text-muted/20"
-                        />
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r="44"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          strokeDasharray={2 * Math.PI * 44}
-                          strokeDashoffset={2 * Math.PI * 44 * (1 - computedRestitution / 100)}
-                          strokeLinecap="round"
-                          className="text-foreground/60 transition-all duration-300"
-                        />
-
-                        {/* Inner Track: Damping Headroom */}
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r="34"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3.5"
-                          className="text-muted/20"
-                        />
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r="34"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3.5"
-                          strokeDasharray={2 * Math.PI * 34}
-                          strokeDashoffset={2 * Math.PI * 34 * (1 - computedHeadroom / 100)}
-                          strokeLinecap="round"
-                          className="text-foreground/40 transition-all duration-300"
-                        />
-                      </svg>
-
-                      {/* Center Numerical Readout */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span className="text-2xl font-mono font-medium tracking-tight text-text-primary">
-                          {tactileSlider}%
-                        </span>
-                        <span className="text-[8px] font-mono uppercase tracking-widest text-text-muted">
-                          CALIBRATED
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 4 Architectural Data Metrics Cells */}
-                  <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[10px] font-mono">
-                    <div className="p-2 rounded-lg bg-card/60 border border-border/50">
-                      <span className="text-text-muted block">RETURN LATENCY</span>
-                      <span className="text-text-primary font-medium text-xs">{computedLatency}ms</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-card/60 border border-border/50">
-                      <span className="text-text-muted block">TACTILE HEADROOM</span>
-                      <span className="text-text-primary font-medium text-xs">{computedHeadroom}%</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-card/60 border border-border/50">
-                      <span className="text-text-muted block">SPRING FORCE</span>
-                      <span className="text-text-primary font-medium text-xs">{computedForce} cN</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-card/60 border border-border/50">
-                      <span className="text-text-muted block">ACOUSTIC PROFILE</span>
-                      <span className="text-text-primary font-medium text-xs truncate">
-                        {activeSpecimen === 'engraved' ? 'Subdued Thud' : activeSpecimen === 'flat' ? 'Planar Tap' : activeSpecimen === 'recessed' ? 'Muffled Click' : 'Crisp Clack'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Interactive Impulse Trigger Action */}
-                  <button
-                    type="button"
-                    onClick={triggerImpulsePulse}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-secondary/80 hover:bg-secondary text-text-primary border border-border/70 text-xs font-mono transition-colors cursor-pointer active:scale-[0.98]"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-text-muted" />
-                    <span>Trigger Physical Impulse</span>
-                  </button>
+                <div className="pt-2 border-t border-border/40 text-[10px] font-mono text-text-muted flex justify-between">
+                  <span>Border: 1px Solid</span>
+                  <span>Finish: Smooth</span>
                 </div>
               </div>
 
-              {/* Bottom Deck: Dual-Channel Phase Waveform & Impulse Oscilloscope */}
-              <div className="relative z-10 p-4 sm:p-5 rounded-2xl bg-secondary/25 border border-border/70 tactile-well space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <Activity className="w-4 h-4 text-text-primary" />
-                    <span className="font-mono font-medium text-text-primary tracking-tight">
-                      DUAL-CHANNEL DISPLACEMENT & PHASE OSCILLOSCOPE
-                    </span>
-                    <span className="text-[10px] font-mono text-text-muted hidden md:inline">
-                      // CH1: TRAVEL (mm) · CH2: VELOCITY (mm/s)
-                    </span>
+              {/* Tier 2: Recessed Milled Well */}
+              <div
+                onClick={() => setTactileTier('recessed')}
+                className={cn(
+                  'p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 select-none',
+                  tactileTier === 'recessed'
+                    ? 'bg-card border-foreground/30 shadow-tactile ring-1 ring-foreground/20'
+                    : 'bg-card/60 hover:bg-card border-border/70 hover:border-border'
+                )}
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Tier 2</span>
+                    <span className="text-[10px] font-mono text-text-muted px-1.5 py-0.5 rounded bg-secondary/60">-0.8mm</span>
                   </div>
-
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-text-muted">
-                      <span>Sweep:</span>
-                      <SegmentedControl
-                        value={timebase}
-                        onChange={(v) => setTimebase(v as any)}
-                        size="sm"
-                        variant="tactile"
-                        options={[
-                          { value: '10ms', label: '10ms' },
-                          { value: '25ms', label: '25ms' },
-                          { value: '50ms', label: '50ms' },
-                        ]}
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-text-muted">
-                      <span>Mode:</span>
-                      <SegmentedControl
-                        value={streamMode}
-                        onChange={(v) => setStreamMode(v as any)}
-                        size="sm"
-                        variant="tactile"
-                        options={[
-                          { value: 'continuous', label: 'Continuous' },
-                          { value: 'transient', label: 'Transient' },
-                          { value: 'spectral', label: 'Spectral' },
-                        ]}
-                      />
-                    </div>
-                  </div>
+                  <h4 className="text-sm font-medium text-text-primary">Recessed Well</h4>
+                  <p className="text-xs text-text-muted leading-relaxed">
+                    Milled chamfer sink with soft ambient shadow falloff.
+                  </p>
                 </div>
 
-                {/* Oscilloscope Phosphor Screen */}
-                <div className="relative h-28 w-full rounded-xl bg-background/95 border border-border/80 overflow-hidden shadow-inner-tactile flex items-center justify-center">
-                  {/* Calibrated Division Grid */}
-                  <div
-                    className="absolute inset-0 opacity-[0.07]"
-                    style={{
-                      backgroundImage:
-                        'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
-                      backgroundSize: '32px 24px',
-                    }}
+                <div className="pt-2">
+                  <Button variant="recessed" size="sm" className="w-full">
+                    Actuate Recessed
+                  </Button>
+                </div>
+
+                <div className="pt-2 border-t border-border/40 text-[10px] font-mono text-text-muted flex justify-between">
+                  <span>Falloff: 4px Soft</span>
+                  <span>Finish: Milled</span>
+                </div>
+              </div>
+
+              {/* Tier 3: Raised Tactile Relief */}
+              <div
+                onClick={() => setTactileTier('tactile')}
+                className={cn(
+                  'p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 select-none',
+                  tactileTier === 'tactile'
+                    ? 'bg-card border-foreground/30 shadow-tactile ring-1 ring-foreground/20'
+                    : 'bg-card/60 hover:bg-card border-border/70 hover:border-border'
+                )}
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Tier 3</span>
+                    <span className="text-[10px] font-mono text-text-muted px-1.5 py-0.5 rounded bg-secondary/60">+2.4mm</span>
+                  </div>
+                  <h4 className="text-sm font-medium text-text-primary">Raised Relief</h4>
+                  <p className="text-xs text-text-muted leading-relaxed">
+                    Raised specular lip with measured spring damping and physical feedback.
+                  </p>
+                </div>
+
+                <div className="pt-2">
+                  <Button variant="tactile" size="sm" className="w-full">
+                    Actuate Tactile
+                  </Button>
+                </div>
+
+                <div className="pt-2 border-t border-border/40 text-[10px] font-mono text-text-muted flex justify-between">
+                  <span>Rim: 1.5px Lip</span>
+                  <span>Spring: Damped</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Unified Tactile Calibration Deck (Single Clean Deck) */}
+            <div className="p-6 rounded-2xl border border-border/80 bg-card shadow-tactile space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border/60">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-medium text-text-primary uppercase tracking-wider">
+                    Physical Kinematics Calibration
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                    CALIBRATED
+                  </span>
+                </div>
+                <div className="text-[11px] font-mono text-text-muted">
+                  SELECTED TIER: <span className="text-text-primary font-medium uppercase">{tactileTier}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                {/* Rotary Damping Knob (Col 4) */}
+                <div className="md:col-span-4 p-4 rounded-xl bg-secondary/30 border border-border/50 flex items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="text-xs font-medium text-text-primary block">Rotary Damping</span>
+                    <p className="text-[11px] text-text-muted leading-relaxed">
+                      Mechanical rotational resistance
+                    </p>
+                    <span className="text-xs font-mono text-text-primary font-medium block pt-1">
+                      {tactileKnob}% Damping
+                    </span>
+                  </div>
+                  <Knob
+                    value={tactileKnob}
+                    onChange={setTactileKnob}
+                    min={0}
+                    max={100}
+                    size={52}
+                    label=""
                   />
-
-                  {/* Horizontal Center Baseline */}
-                  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 border-b border-border/40 pointer-events-none" />
-
-                  {/* Calibrated Trigger Line */}
-                  <div className="absolute left-0 right-0 top-[35%] border-b border-dashed border-text-muted/30 pointer-events-none flex justify-end pr-2">
-                    <span className="text-[8px] font-mono text-text-muted/60">TRIG: 45 cN</span>
-                  </div>
-
-                  {/* Dual Channel Waveforms */}
-                  <svg
-                    viewBox="0 0 640 96"
-                    preserveAspectRatio="none"
-                    className="w-full h-full relative z-10"
-                  >
-                    <defs>
-                      <linearGradient id="waveGradientA" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="currentColor" stopOpacity="0.14" />
-                        <stop offset="100%" stopColor="currentColor" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-
-                    {/* Area under Channel A */}
-                    <path
-                      d={areaSvgPathChA}
-                      fill="url(#waveGradientA)"
-                      className="text-foreground transition-all duration-200"
-                    />
-
-                    {/* Channel B: Velocity Derivative (dashed hairline) */}
-                    <path
-                      d={svgPathChB}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1"
-                      strokeDasharray="4 3"
-                      strokeLinecap="round"
-                      className="text-text-muted/60 transition-all duration-200"
-                    />
-
-                    {/* Channel A: Force Travel Displacement (solid curve) */}
-                    <path
-                      d={svgPathChA}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-foreground transition-all duration-200"
-                    />
-                  </svg>
                 </div>
 
-                {/* Oscilloscope Instrumentation Footer */}
-                <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono text-text-muted pt-1">
-                  <span>SAMPLING: 2,400 Hz</span>
-                  <span>BUFFER: 1,024 SAMPLES</span>
-                  <span>TIMEBASE: {timebase}/DIV</span>
-                  <span>TRIGGER: 45.0 cN (AUTO)</span>
-                  <span>DAMPING: {dampingMode.toUpperCase()} (0.707 ζ)</span>
-                  <span>HEADROOM: {computedHeadroom}%</span>
+                {/* Spring Travel Slider (Col 5) */}
+                <div className="md:col-span-5 p-4 rounded-xl bg-secondary/30 border border-border/50 space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-medium text-text-primary">Spring Travel Resistance</span>
+                    <span className="font-mono text-text-muted">{tactileSlider}%</span>
+                  </div>
+                  <Slider value={tactileSlider} onChange={setTactileSlider} min={10} max={100} />
+                  <div className="flex items-center justify-between text-[10px] font-mono text-text-muted">
+                    <span>Soft (10%)</span>
+                    <span>Nominal (68%)</span>
+                    <span>Stiff (100%)</span>
+                  </div>
+                </div>
+
+                {/* Live Actuation Specimen (Col 3) */}
+                <div className="md:col-span-3 p-4 rounded-xl bg-secondary/30 border border-border/50 flex flex-col items-center justify-center space-y-2 text-center">
+                  <span className="text-[10px] font-mono text-text-muted uppercase">Live Actuator</span>
+                  <Button
+                    variant={tactileTier === 'flat' ? 'secondary' : tactileTier === 'engraved' ? 'subtle' : tactileTier}
+                    size="md"
+                    className="w-full"
+                  >
+                    Actuate Key
+                  </Button>
                 </div>
               </div>
             </div>

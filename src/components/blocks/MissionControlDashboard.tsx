@@ -15,7 +15,6 @@ import {
   Radio,
   ShieldAlert,
   Terminal,
-  Zap,
   Layers,
   RefreshCw,
   Sliders,

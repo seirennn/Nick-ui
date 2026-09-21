@@ -159,62 +159,51 @@ export default function FinancialKPIs() {
 
 const HERO_CODE = `import { CenteredHeroLayout } from '@/components/blocks/landing/CenteredHeroLayout';
 
-export default function LandingPage() {
+export default function WorkstationHeroPage() {
   return (
     <CenteredHeroLayout
       showLogo={true}
-      badgeText="NickUI v0.1.1 · Open Source Release"
-      badgeHref="/components"
-      title={<>Architectural design system for <span className="text-text-muted">developer-owned software</span>.</>}
-      description="High-craft UI components, tactile depth tiers, and native AI MCP server."
-      primaryAction={{ label: 'Explore Components', href: '/components' }}
-      secondaryAction={{ label: 'CLI Documentation', href: '/docs/cli' }}
-      commandSnippet="pnpm dlx @sehrennn/nickui add button"
+      systemStatus="STATUS: NOMINAL // CORE-ENGINE V0.1.1 · WIRE-SPEED MTLS · 48 NODES"
+      title={<>Architectural UI primitives & <br className="hidden sm:inline" />high-density hardware consoles.</>}
+      description="Engineered for spatial clarity, environmental atmosphere, and tactile depth. High-frequency telemetry decks, calibrated physical controls, and developer-owned components."
+      primaryAction={{ label: 'Explore Primitives', href: '/components' }}
+      secondaryAction={{ label: 'Architecture Guide', href: '/docs/cli' }}
     />
   );
 }`;
 
 const BENTO_LAYOUT_CODE = `import { BentoShowcaseLayout } from '@/components/blocks/landing/BentoShowcaseLayout';
 
-export default function BentoSection() {
+export default function SystemsArchitecturePage() {
   return (
     <BentoShowcaseLayout
-      category="SYSTEM ARCHITECTURE"
+      category="SYSTEMS ARCHITECTURE & TOPOLOGY"
       title="Engineered for tactile precision & zero-latency execution."
-      description="Every primitive is physically grounded with atmospheric lighting, measured spring physics, and native AI MCP bindings."
+      description="Every primitive is physically grounded with atmospheric lighting, measured spring physics, and deterministic state continuity."
     />
   );
 }`;
 
 const FEATURE_GRID_CODE = `import { FeatureGridLayout } from '@/components/blocks/landing/FeatureGridLayout';
 
-export default function FeaturesSection() {
+export default function SpecificationsPage() {
   return (
     <FeatureGridLayout
-      category="CAPABILITIES & PRINCIPLES"
+      category="ARCHITECTURAL SPECIFICATIONS"
       title="Engineered for spatial clarity & architectural presence."
-      description="Every component is built from the ground up to respect environmental lighting and calm motion."
+      description="Every primitive is built from the ground up to respect environmental lighting, calm non-intrusive motion, and tangible depth."
     />
   );
 }`;
 
 const SPLIT_SHOWCASE_CODE = `import { SplitShowcaseLayout } from '@/components/blocks/landing/SplitShowcaseLayout';
-import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDescription, SpotlightCardContent } from '@/components/ui/spotlight-card';
 
-export default function ShowcaseSection() {
+export default function DualChassisPage() {
   return (
     <SplitShowcaseLayout
-      category="DESIGN PARADIGM"
+      category="DESIGN PARADIGM & HARDWARE GROUNDING"
       title="Optical physics meets calm, non-intrusive software."
-      showcaseNode={
-        <SpotlightCard variant="tactile">
-          <SpotlightCardHeader>
-            <SpotlightCardTitle>Telemetry Node</SpotlightCardTitle>
-            <SpotlightCardDescription>Pass pointer to observe ambient light.</SpotlightCardDescription>
-          </SpotlightCardHeader>
-          <SpotlightCardContent>420px soft falloff</SpotlightCardContent>
-        </SpotlightCard>
-      }
+      description="Crafted to remain visually complete even if all motion is paused. Visual hierarchy is established through typography, spacing, and alignment alone."
     />
   );
 }`;
@@ -278,7 +267,7 @@ export default function BlocksPage() {
                 <TabsTrigger value="all">All Blocks</TabsTrigger>
                 <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
                 <TabsTrigger value="tactile">Tactile Metrics</TabsTrigger>
-                <TabsTrigger value="landing">Landing Layouts</TabsTrigger>
+                <TabsTrigger value="systems">Systems & Showcases</TabsTrigger>
                 <TabsTrigger value="infrastructure">Cloud & Ops</TabsTrigger>
                 <TabsTrigger value="settings">Governance</TabsTrigger>
               </TabsList>
@@ -515,18 +504,18 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* ─── LANDING LAYOUTS ─── */}
-          {(activeTab === 'all' || activeTab === 'landing') && (
+          {/* ─── SYSTEMS & SHOWCASES ─── */}
+          {(activeTab === 'all' || activeTab === 'systems') && (
             <BlockViewer
-              title="Centered Hero Section Layout"
+              title="Architectural Studio Command Canvas"
               slug="centered-hero-layout"
-              category="Landing Layouts"
+              category="Systems & Showcases"
               cliCommand="pnpm dlx @sehrennn/nickui add centered-hero-layout"
               code={getBlockSource('centered-hero-layout')}
               codeFileName="CenteredHeroLayout.tsx"
               usageCode={HERO_CODE}
               usageFileName="page.tsx"
-              description="Commanding centered hero section with official BrandLogo glyph, release announcement badge, and interactive CLI copy pill."
+              description="Commanding architectural workstation canvas featuring an integrated hardware surface deck with dual rotary knobs, live telemetry sparkline, and dual package/CLI installation wells."
             >
               <div className="w-full max-w-4xl">
                 <CenteredHeroLayout />
@@ -534,18 +523,18 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {(activeTab === 'all' || activeTab === 'landing') && (
+          {(activeTab === 'all' || activeTab === 'systems') && (
             <BlockViewer
-              title="Bento Grid Capabilities Layout"
+              title="Systems Topology & Telemetry Matrix"
               slug="bento-showcase-layout"
-              category="Landing Layouts"
+              category="Systems & Showcases"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add bento-showcase-layout"
               code={getBlockSource('bento-showcase-layout')}
               codeFileName="BentoShowcaseLayout.tsx"
               usageCode={BENTO_LAYOUT_CODE}
               usageFileName="page.tsx"
-              description="Multi-tier architectural bento grid featuring live throughput telemetry sparkline, analog spring physics sliders, and AI MCP badge."
+              description="Engineering systems topology matrix featuring high-frequency telemetry sparkline, edge relay latency matrix, analog spring physics controls, stdio JSON-RPC stream, and core affinity allocation."
             >
               <div className="w-full max-w-5xl">
                 <BentoShowcaseLayout />
@@ -553,17 +542,17 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {(activeTab === 'all' || activeTab === 'landing') && (
+          {(activeTab === 'all' || activeTab === 'systems') && (
             <BlockViewer
-              title="Feature Grid Section Layout"
+              title="Architectural Primitives Specification Deck"
               slug="feature-grid-layout"
-              category="Landing Layouts"
+              category="Systems & Showcases"
               cliCommand="pnpm dlx @sehrennn/nickui add feature-grid-layout"
               code={getBlockSource('feature-grid-layout')}
               codeFileName="FeatureGridLayout.tsx"
               usageCode={FEATURE_GRID_CODE}
               usageFileName="page.tsx"
-              description="Four-column architectural capability cards with hairline borders and tactile hover response."
+              description="Architectural primitives and hardware specification cards with hairline borders, monospace engineering specs, and tactile hover response."
             >
               <div className="w-full max-w-5xl">
                 <FeatureGridLayout />
@@ -571,32 +560,20 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {(activeTab === 'all' || activeTab === 'landing') && (
+          {(activeTab === 'all' || activeTab === 'systems') && (
             <BlockViewer
-              title="Split Interactive Showcase Layout"
+              title="Dual-Chassis Engineering Canvas"
               slug="split-showcase-layout"
-              category="Landing Layouts"
+              category="Systems & Showcases"
               cliCommand="pnpm dlx @sehrennn/nickui add split-showcase-layout"
               code={getBlockSource('split-showcase-layout')}
               codeFileName="SplitShowcaseLayout.tsx"
               usageCode={SPLIT_SHOWCASE_CODE}
               usageFileName="page.tsx"
-              description="Asymmetrical layout pairing editorial design principles with an interactive live optical spotlight widget."
+              description="Dual-chassis canvas pairing deep architectural design principles with an interactive live dual-channel oscilloscope and hardware attenuation knob."
             >
               <div className="w-full max-w-5xl">
-                <SplitShowcaseLayout
-                  category="DESIGN PARADIGM"
-                  title="Optical physics meets calm, non-intrusive software."
-                  showcaseNode={
-                    <SpotlightCard variant="tactile">
-                      <SpotlightCardHeader>
-                        <SpotlightCardTitle>Telemetry Node</SpotlightCardTitle>
-                        <SpotlightCardDescription>Pass pointer to observe ambient light.</SpotlightCardDescription>
-                      </SpotlightCardHeader>
-                      <SpotlightCardContent>420px soft falloff</SpotlightCardContent>
-                    </SpotlightCard>
-                  }
-                />
+                <SplitShowcaseLayout />
               </div>
             </BlockViewer>
           )}

@@ -17,7 +17,7 @@ import {
   Home,
   Wallet,
   Activity,
-  Zap,
+  Workflow,
   BarChart3,
   Shield,
   Terminal,
@@ -25,7 +25,7 @@ import {
   Settings,
   User,
   LogOut,
-  Sparkles,
+  Palette,
   Download,
   CheckCircle2,
   Heart,
@@ -129,7 +129,7 @@ export function WorkstationSidebar() {
         { id: 'overview', label: 'Overview & Mission', icon: Home, badge: 'Live', badgeVariant: 'live' },
         { id: 'accounts', label: 'Multi-Cluster Accounts', icon: Wallet, badge: '4' },
         { id: 'strategies', label: 'Algorithmic Strategies', icon: Activity },
-        { id: 'execution', label: 'Zero-Loss Routing', icon: Zap, badge: '99.9%', badgeVariant: 'live' },
+        { id: 'execution', label: 'Zero-Loss Routing', icon: Workflow, badge: '99.9%', badgeVariant: 'live' },
       ],
     },
     {
@@ -232,7 +232,7 @@ export function WorkstationSidebar() {
                   title="Theme & Appearance (⌘T)"
                   className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Palette className="w-3.5 h-3.5" strokeWidth={1.5} />
                 </button>
                 <button
                   type="button"
@@ -501,7 +501,7 @@ export function WorkstationSidebar() {
                     className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs text-neutral-300 hover:text-white hover:bg-white/[0.08] transition-colors text-left"
                   >
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
+                      <Palette className="w-3.5 h-3.5 text-neutral-400" strokeWidth={1.5} />
                       <span>Appearance</span>
                     </div>
                     <kbd className="text-[9px] font-mono bg-white/[0.06] px-1.5 py-0.5 rounded text-neutral-400">⌘T</kbd>

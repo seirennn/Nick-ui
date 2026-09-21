@@ -3,23 +3,22 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Activity01Icon,
+  CpuIcon,
+  RadioTowerIcon,
+  Database01Icon,
+  LayerIcon,
+  ShieldCheckIcon,
+  ComputerTerminal01Icon,
+  SlidersHorizontalIcon,
+  Search01Icon,
+} from '@hugeicons/core-free-icons';
 import {
   ChevronDown,
-  Search,
-  Sliders,
-  Cpu,
-  Activity,
-  Layers,
-  HardDrive,
-  ShieldCheck,
-  Terminal,
-  FileText,
-  User,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
-  Database,
-  Radio,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { cn } from '@/lib/utils';
@@ -27,7 +26,7 @@ import { cn } from '@/lib/utils';
 export interface StudioSidebarItem {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: any;
   badge?: string;
   active?: boolean;
   href?: string;
@@ -63,19 +62,19 @@ const DEFAULT_GROUPS: StudioSidebarGroup[] = [
   {
     category: 'CORE PLATFORM',
     items: [
-      { id: 'overview', label: 'Operations Overview', icon: Activity, badge: 'Live' },
-      { id: 'clusters', label: 'Nodes & Clusters', icon: Cpu },
-      { id: 'telemetry', label: 'Revenue Telemetry', icon: Radio },
-      { id: 'storage', label: 'Datastores & Pools', icon: Database },
+      { id: 'overview', label: 'Operations Overview', icon: Activity01Icon, badge: 'Live' },
+      { id: 'clusters', label: 'Nodes & Clusters', icon: CpuIcon },
+      { id: 'telemetry', label: 'Revenue Telemetry', icon: RadioTowerIcon },
+      { id: 'storage', label: 'Datastores & Pools', icon: Database01Icon },
     ],
   },
   {
     category: 'INFRASTRUCTURE & OPS',
     items: [
-      { id: 'deployments', label: 'Pipelines & CI/CD', icon: Layers, badge: 'v0.1.1' },
-      { id: 'security', label: 'Access & Compliance', icon: ShieldCheck },
-      { id: 'audit', label: 'Consensus Logs', icon: FileText },
-      { id: 'config', label: 'System Preferences', icon: Sliders },
+      { id: 'deployments', label: 'Pipelines & CI/CD', icon: LayerIcon, badge: 'v0.1.1' },
+      { id: 'security', label: 'Access & Compliance', icon: ShieldCheckIcon },
+      { id: 'audit', label: 'Consensus Logs', icon: ComputerTerminal01Icon },
+      { id: 'config', label: 'System Preferences', icon: SlidersHorizontalIcon },
     ],
   },
 ];
@@ -154,7 +153,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
               className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-secondary/40 hover:bg-secondary/70 border border-border/60 text-xs text-text-muted transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2">
-                <Search className="w-3.5 h-3.5" />
+                <HugeiconsIcon icon={Search01Icon} size={14} strokeWidth={1.5} className="text-text-muted" />
                 <span className="text-[11px] font-sans">Command palette...</span>
               </div>
               <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-background/80 border border-border/60 text-text-muted">
@@ -176,7 +175,6 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
 
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const Icon = item.icon;
                   const isActive = selected === item.id;
 
                   return (
@@ -206,7 +204,18 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
                       )}
 
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')} />
+                        {Array.isArray(item.icon) ? (
+                          <HugeiconsIcon
+                            icon={item.icon}
+                            size={16}
+                            strokeWidth={1.5}
+                            className={cn('shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')}
+                          />
+                        ) : React.isValidElement(item.icon) ? (
+                          item.icon
+                        ) : typeof item.icon === 'function' ? (
+                          <item.icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')} />
+                        ) : null}
                         {!collapsed && (
                           <span className="truncate">{item.label}</span>
                         )}

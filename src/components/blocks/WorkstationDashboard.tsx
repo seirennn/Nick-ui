@@ -33,11 +33,10 @@ import {
   Shield,
   Activity,
   Layers,
-  Sparkles,
+  Palette,
   Download,
   Copy,
   Check,
-  Zap,
 } from 'lucide-react';
 
 // Inner Workstation Console that consumes SidebarContext and BlockViewerContext
@@ -265,7 +264,7 @@ function WorkstationContent() {
                 title="Theme & Appearance (⌘T)"
                 className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Palette className="w-3.5 h-3.5" strokeWidth={1.5} />
               </button>
             </div>
           </div>

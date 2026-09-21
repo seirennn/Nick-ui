@@ -29,7 +29,6 @@ import {
   BookOpen,
   ArrowUpRight,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 
 export function TechnicalDocsLayout() {

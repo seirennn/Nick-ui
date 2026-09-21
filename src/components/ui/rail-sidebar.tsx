@@ -2,26 +2,24 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  LayoutGrid,
-  BarChart3,
-  Server,
-  Shield,
-  Layers,
-  Sliders,
-  Terminal,
-  ChevronRight,
-  Zap,
-  Activity,
-  Search,
-} from 'lucide-react';
+  DashboardSquare01Icon,
+  BarChartIcon,
+  ServerStack01Icon,
+  Shield01Icon,
+  LayerIcon,
+  SlidersHorizontalIcon,
+  TerminalIcon,
+} from '@hugeicons/core-free-icons';
+import { ChevronRight } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { cn } from '@/lib/utils';
 
 export interface RailNavItem {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: any;
   shortcut?: string;
   badge?: string;
 }
@@ -40,12 +38,12 @@ export interface RailSidebarProps extends Omit<React.HTMLAttributes<HTMLElement>
 }
 
 const DEFAULT_RAIL_ITEMS: RailNavItem[] = [
-  { id: 'overview', label: 'Operations & KPIs', icon: LayoutGrid, shortcut: '⌘1' },
-  { id: 'analytics', label: 'Revenue Telemetry', icon: BarChart3, shortcut: '⌘2' },
-  { id: 'nodes', label: 'Cluster Infrastructure', icon: Server, shortcut: '⌘3', badge: '12' },
-  { id: 'security', label: 'Access & Compliance', icon: Shield, shortcut: '⌘4' },
-  { id: 'deployments', label: 'Release Pipeline', icon: Layers, shortcut: '⌘5' },
-  { id: 'config', label: 'System Configuration', icon: Sliders, shortcut: '⌘6' },
+  { id: 'overview', label: 'Operations & KPIs', icon: DashboardSquare01Icon, shortcut: '⌘1' },
+  { id: 'analytics', label: 'Revenue Telemetry', icon: BarChartIcon, shortcut: '⌘2' },
+  { id: 'nodes', label: 'Cluster Infrastructure', icon: ServerStack01Icon, shortcut: '⌘3', badge: '12' },
+  { id: 'security', label: 'Access & Compliance', icon: Shield01Icon, shortcut: '⌘4' },
+  { id: 'deployments', label: 'Release Pipeline', icon: LayerIcon, shortcut: '⌘5' },
+  { id: 'config', label: 'System Configuration', icon: SlidersHorizontalIcon, shortcut: '⌘6' },
 ];
 
 export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
@@ -138,7 +136,6 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
         {/* Middle: Navigation Wells */}
         <nav className="flex flex-col w-full px-2.5 gap-1.5 my-auto">
           {items.map((item) => {
-            const Icon = item.icon;
             const isActive = selected === item.id;
             const isHovered = hoveredId === item.id;
 
@@ -173,7 +170,18 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
                   )}
 
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')} />
+                    {Array.isArray(item.icon) ? (
+                      <HugeiconsIcon
+                        icon={item.icon}
+                        size={16}
+                        strokeWidth={1.5}
+                        className={cn('shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')}
+                      />
+                    ) : React.isValidElement(item.icon) ? (
+                      item.icon
+                    ) : typeof item.icon === 'function' ? (
+                      <item.icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')} />
+                    ) : null}
                     {isExpanded && (
                       <span className="text-xs truncate">{item.label}</span>
                     )}
@@ -243,7 +251,7 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
             aria-label="Command Palette"
           >
             <div className="flex items-center gap-2">
-              <Terminal className="w-4 h-4 shrink-0" />
+              <HugeiconsIcon icon={TerminalIcon} size={16} strokeWidth={1.5} className="shrink-0" />
               {isExpanded && <span className="text-xs font-sans">Command palette</span>}
             </div>
             {isExpanded && (

@@ -10,7 +10,6 @@ import { Separator } from '@/components/ui/separator';
 import {
   FileText,
   Calendar,
-  Sparkles,
   ArrowUpRight,
   Search,
   Filter,

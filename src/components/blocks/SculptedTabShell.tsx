@@ -9,7 +9,6 @@ import {
   Key,
   LogOut,
   Shield,
-  Sparkles,
   Check,
   ExternalLink,
 } from 'lucide-react';
