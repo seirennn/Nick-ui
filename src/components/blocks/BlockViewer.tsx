@@ -191,23 +191,14 @@ export function BlockViewer({
         </div>
       )}
 
-      {/* Canvas Viewport (Always visible, serene atmospheric dot lattice) */}
-      <div className="w-full overflow-x-auto p-4 sm:p-8 flex justify-center bg-background/60 relative min-h-[340px]">
-        {/* Subtle, restrained ambient dot lattice */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.25] dark:opacity-[0.2]"
-          style={{
-            backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-          }}
-        />
-
+      {/* Canvas Viewport: Calm atmospheric canvas with generous breathing room */}
+      <div className="w-full overflow-x-auto p-4 sm:p-6 md:p-10 flex justify-center bg-secondary/15 dark:bg-[#0a0a0c]/70 relative min-h-[360px] border-b border-border/60">
         {/* Framing wrapper */}
         <div
           className={cn(
             'w-full transition-all duration-300 flex justify-center relative z-10',
             viewport !== '100%' &&
-              'border border-border/80 rounded-[24px] p-4 bg-card/70 shadow-tactile my-2'
+              'border border-border/90 rounded-[28px] p-3 sm:p-4 bg-card/90 shadow-tactile my-3'
           )}
           style={{ maxWidth: viewport }}
         >

@@ -244,41 +244,74 @@ export default function BlocksPage() {
 
         {/* Blocks Showcase Stack */}
         <div className="space-y-16">
-          {/* BLOCK 1: FLAGSHIP TACTILE STUDIO DASHBOARD */}
+          {/* ─── DASHBOARD TYPE 1: MONOLITHIC SHELL (RAIL SIDEBAR) ─── */}
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Tactile Studio Dashboard"
-              category="Rail Sidebar Dashboard"
+              category="Monolithic Shell · Rail Sidebar"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add tactile-studio-dashboard"
               code={getBlockSource('tactile-studio-dashboard')}
               codeFileName="TactileStudioDashboard.tsx"
               usageCode={FLAGSHIP_CODE}
               usageFileName="page.tsx"
-              description="Unified executive operations dashboard with RailSidebar, dot-matrix revenue equalizer, organic trend curve, and live settlement table."
+              description="Seamless monolithic shell dashboard featuring RailSidebar, dot-matrix revenue equalizer, organic trend curve, and live settlement table."
             >
               <TactileStudioDashboard />
             </BlockViewer>
           )}
 
-          {/* BLOCK 2: NEW EXECUTIVE STUDIO CONSOLE (STUDIO SIDEBAR STYLE) */}
+          {/* ─── DASHBOARD TYPE 2: FLOATING ISLAND ARCHITECTURE (STUDIO SIDEBAR WITH GAPS) ─── */}
           {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
             <BlockViewer
               title="Executive Studio Console"
-              category="Collapsible Studio Sidebar"
+              category="Floating Island · Studio Sidebar"
               isNew
               cliCommand="pnpm dlx @sehrennn/nickui add executive-studio-console"
               code={getBlockSource('executive-studio-console')}
               codeFileName="ExecutiveStudioConsole.tsx"
               usageCode={EXECUTIVE_CONSOLE_CODE}
               usageFileName="page.tsx"
-              description="A distinct architectural dashboard style featuring the collapsible StudioSidebar, 4 top KPI sparkline cards, and distributed cluster nodes table."
+              description="A distinct floating island dashboard style featuring a detached StudioSidebar, breathable spatial gaps, modular floating cards, and mechanical dials."
             >
               <ExecutiveStudioConsole />
             </BlockViewer>
           )}
 
-          {/* BLOCK 3: TACTILE FINANCIAL METRIC CARDS */}
+          {/* ─── DASHBOARD TYPE 3: DATA-DENSE ANALYTICS & CRYPTOLEDGER ─── */}
+          {(activeTab === 'all' || activeTab === 'dashboards') && (
+            <BlockViewer
+              title="Revenue & Telemetry Analytics Suite"
+              category="Analytics Dashboard"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add analytics-dashboard"
+              code={getBlockSource('analytics-dashboard')}
+              codeFileName="AnalyticsDashboard.tsx"
+              usageCode={ANALYTICS_CODE}
+              usageFileName="page.tsx"
+              description="Comprehensive financial & telemetry suite with Catmull-Rom spline area progression, regional ingress bar wells, mechanical gauges, and searchable cryptoledger."
+            >
+              <AnalyticsDashboard />
+            </BlockViewer>
+          )}
+
+          {/* ─── DASHBOARD TYPE 4: MISSION-CRITICAL CLUSTER OPERATIONS ─── */}
+          {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
+            <BlockViewer
+              title="Cluster Infrastructure Telemetry Console"
+              category="Operations Console"
+              cliCommand="pnpm dlx @sehrennn/nickui add infrastructure-console"
+              code={getBlockSource('infrastructure-console')}
+              codeFileName="InfrastructureConsole.tsx"
+              usageCode={INFRASTRUCTURE_CODE}
+              usageFileName="page.tsx"
+              description="Distributed node health monitoring, calibrated CPU/RAM dials, live consensus terminal log stream, and runtime edge controls."
+            >
+              <InfrastructureConsole />
+            </BlockViewer>
+          )}
+
+          {/* ─── TACTILE TELEMETRY WIDGETS ─── */}
           {(activeTab === 'all' || activeTab === 'tactile') && (
             <BlockViewer
               title="Tactile Financial Metrics (Balance & Income)"
@@ -312,7 +345,6 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* BLOCK 4: TACTILE TREND CARD */}
           {(activeTab === 'all' || activeTab === 'tactile') && (
             <BlockViewer
               title="Protocol Volume Trend Curve"
@@ -336,7 +368,6 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* BLOCK 5: DOT MATRIX EQUALIZER */}
           {(activeTab === 'all' || activeTab === 'tactile') && (
             <BlockViewer
               title="Dot Matrix Revenue Velocity Equalizer"
@@ -361,7 +392,24 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* BLOCK 6: BENTO SHOWCASE LANDING SECTION */}
+          {/* ─── LANDING LAYOUTS ─── */}
+          {(activeTab === 'all' || activeTab === 'landing') && (
+            <BlockViewer
+              title="Centered Hero Section Layout"
+              category="Landing Layouts"
+              cliCommand="pnpm dlx @sehrennn/nickui add centered-hero-layout"
+              code={getBlockSource('centered-hero-layout')}
+              codeFileName="CenteredHeroLayout.tsx"
+              usageCode={HERO_CODE}
+              usageFileName="page.tsx"
+              description="Commanding centered hero section with official BrandLogo glyph, release announcement badge, and interactive CLI copy pill."
+            >
+              <div className="w-full max-w-4xl">
+                <CenteredHeroLayout />
+              </div>
+            </BlockViewer>
+          )}
+
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Bento Grid Capabilities Layout"
@@ -380,25 +428,6 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* BLOCK 7: CENTERED HERO LANDING LAYOUT */}
-          {(activeTab === 'all' || activeTab === 'landing') && (
-            <BlockViewer
-              title="Centered Hero Section Layout"
-              category="Landing Layouts"
-              cliCommand="pnpm dlx @sehrennn/nickui add centered-hero-layout"
-              code={getBlockSource('centered-hero-layout')}
-              codeFileName="CenteredHeroLayout.tsx"
-              usageCode={HERO_CODE}
-              usageFileName="page.tsx"
-              description="Commanding centered hero section with official BrandLogo glyph, release announcement badge, and interactive CLI copy pill."
-            >
-              <div className="w-full max-w-4xl">
-                <CenteredHeroLayout />
-              </div>
-            </BlockViewer>
-          )}
-
-          {/* BLOCK 8: FEATURE GRID LAYOUT */}
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Feature Grid Section Layout"
@@ -416,7 +445,6 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* BLOCK 9: SPLIT SHOWCASE LAYOUT */}
           {(activeTab === 'all' || activeTab === 'landing') && (
             <BlockViewer
               title="Split Interactive Showcase Layout"
@@ -446,43 +474,7 @@ export default function BlocksPage() {
             </BlockViewer>
           )}
 
-          {/* BLOCK 10: REVENUE & FINANCIAL TELEMETRY */}
-          {(activeTab === 'all' || activeTab === 'dashboards') && (
-            <BlockViewer
-              title="Revenue Financial Telemetry Dashboard"
-              category="Analytics Dashboard"
-              cliCommand="pnpm dlx @sehrennn/nickui add analytics-dashboard"
-              code={getBlockSource('analytics-dashboard')}
-              codeFileName="AnalyticsDashboard.tsx"
-              usageCode={ANALYTICS_CODE}
-              usageFileName="page.tsx"
-              description="ARR performance graphs, real-time transaction ledgers, sparkline metrics, and billing analytics."
-            >
-              <div className="w-full max-w-5xl">
-                <AnalyticsDashboard />
-              </div>
-            </BlockViewer>
-          )}
-
-          {/* BLOCK 11: CLUSTER INFRASTRUCTURE CONSOLE */}
-          {(activeTab === 'all' || activeTab === 'infrastructure') && (
-            <BlockViewer
-              title="Cluster Infrastructure Telemetry Console"
-              category="Infrastructure"
-              cliCommand="pnpm dlx @sehrennn/nickui add infrastructure-console"
-              code={getBlockSource('infrastructure-console')}
-              codeFileName="InfrastructureConsole.tsx"
-              usageCode={INFRASTRUCTURE_CODE}
-              usageFileName="page.tsx"
-              description="Distributed node health monitoring, CPU/RAM utilization gauges, throughput telemetry, and live terminal stream."
-            >
-              <div className="w-full max-w-5xl">
-                <InfrastructureConsole />
-              </div>
-            </BlockViewer>
-          )}
-
-          {/* BLOCK 12: ENTERPRISE GOVERNANCE & SETTINGS */}
+          {/* ─── ENTERPRISE GOVERNANCE & SETTINGS ─── */}
           {(activeTab === 'all' || activeTab === 'settings') && (
             <BlockViewer
               title="Enterprise Governance & Security Workspace"

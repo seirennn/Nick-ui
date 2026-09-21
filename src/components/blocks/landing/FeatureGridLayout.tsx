@@ -34,14 +34,14 @@ const DEFAULT_FEATURES: FeatureItem[] = [
     tag: 'Stdio JSON-RPC',
     title: 'Free AI MCP Server',
     description: 'Connect Cursor, Claude Desktop, and Zed. AI coding agents query exact props, tokens, and verified guidelines without hallucination.',
-    snippet: 'pnpm dlx nickui mcp',
+    snippet: 'pnpm dlx @sehrennn/nickui mcp',
   },
   {
     icon: <Terminal className="w-4 h-4" />,
     tag: 'Developer-Owned',
     title: 'Shadcn-Style CLI',
     description: 'No opaque black-box dependencies. Inject full TypeScript source code directly into your repository with full customization freedom.',
-    snippet: 'pnpm dlx nickui add button',
+    snippet: 'pnpm dlx @sehrennn/nickui add button',
   },
 ];
 
