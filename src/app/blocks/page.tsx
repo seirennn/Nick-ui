@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { SiteNavbar } from '@/components/docs/SiteNavbar';
 import { BlockViewer } from '@/components/blocks/BlockViewer';
+import { WorkstationDashboard } from '@/components/blocks/WorkstationDashboard';
 import { TechnicalDocsLayout } from '@/components/blocks/TechnicalDocsLayout';
 import { MissionControlDashboard } from '@/components/blocks/MissionControlDashboard';
 import { EditorialWorkspaceDashboard } from '@/components/blocks/EditorialWorkspaceDashboard';
@@ -40,6 +41,16 @@ const getBlockSource = (slug: string) => {
 const getSource = (slug: string) => {
   return componentsData.find((c) => c.slug === slug)?.sourceCode || '';
 };
+
+const WORKSTATION_DASHBOARD_CODE = `import { WorkstationDashboard } from '@/components/blocks/WorkstationDashboard';
+
+export default function WorkstationPage() {
+  return (
+    <main className="min-h-screen p-6 md:p-10 bg-background">
+      <WorkstationDashboard />
+    </main>
+  );
+}`;
 
 const TECHNICAL_DOCS_CODE = `import { TechnicalDocsLayout } from '@/components/blocks/TechnicalDocsLayout';
 
@@ -250,7 +261,7 @@ export default function BlocksPage() {
         <div className="max-w-3xl space-y-3">
           <div className="flex items-center gap-2">
             <Badge variant="mono" className="text-xs">
-              Open-Source Blocks · 14 Production Patterns
+              Open-Source Blocks · 15 Production Patterns
             </Badge>
           </div>
           <h1 className="text-3xl sm:text-4xl font-medium tracking-tight text-text-primary">
@@ -277,6 +288,25 @@ export default function BlocksPage() {
 
         {/* Blocks Showcase Stack */}
         <div className="space-y-16">
+          {/* ─── FLAGSHIP DASHBOARD: ARCHITECTURAL WORKSTATION CONSOLE ─── */}
+          {(activeTab === 'all' || activeTab === 'dashboards') && (
+            <BlockViewer
+              title="Architectural Workstation Console"
+              category="Flagship Workstation · Resizable Architecture Sidebar"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add workstation-dashboard"
+              code={getBlockSource('workstation-dashboard')}
+              codeFileName="WorkstationDashboard.tsx"
+              usageCode={WORKSTATION_DASHBOARD_CODE}
+              usageFileName="page.tsx"
+              description="Flagship architectural workstation dashboard featuring a resizable sidebar with drag-resize handle, multi-pane split-view canvas (Focus, 2-Split LR, 3-Pane Command), orderbook depth, harmonic area progression, and elevated user identity capsule."
+            >
+              <div className="w-full">
+                <WorkstationDashboard />
+              </div>
+            </BlockViewer>
+          )}
+
           {/* ─── DASHBOARD TYPE 1: THREE-COLUMN TECHNICAL DOCS & SCULPTED TAB NOTCH ─── */}
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer

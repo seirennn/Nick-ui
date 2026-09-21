@@ -95,6 +95,16 @@ const registryBlocksPath = path.join(rootDir, 'registry', 'blocks.json');
 
 const blockDefinitions = [
   {
+    slug: 'workstation-dashboard',
+    name: 'WorkstationDashboard',
+    title: 'Architectural Workstation Console',
+    category: 'Dashboards',
+    filePath: 'WorkstationDashboard.tsx',
+    fileName: 'WorkstationDashboard.tsx',
+    description: 'Flagship architectural workstation dashboard featuring a resizable sidebar with drag-resize handle, multi-pane split-view canvas (Focus, 2-Split, 3-Pane), orderbook depth, harmonic area progression, and elevated user capsule.',
+    dependencies: ['@sehrennn/nickui', 'lucide-react', 'framer-motion'],
+  },
+  {
     slug: 'technical-docs-layout',
     name: 'TechnicalDocsLayout',
     title: 'Technical Documentation & Config Layout',

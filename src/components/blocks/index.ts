@@ -1,4 +1,5 @@
 export * from './BlockViewer';
+export * from './WorkstationDashboard';
 export * from './SculptedTabShell';
 export * from './TechnicalDocsLayout';
 export * from './MissionControlDashboard';
