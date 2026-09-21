@@ -54,7 +54,7 @@ export function SiteNavbar() {
     },
     {
       id: 'go-mcp',
-      title: 'AI MCP Server Guide (Cursor, Claude, Antigravity)',
+      title: 'MCP Server Guide (Cursor, Claude, Zed)',
       category: 'Developer Experience',
       shortcut: 'G M',
       icon: <Bot className="w-4 h-4" />,

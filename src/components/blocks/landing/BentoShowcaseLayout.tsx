@@ -127,7 +127,7 @@ export function BentoShowcaseLayout({
           </div>
 
           <p className="text-xs text-text-secondary leading-relaxed">
-            NickUI includes a built-in Model Context Protocol server for Cursor, Claude Desktop, and Antigravity. Inspect, scaffold, and generate components natively.
+            NickUI includes a built-in Model Context Protocol server for Cursor, Claude Desktop, and Zed. Inspect, scaffold, and generate components natively.
           </p>
 
           <div className="p-2.5 rounded-xl bg-secondary/60 border border-border/70 font-mono text-[11px] text-text-primary flex items-center justify-between">

@@ -38,7 +38,7 @@ export default function McpDocPage() {
               </h1>
 
               <p className="text-body text-text-secondary leading-relaxed max-w-2xl text-base">
-                NickUI includes a native, completely free and open-source <strong>Model Context Protocol (MCP)</strong> server. It empowers AI coding agents (Cursor, Claude, Copilot, Antigravity) to discover, understand, and compose NickUI components without hallucination.
+                NickUI includes a native, completely free and open-source <strong>Model Context Protocol (MCP)</strong> server. It empowers AI coding agents (Cursor, Claude, Copilot, Zed) to discover, understand, and compose NickUI components without hallucination.
               </p>
             </div>
 

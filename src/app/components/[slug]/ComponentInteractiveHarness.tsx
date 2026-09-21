@@ -510,7 +510,7 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                   Zero-latency distributed messaging via NATS JetStream and Redis cache clusters.
                 </TabsContent>
                 <TabsContent value="models">
-                  Multi-model failover chains orchestrating Gemini and local inference pipelines.
+                  Multi-cluster failover chains orchestrating edge computing and distributed local pipelines.
                 </TabsContent>
               </div>
             </Tabs>

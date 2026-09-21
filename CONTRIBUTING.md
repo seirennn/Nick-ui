@@ -1,6 +1,6 @@
 # Contributing to NickUI
 
-Thank you for your interest in contributing to NickUI! As a free, open-source project, we welcome community improvements to components, documentation, the CLI, and the AI MCP server.
+Thank you for your interest in contributing to NickUI! As a free, open-source project, we welcome community improvements to components, documentation, the CLI, and the MCP server.
 
 ---
 

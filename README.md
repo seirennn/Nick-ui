@@ -76,7 +76,7 @@ src/
 
 ## Free & Open-Source AI MCP Server
 
-NickUI includes a built-in, completely free and open-source **Model Context Protocol (MCP)** server. Connect it to AI coding agents (Cursor, Claude Desktop, Copilot, Antigravity) so your agent understands NickUI components, props, design tokens, and source code without hallucination.
+NickUI includes a built-in, completely free and open-source **Model Context Protocol (MCP)** server. Connect it to AI coding agents (Cursor, Claude Desktop, Copilot, Zed) so your agent understands NickUI components, props, design tokens, and source code without hallucination.
 
 ### Connect to Cursor
 Add to `.cursor/mcp.json`:

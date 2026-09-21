@@ -274,7 +274,7 @@ export default function HomePage() {
                     </div>
                     <CardTitle>Medical Logic Verification</CardTitle>
                     <CardDescription>
-                      Lean 4 and Prolog proof synthesis engine with Gemini multi-model failover.
+                      Lean 4 and Prolog proof synthesis engine with distributed multi-cluster failover.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

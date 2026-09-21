@@ -10,6 +10,11 @@ out/
 dist/
 build/
 
+# Reference Documentation & Internal Guidelines
+/docs/
+AI_GUIDELINES.md
+DESIGN_SYSTEM.md
+
 # Logs & Diagnostics
 *.log
 npm-debug.log*

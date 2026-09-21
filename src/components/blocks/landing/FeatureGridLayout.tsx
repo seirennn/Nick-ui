@@ -33,7 +33,7 @@ const DEFAULT_FEATURES: FeatureItem[] = [
     icon: <Bot className="w-4 h-4" />,
     tag: 'Stdio JSON-RPC',
     title: 'Free AI MCP Server',
-    description: 'Connect Cursor, Claude Desktop, and Antigravity. AI coding agents query exact props, tokens, and verified guidelines without hallucination.',
+    description: 'Connect Cursor, Claude Desktop, and Zed. AI coding agents query exact props, tokens, and verified guidelines without hallucination.',
     snippet: 'pnpm dlx nickui mcp',
   },
   {
