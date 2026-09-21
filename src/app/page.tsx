@@ -21,8 +21,10 @@ import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDe
 import { FolderPreview } from '@/components/ui/folder-preview';
 import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
+import { SegmentedControl } from '@/components/ui/segmented-control';
+import { Knob } from '@/components/ui/knob';
 import { BrandLogo } from '@/components/brand/BrandLogo';
-import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Volume2, Sparkles, Terminal, Activity, HardDrive, ShieldCheck } from 'lucide-react';
+import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Volume2, Sparkles, Terminal, Activity, HardDrive, ShieldCheck, RotateCcw, Radio } from 'lucide-react';
 import componentsData from '@/registry/components.json';
 
 export default function HomePage() {
@@ -31,14 +33,73 @@ export default function HomePage() {
   const [demoStatus, setDemoStatus] = React.useState<'success' | 'warning' | 'neutral'>('success');
   const [copiedInstall, setCopiedInstall] = React.useState(false);
 
-  // Tactile playground state
-  const [tactileSwitch, setTactileSwitch] = React.useState(true);
-  const [tactileGain, setTactileGain] = React.useState(68);
+  // Precision Hardware Studio Console state
+  const [tactileGain, setTactileGain] = React.useState(64);
+  const [tactileFreq, setTactileFreq] = React.useState(2400);
+  const [tactileSlider, setTactileSlider] = React.useState(45);
+  const [tactileDamping, setTactileDamping] = React.useState(true);
+  const [waveMode, setWaveMode] = React.useState('harmonic');
+  const [studioMode, setStudioMode] = React.useState('analog');
+  const [pressedBtn, setPressedBtn] = React.useState<string | null>(null);
+
   const [homeOtp, setHomeOtp] = React.useState('849201');
   const [homeTab, setHomeTab] = React.useState('schematics');
 
+  const computedRms = Math.min(
+    100,
+    Math.max(0, Math.round(tactileGain * 0.55 + (tactileFreq / 20000) * 20 + tactileSlider * 0.25))
+  );
+
+  const waveformPoints = React.useMemo(() => {
+    const points: number[] = [];
+    const count = 32;
+    const freqFactor = waveMode === 'harmonic' ? (tactileFreq / 2500) + 1 : (tactileFreq / 1200) + 1.5;
+    const amp = (tactileGain / 100) * 32 + 6;
+    for (let i = 0; i < count; i++) {
+      const x = i / (count - 1);
+      const angle = x * Math.PI * 2 * freqFactor;
+      const base = waveMode === 'harmonic' ? Math.sin(angle) : Math.sin(angle) * Math.cos(angle * 0.4);
+      const val = 50 + base * amp * (tactileDamping ? 1 : 0.65);
+      points.push(Math.round(Math.max(8, Math.min(92, val))));
+    }
+    return points;
+  }, [tactileGain, tactileFreq, tactileDamping, waveMode]);
+
+  const svgPath = React.useMemo(() => {
+    if (waveformPoints.length === 0) return '';
+    const width = 600;
+    const height = 80;
+    const step = width / (waveformPoints.length - 1);
+    let d = `M 0,${height - (waveformPoints[0] / 100) * height}`;
+    for (let i = 1; i < waveformPoints.length; i++) {
+      const prevX = (i - 1) * step;
+      const prevY = height - (waveformPoints[i - 1] / 100) * height;
+      const currX = i * step;
+      const currY = height - (waveformPoints[i] / 100) * height;
+      const cp1X = prevX + step * 0.5;
+      const cp1Y = prevY;
+      const cp2X = prevX + step * 0.5;
+      const cp2Y = currY;
+      d += ` C ${cp1X},${cp1Y} ${cp2X},${cp2Y} ${currX},${currY}`;
+    }
+    return d;
+  }, [waveformPoints]);
+
+  const areaSvgPath = React.useMemo(() => {
+    if (!svgPath) return '';
+    return `${svgPath} L 600,80 L 0,80 Z`;
+  }, [svgPath]);
+
+  const resetConsoleDefaults = () => {
+    setTactileGain(64);
+    setTactileFreq(2400);
+    setTactileSlider(45);
+    setTactileDamping(true);
+    setWaveMode('harmonic');
+  };
+
   const handleCopyInstall = () => {
-    navigator.clipboard.writeText('pnpm add framer-motion lucide-react');
+    navigator.clipboard.writeText('pnpm add @sehrennn/nickui');
     setCopiedInstall(true);
     setTimeout(() => setCopiedInstall(false), 2000);
   };
@@ -133,7 +194,7 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link href="/components">
                   <Button variant="tactile" size="md" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                    Explore All 31 Components
+                    Explore All {componentsData.length} Components
                   </Button>
                 </Link>
                 <Link href="/docs/cli">
@@ -151,148 +212,276 @@ export default function HomePage() {
           </section>
 
           {/* ═══════════════════════════════════════════
-              MODERN TACTILE SKEUOMORPHISM DECK
+              PRECISION HARDWARE & TACTILE STUDIO DECK
           ═══════════════════════════════════════════ */}
           <section className="px-6 md:px-12 py-16 border-b border-border/80 space-y-8 bg-card/25">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span className="text-sidebar-category uppercase tracking-wider text-text-muted block font-medium">
-                  Physical Depth & Tactile Surface
+                  Physical Calibration & Ergonomics
                 </span>
                 <h2 className="text-component-title text-text-primary mt-1">
-                  Tactile Skeuomorphism Studio
+                  Precision Hardware Console
                 </h2>
               </div>
-              <p className="text-metadata text-text-muted max-w-xs">
-                Physical highlights, recessed wells, mechanical keycaps, and tangible knobs reacting with real physical travel.
+              <p className="text-metadata text-text-muted max-w-sm text-xs sm:text-[13px] leading-relaxed">
+                Milled rotary encoders, spring-damped telemetry dials, recessed tactile wells, and live harmonic oscilloscopes reacting with real physical travel.
               </p>
             </div>
 
-            {/* Tactile Workbench Card */}
-            <div className="rounded-2xl border border-border/80 bg-card p-6 md:p-8 space-y-8 tactile-surface">
-              {/* Segmented Control + Mechanical Hotkeys Row */}
+            {/* Precision Console Master Deck */}
+            <div className="rounded-[26px] border border-border/80 bg-card shadow-tactile p-6 md:p-8 space-y-8 backdrop-blur-sm">
+              {/* Console Top Instrument Toolbar */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
-                <Tabs defaultValue="dsp">
-                  <TabsList>
-                    <TabsTrigger value="dsp">DSP Visualizer</TabsTrigger>
-                    <TabsTrigger value="mesh">Cluster Mesh</TabsTrigger>
-                    <TabsTrigger value="bayesian">BKT Weights</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-text-muted hidden md:inline">Hotkeys:</span>
-                  <div className="flex items-center gap-1">
-                    <Kbd>⌘</Kbd>
-                    <Kbd>K</Kbd>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
+                    <span className="text-xs font-mono font-medium text-text-primary tracking-tight">
+                      CONSOLE // CALIBRATED
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Kbd variant="elevated">ESC</Kbd>
+                  <span className="text-text-muted/40 hidden sm:inline">|</span>
+                  <div className="text-[11px] font-mono text-text-muted hidden md:inline">
+                    SAMPLING: 96 kHz · 24-BIT
                   </div>
                 </div>
-              </div>
 
-              {/* Real-time Hardware Controls */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-                {/* Switch Control */}
-                <div className="p-4 rounded-xl bg-secondary/40 border border-border/60 tactile-well space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-ui font-medium text-text-primary">Atmosphere Layer</span>
-                    <Switch checked={tactileSwitch} onCheckedChange={setTactileSwitch} size="md" />
-                  </div>
-                  <p className="text-[11px] text-text-muted leading-relaxed">
-                    Toggles 28s ambient breath gradient.
-                  </p>
-                </div>
-
-                {/* Slider Control */}
-                <div className="p-4 rounded-xl bg-secondary/40 border border-border/60 tactile-well space-y-3">
-                  <div className="flex items-center justify-between text-xs font-mono text-text-muted">
-                    <div className="flex items-center gap-1.5">
-                      <Volume2 className="w-3.5 h-3.5" />
-                      <span>Gain Level</span>
-                    </div>
-                    <span className="text-text-primary font-medium">{tactileGain}%</span>
-                  </div>
-                  <Slider value={tactileGain} min={0} max={100} onChange={setTactileGain} />
-                </div>
-
-                {/* Live Radial Gauge */}
-                <div className="p-3 rounded-xl bg-secondary/40 border border-border/60 tactile-well flex flex-col items-center justify-center">
-                  <Gauge
-                    value={tactileGain}
-                    label="VU METER"
-                    unit="%"
-                    size={105}
-                    variant="tactile"
-                    className="border-0 bg-transparent p-0 shadow-none"
+                <div className="flex items-center gap-3 self-end sm:self-auto">
+                  <SegmentedControl
+                    value={studioMode}
+                    onChange={setStudioMode}
+                    size="sm"
+                    variant="recessed"
+                    options={[
+                      { value: 'analog', label: 'Analog Controls' },
+                      { value: 'telemetry', label: 'Signal Telemetry' },
+                    ]}
                   />
-                </div>
 
-                {/* Tactile Button Actions */}
-                <div className="p-4 rounded-xl bg-secondary/40 border border-border/60 tactile-well flex flex-col justify-center gap-2">
-                  <Button variant="tactile" size="sm" className="w-full">
-                    Raised Surface
-                  </Button>
-                  <Button variant="recessed" size="sm" className="w-full">
-                    Recessed Sink
-                  </Button>
+                  <button
+                    type="button"
+                    onClick={resetConsoleDefaults}
+                    className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-secondary/70 border border-border/60 transition-colors cursor-pointer"
+                    title="Reset console to factory defaults"
+                    aria-label="Reset console"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
 
-              {/* Composite Tactile Project Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <Card variant="tactile">
-                  <CardHeader>
+              {/* Central Instruments Deck */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+                {/* Column 1: Dual Milled Rotary Encoders (4 cols) */}
+                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col justify-between space-y-5">
+                  <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <Badge variant="engraved">C++20</Badge>
-                      <span className="text-metadata text-text-muted font-mono">1.2ms</span>
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
+                        Rotary Encoders
+                      </span>
+                      <Badge variant="outline" className="text-[10px]">270° Arc</Badge>
                     </div>
-                    <CardTitle>{demoInput || 'Neural Audio Synthesis'}</CardTitle>
-                    <CardDescription>
-                      Stereo harmonic spectrum analyzer with real-time FFT processing and libmpv engine.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="mono">FTXUI</Badge>
-                      <Badge variant="mono">SQLite</Badge>
-                      <Badge variant="tactile">Verified</Badge>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="justify-between">
-                    <span className="text-sidebar-category uppercase tracking-wider text-text-muted">Terminal TUI</span>
-                    <Button variant="tactile" size="sm">Run Client</Button>
-                  </CardFooter>
-                </Card>
+                    <p className="text-xs text-text-secondary">
+                      Tactile knobs with calibrated spring physics. Drag vertically or scroll to adjust.
+                    </p>
+                  </div>
 
-                <Card variant="recessed">
-                  <CardHeader>
+                  <div className="flex items-center justify-around py-3">
+                    <Knob
+                      label="Master Gain"
+                      value={tactileGain}
+                      onChange={setTactileGain}
+                      min={0}
+                      max={100}
+                      unit="%"
+                      variant="tactile"
+                      showTicks={true}
+                    />
+                    <Knob
+                      label="Cutoff Freq"
+                      value={tactileFreq}
+                      onChange={setTactileFreq}
+                      min={200}
+                      max={12000}
+                      step={100}
+                      unit="Hz"
+                      variant="tactile"
+                      showTicks={true}
+                    />
+                  </div>
+
+                  <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                    <span>Gain: <strong className="text-text-primary font-medium">{tactileGain}%</strong></span>
+                    <span>Cutoff: <strong className="text-text-primary font-medium">{tactileFreq} Hz</strong></span>
+                  </div>
+                </div>
+
+                {/* Column 2: Analog Mechanical Meter (4 cols) */}
+                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col items-center justify-between space-y-4">
+                  <div className="w-full flex items-center justify-between">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
+                      Mechanical Dial
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
+                      Live Peak
+                    </span>
+                  </div>
+
+                  <div className="py-1">
+                    <Gauge
+                      value={computedRms}
+                      label="RMS OUTPUT"
+                      unit="%"
+                      size={130}
+                      variant="tactile"
+                      className="border-0 bg-transparent p-0 shadow-none"
+                    />
+                  </div>
+
+                  <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[10px] font-mono text-center">
+                    <div className="p-1.5 rounded-lg bg-secondary/60 border border-border/50">
+                      <span className="text-text-muted block">RMS LEVEL</span>
+                      <span className="text-text-primary font-medium text-xs">{computedRms}%</span>
+                    </div>
+                    <div className="p-1.5 rounded-lg bg-secondary/60 border border-border/50">
+                      <span className="text-text-muted block">HEADROOM</span>
+                      <span className="text-text-primary font-medium text-xs">{100 - computedRms}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 3: Linear Well, Switch & Tactile Buttons (4 cols) */}
+                <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col justify-between space-y-4">
+                  <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <Badge variant="status" status="success">Operational</Badge>
-                      <span className="text-metadata text-text-muted font-mono">Node #01</span>
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
+                        Linear Sink & Buttons
+                      </span>
+                      <Badge variant="engraved" className="text-[10px]">Tactile Tier</Badge>
                     </div>
-                    <CardTitle>Medical Logic Verification</CardTitle>
-                    <CardDescription>
-                      Lean 4 and Prolog proof synthesis engine with distributed multi-cluster failover.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-1.5 text-xs text-text-secondary">
-                      <div className="flex justify-between">
-                        <span>Proof Verification Rate</span>
-                        <span className="font-mono">99.98%</span>
+                    <p className="text-xs text-text-secondary">
+                      Physical highlights and recessed sink wells reacting to tactile actuation.
+                    </p>
+                  </div>
+
+                  {/* Linear Slider Well */}
+                  <div className="space-y-2 p-3 rounded-xl bg-card/60 border border-border/60">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <div className="flex items-center gap-1.5 text-text-muted">
+                        <Volume2 className="w-3.5 h-3.5" />
+                        <span>Attenuator</span>
                       </div>
-                      <div className="h-1.5 rounded-full bg-border overflow-hidden">
-                        <div className="h-full bg-emerald-500 rounded-full w-[99.98%]" />
-                      </div>
+                      <span className="text-text-primary font-medium">{tactileSlider}%</span>
                     </div>
-                  </CardContent>
-                  <CardFooter className="justify-between">
-                    <span className="text-sidebar-category uppercase tracking-wider text-text-muted">NATS JetStream</span>
-                    <Button variant="secondary" size="sm">View Proofs</Button>
-                  </CardFooter>
-                </Card>
+                    <Slider value={tactileSlider} min={0} max={100} onChange={setTactileSlider} />
+                  </div>
+
+                  {/* Spring Damping Switch */}
+                  <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-card/60 border border-border/60">
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-medium text-text-primary">Quintic Damping</div>
+                      <div className="text-[10px] text-text-muted">Smooth spring deceleration</div>
+                    </div>
+                    <Switch checked={tactileDamping} onCheckedChange={setTactileDamping} size="sm" />
+                  </div>
+
+                  {/* Tactile Button Actions Hierarchy */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <Button
+                      variant="tactile"
+                      size="sm"
+                      onClick={() => setPressedBtn('raised')}
+                      className={pressedBtn === 'raised' ? 'ring-1 ring-primary/40' : ''}
+                    >
+                      Raised Rim
+                    </Button>
+                    <Button
+                      variant="recessed"
+                      size="sm"
+                      onClick={() => setPressedBtn('recessed')}
+                      className={pressedBtn === 'recessed' ? 'ring-1 ring-primary/40' : ''}
+                    >
+                      Recessed Sink
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Deck: Live Harmonic Oscilloscope / Telemetry Waveform */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-text-muted animate-pulse" />
+                    <span className="font-mono font-medium text-text-primary">
+                      LIVE HARMONIC OSCILLOSCOPE
+                    </span>
+                    <span className="text-[10px] font-mono text-text-muted hidden md:inline">
+                      // BUFFER: 512 SAMPLES · LATENCY: 0.8ms
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-mono text-text-muted">Waveform:</span>
+                    <SegmentedControl
+                      value={waveMode}
+                      onChange={setWaveMode}
+                      size="sm"
+                      variant="tactile"
+                      options={[
+                        { value: 'harmonic', label: 'Harmonic' },
+                        { value: 'transient', label: 'Transient' },
+                      ]}
+                    />
+                  </div>
+                </div>
+
+                {/* Oscilloscope Screen with Ambient Phosphor Bezier Curve */}
+                <div className="relative h-24 w-full rounded-xl bg-background/90 border border-border/70 overflow-hidden shadow-inner-tactile flex items-center justify-center">
+                  {/* Subtle Grid Lines */}
+                  <div
+                    className="absolute inset-0 opacity-[0.08]"
+                    style={{
+                      backgroundImage: 'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
+                      backgroundSize: '30px 20px',
+                    }}
+                  />
+
+                  {/* Oscilloscope Bezier Waveform */}
+                  <svg
+                    viewBox="0 0 600 80"
+                    preserveAspectRatio="none"
+                    className="w-full h-full relative z-10"
+                  >
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="currentColor" stopOpacity="0.16" />
+                        <stop offset="100%" stopColor="currentColor" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d={areaSvgPath}
+                      fill="url(#waveGradient)"
+                      className="text-foreground transition-all duration-300"
+                    />
+                    <path
+                      d={svgPath}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.75"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-foreground/80 transition-all duration-300"
+                    />
+                  </svg>
+                </div>
+
+                {/* Oscilloscope Footer Stats */}
+                <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono text-text-muted pt-1">
+                  <span>FREQUENCY: {tactileFreq} Hz</span>
+                  <span>AMPLITUDE: {tactileGain}%</span>
+                  <span>DAMPING: {tactileDamping ? 'QUINTIC (ACTIVE)' : 'OFF'}</span>
+                  <span>PEAK HEADROOM: {100 - computedRms}%</span>
+                </div>
               </div>
             </div>
           </section>
@@ -315,7 +504,7 @@ export default function HomePage() {
               </div>
               <Link href="/components">
                 <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                  Explore All 27 Components
+                  Explore All {componentsData.length} Components
                 </Button>
               </Link>
             </div>
@@ -475,7 +664,7 @@ export default function HomePage() {
                 </h2>
               </div>
               <Link href="/blocks" className="text-ui text-text-secondary hover:text-text-primary flex items-center gap-1 font-medium">
-                Explore all 6 blocks & landing layouts
+                Explore all 12 blocks & landing layouts
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
