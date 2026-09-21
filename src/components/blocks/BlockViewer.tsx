@@ -19,10 +19,23 @@ import {
   ChevronUp,
   Maximize2,
   Minimize2,
+  Maximize,
   ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+
+export interface BlockViewerContextValue {
+  isFullscreen: boolean;
+  viewport: string;
+}
+
+export const BlockViewerContext = React.createContext<BlockViewerContextValue>({
+  isFullscreen: false,
+  viewport: '100%',
+});
+
+export const useBlockViewer = () => React.useContext(BlockViewerContext);
 
 export interface BlockViewerProps {
   title: string;
@@ -63,6 +76,7 @@ export function BlockViewer({
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [fullscreenViewport, setFullscreenViewport] = React.useState<'100%' | '1280px' | '1024px' | '768px' | '375px'>('100%');
+  const [isNativeFullscreen, setIsNativeFullscreen] = React.useState(false);
 
   // Fullscreen keyboard listener and body scroll lock
   React.useEffect(() => {
@@ -84,6 +98,31 @@ export function BlockViewer({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isFullscreen]);
+
+  // Sync native fullscreen changes
+  React.useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsNativeFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+
+  const toggleNativeFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsNativeFullscreen(true);
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+          setIsNativeFullscreen(false);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to toggle native fullscreen:', err);
+    }
+  };
 
   const activeCode = codeTab === 'component' ? (code || usageCode || '') : (usageCode || code || '');
   const activeFileName = codeTab === 'component' ? codeFileName : usageFileName;
@@ -253,7 +292,9 @@ export function BlockViewer({
             )}
             style={{ maxWidth: viewport }}
           >
-            {children}
+            <BlockViewerContext.Provider value={{ isFullscreen: false, viewport }}>
+              {children}
+            </BlockViewerContext.Provider>
           </div>
         </div>
 
@@ -386,7 +427,7 @@ export function BlockViewer({
                     ? 'bg-card text-text-primary shadow-2xs font-medium border border-border/60'
                     : 'text-text-muted hover:text-text-primary'
                 )}
-                title="Desktop Full Width (100%)"
+                title="Desktop Edge-to-Edge (100%)"
               >
                 <Monitor className="w-3.5 h-3.5" />
                 <span>Desktop (100%)</span>
@@ -435,8 +476,18 @@ export function BlockViewer({
               </button>
             </div>
 
-            {/* Right: CLI copy, Code toggle, and Exit */}
+            {/* Right: Native Fullscreen, CLI copy, Code toggle, and Exit */}
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleNativeFullscreen}
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-text-muted hover:text-text-primary bg-secondary/60 hover:bg-secondary border border-border/60 transition-colors cursor-pointer"
+                title={isNativeFullscreen ? 'Exit Browser Fullscreen' : 'Enter Native Browser Fullscreen'}
+              >
+                <Maximize className="w-3.5 h-3.5 text-text-muted" />
+                <span>{isNativeFullscreen ? 'Window' : 'Native'}</span>
+              </button>
+
               {cliCommand && (
                 <button
                   type="button"
@@ -491,17 +542,25 @@ export function BlockViewer({
             </div>
           </div>
 
-          {/* Fullscreen Body Canvas */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 flex justify-center bg-secondary/15 dark:bg-[#070709]">
+          {/* Fullscreen Body Canvas: When 100%, 0 padding, full height, edge-to-edge! */}
+          <div
+            className={cn(
+              'flex-1 overflow-y-auto flex justify-center bg-secondary/15 dark:bg-[#070709]',
+              fullscreenViewport === '100%' ? 'p-0 items-stretch' : 'p-4 sm:p-6 md:p-8 items-start'
+            )}
+          >
             <div
               className={cn(
-                'w-full transition-all duration-300 flex justify-center relative z-10',
-                fullscreenViewport !== '100%' &&
-                  'border border-border/90 rounded-[28px] p-3 sm:p-4 bg-card/90 shadow-tactile my-auto'
+                'w-full transition-all duration-300 relative z-10 flex flex-col',
+                fullscreenViewport === '100%'
+                  ? 'h-full max-w-full'
+                  : 'border border-border/90 rounded-[28px] p-3 sm:p-4 bg-card/90 shadow-tactile my-auto'
               )}
-              style={{ maxWidth: fullscreenViewport }}
+              style={{ maxWidth: fullscreenViewport === '100%' ? '100%' : fullscreenViewport }}
             >
-              {children}
+              <BlockViewerContext.Provider value={{ isFullscreen: true, viewport: fullscreenViewport }}>
+                {children}
+              </BlockViewerContext.Provider>
             </div>
           </div>
 

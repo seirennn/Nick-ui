@@ -13,4 +13,4 @@ export * from './landing/CenteredHeroLayout';
 export * from './landing/FeatureGridLayout';
 export * from './landing/SplitShowcaseLayout';
 export * from './landing/BentoShowcaseLayout';
-
+export * from './workstation';
