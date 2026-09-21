@@ -22,9 +22,8 @@ import { FolderPreview } from '@/components/ui/folder-preview';
 import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { Knob } from '@/components/ui/knob';
 import { BrandLogo } from '@/components/brand/BrandLogo';
-import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Volume2, Sparkles, Terminal, Activity, HardDrive, ShieldCheck, RotateCcw, Radio } from 'lucide-react';
+import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Sparkles, Terminal, Activity, HardDrive, ShieldCheck, RotateCcw } from 'lucide-react';
 import componentsData from '@/registry/components.json';
 
 export default function HomePage() {
@@ -33,37 +32,35 @@ export default function HomePage() {
   const [demoStatus, setDemoStatus] = React.useState<'success' | 'warning' | 'neutral'>('success');
   const [copiedInstall, setCopiedInstall] = React.useState(false);
 
-  // Precision Hardware Studio Console state
-  const [tactileGain, setTactileGain] = React.useState(64);
-  const [tactileFreq, setTactileFreq] = React.useState(2400);
-  const [tactileSlider, setTactileSlider] = React.useState(45);
+  // Precision Tactile Ergonomics & Telemetry Console state
+  const [tactileTier, setTactileTier] = React.useState<'tactile' | 'recessed' | 'engraved' | 'flat'>('tactile');
+  const [tactileSlider, setTactileSlider] = React.useState(74);
   const [tactileDamping, setTactileDamping] = React.useState(true);
-  const [waveMode, setWaveMode] = React.useState('harmonic');
-  const [studioMode, setStudioMode] = React.useState('analog');
-  const [pressedBtn, setPressedBtn] = React.useState<string | null>(null);
+  const [precisionMode, setPrecisionMode] = React.useState<'standard' | 'fine' | 'coarse'>('standard');
+  const [streamMode, setStreamMode] = React.useState<'continuous' | 'transient'>('continuous');
+  const [pressedBtn, setPressedBtn] = React.useState<'raised' | 'recessed' | 'engraved'>('raised');
 
   const [homeOtp, setHomeOtp] = React.useState('849201');
   const [homeTab, setHomeTab] = React.useState('schematics');
 
-  const computedRms = Math.min(
-    100,
-    Math.max(0, Math.round(tactileGain * 0.55 + (tactileFreq / 20000) * 20 + tactileSlider * 0.25))
-  );
+  const computedCapacity = tactileSlider;
+  const computedHeadroom = 100 - Math.round(tactileSlider * 0.65);
+  const computedLatency = (1.8 - (tactileSlider / 100) * 0.9).toFixed(1);
 
   const waveformPoints = React.useMemo(() => {
     const points: number[] = [];
     const count = 32;
-    const freqFactor = waveMode === 'harmonic' ? (tactileFreq / 2500) + 1 : (tactileFreq / 1200) + 1.5;
-    const amp = (tactileGain / 100) * 32 + 6;
+    const freqFactor = streamMode === 'continuous' ? 2.4 : 3.8;
+    const amp = (tactileSlider / 100) * 28 + 8;
     for (let i = 0; i < count; i++) {
       const x = i / (count - 1);
       const angle = x * Math.PI * 2 * freqFactor;
-      const base = waveMode === 'harmonic' ? Math.sin(angle) : Math.sin(angle) * Math.cos(angle * 0.4);
+      const base = streamMode === 'continuous' ? Math.sin(angle) : Math.sin(angle) * Math.cos(angle * 0.5);
       const val = 50 + base * amp * (tactileDamping ? 1 : 0.65);
-      points.push(Math.round(Math.max(8, Math.min(92, val))));
+      points.push(Math.round(Math.max(10, Math.min(90, val))));
     }
     return points;
-  }, [tactileGain, tactileFreq, tactileDamping, waveMode]);
+  }, [tactileSlider, tactileDamping, streamMode]);
 
   const svgPath = React.useMemo(() => {
     if (waveformPoints.length === 0) return '';
@@ -91,11 +88,12 @@ export default function HomePage() {
   }, [svgPath]);
 
   const resetConsoleDefaults = () => {
-    setTactileGain(64);
-    setTactileFreq(2400);
-    setTactileSlider(45);
+    setTactileTier('tactile');
+    setTactileSlider(74);
     setTactileDamping(true);
-    setWaveMode('harmonic');
+    setPrecisionMode('standard');
+    setStreamMode('continuous');
+    setPressedBtn('raised');
   };
 
   const handleCopyInstall = () => {
@@ -212,20 +210,20 @@ export default function HomePage() {
           </section>
 
           {/* ═══════════════════════════════════════════
-              PRECISION HARDWARE & TACTILE STUDIO DECK
+              SURFACE ERGONOMICS & TACTILE CALIBRATION
           ═══════════════════════════════════════════ */}
           <section className="px-6 md:px-12 py-20 border-b border-border/80 space-y-8 bg-card/25">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span className="text-sidebar-category uppercase tracking-wider text-text-muted block font-medium">
-                  Physical Calibration & Ergonomics
+                  Tactile Ergonomics & Surface Calibration
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-text-primary mt-1">
-                  Precision Hardware Console
+                  Calibrated Tactile Hierarchy
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-text-secondary max-w-md leading-relaxed">
-                Milled rotary encoders, spring-damped telemetry dials, recessed tactile wells, and live harmonic oscilloscopes reacting with real physical travel.
+                Architectural depth tiers engineered for tactile feedback — raised reliefs, recessed wells, milled chamfers, and balanced spring damping.
               </p>
             </div>
 
@@ -237,24 +235,26 @@ export default function HomePage() {
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
                     <span className="text-xs font-mono font-medium text-text-primary tracking-tight">
-                      CONSOLE // CALIBRATED
+                      SURFACE // CALIBRATED
                     </span>
                   </div>
                   <span className="text-text-muted/40 hidden sm:inline">|</span>
                   <div className="text-[11px] font-mono text-text-muted hidden md:inline">
-                    SAMPLING: 96 kHz · 24-BIT
+                    TIER: <span className="text-text-primary uppercase font-medium">{tactileTier}</span> · RESOLUTION: 0.1mm
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
                   <SegmentedControl
-                    value={studioMode}
-                    onChange={setStudioMode}
+                    value={tactileTier}
+                    onChange={(val) => setTactileTier(val as any)}
                     size="sm"
                     variant="recessed"
                     options={[
-                      { value: 'analog', label: 'Analog Controls' },
-                      { value: 'telemetry', label: 'Signal Telemetry' },
+                      { value: 'flat', label: 'Flat' },
+                      { value: 'engraved', label: 'Engraved' },
+                      { value: 'recessed', label: 'Recessed' },
+                      { value: 'tactile', label: 'Tactile' },
                     ]}
                   />
 
@@ -272,280 +272,238 @@ export default function HomePage() {
 
               {/* Central Instruments Deck */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-                {/* Column 1: Dual Milled Rotary Encoders (4 cols) */}
+                {/* Column 1: Actuation Surfaces & Depth Tiers (4 cols) */}
                 <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col justify-between space-y-5">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                        Rotary Encoders
+                        Actuation Surfaces
                       </span>
-                      <Badge variant="outline" className="text-[10px]">270° Arc</Badge>
+                      <Badge variant="outline" className="text-[10px]">Depth Tiers</Badge>
                     </div>
                     <p className="text-xs text-text-secondary">
-                      Tactile knobs with calibrated spring physics. Drag vertically or scroll to adjust.
+                      Physical relief and inner-shadow chamfers calibrated across tactile elevation levels.
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-around py-3">
-                    <Knob
-                      label="Master Gain"
-                      value={tactileGain}
-                      onChange={setTactileGain}
-                      min={0}
-                      max={100}
-                      unit="%"
-                      variant="tactile"
-                      showTicks={true}
-                    />
-                    <Knob
-                      label="Cutoff Freq"
-                      value={tactileFreq}
-                      onChange={setTactileFreq}
-                      min={200}
-                      max={12000}
-                      step={100}
-                      unit="Hz"
-                      variant="tactile"
-                      showTicks={true}
-                    />
+                  {/* Tactile Button Actions */}
+                  <div className="space-y-2 py-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        variant={tactileTier === 'flat' ? 'outline' : tactileTier === 'engraved' ? 'outline' : tactileTier === 'recessed' ? 'recessed' : 'tactile'}
+                        size="sm"
+                        onClick={() => setPressedBtn('raised')}
+                        className={`text-xs ${pressedBtn === 'raised' ? 'ring-1 ring-primary/40' : ''}`}
+                      >
+                        Raised Rim
+                      </Button>
+                      <Button
+                        variant={tactileTier === 'flat' ? 'outline' : 'recessed'}
+                        size="sm"
+                        onClick={() => setPressedBtn('recessed')}
+                        className={`text-xs ${pressedBtn === 'recessed' ? 'ring-1 ring-primary/40' : ''}`}
+                      >
+                        Recessed
+                      </Button>
+                      <Button
+                        variant={tactileTier === 'tactile' ? 'tactile' : 'outline'}
+                        size="sm"
+                        onClick={() => setPressedBtn('engraved')}
+                        className={`text-xs ${pressedBtn === 'engraved' ? 'ring-1 ring-primary/40' : ''}`}
+                      >
+                        Engraved
+                      </Button>
+                    </div>
+
+                    {/* Spring Damping Toggle Switch */}
+                    <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-card/60 border border-border/60 mt-3">
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-medium text-text-primary">Quintic Damping</div>
+                        <div className="text-[10px] text-text-muted">Smooth spring deceleration</div>
+                      </div>
+                      <Switch checked={tactileDamping} onCheckedChange={setTactileDamping} size="sm" />
+                    </div>
                   </div>
 
                   <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                    <span>Gain: <strong className="text-text-primary font-medium">{tactileGain}%</strong></span>
-                    <span>Cutoff: <strong className="text-text-primary font-medium">{tactileFreq} Hz</strong></span>
+                    <span>ACTIVE: <strong className="text-text-primary font-medium uppercase">{pressedBtn}</strong></span>
+                    <span>PHYSICS: <strong className="text-text-primary font-medium">{tactileDamping ? 'QUINTIC' : 'LINEAR'}</strong></span>
                   </div>
                 </div>
 
-                {/* Column 2: Calibrated Ballistic VU/RMS Telemetry Dial (4 cols) */}
+                {/* Column 2: Continuous Attenuation & Milled Well (4 cols) */}
                 <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col justify-between space-y-4">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                        Mechanical Telemetry
+                        Continuous Calibration
                       </span>
-                      <Badge variant="engraved" className="text-[10px]">Ballistic Meter</Badge>
+                      <Badge variant="engraved" className="text-[10px]">Milled Well</Badge>
                     </div>
                     <p className="text-xs text-text-secondary">
-                      Spring-damped needle dynamics calibrated to studio reference level with instant peak hold.
+                      Recessed slider track with etched millimeter tick graduation and precision attenuation.
                     </p>
                   </div>
 
-                  {/* Precision Analog Meter Face */}
-                  <div className="py-1 flex flex-col items-center justify-center">
-                    <div className="relative w-full max-w-[240px] aspect-[240/125] flex flex-col items-center justify-center">
-                      <svg viewBox="0 0 240 125" className="w-full h-full overflow-visible">
-                        <defs>
-                          <radialGradient id="dialFaceGrad" cx="50%" cy="100%" r="95%">
-                            <stop offset="0%" stopColor="currentColor" stopOpacity="0.08" />
-                            <stop offset="80%" stopColor="currentColor" stopOpacity="0.02" />
-                            <stop offset="100%" stopColor="transparent" />
-                          </radialGradient>
-                          <filter id="needleShadow" x="-30%" y="-30%" width="160%" height="160%">
-                            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="currentColor" floodOpacity="0.3" />
-                          </filter>
-                        </defs>
+                  {/* Precision Linear Slider Well */}
+                  <div className="space-y-3 p-4 rounded-xl bg-card/60 border border-border/60">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <div className="flex items-center gap-1.5 text-text-muted">
+                        <Sliders className="w-3.5 h-3.5" />
+                        <span>Attenuation</span>
+                      </div>
+                      <span className="text-text-primary font-medium text-sm">{tactileSlider}%</span>
+                    </div>
 
-                        {/* Dial Face Arc Background */}
-                        <path
-                          d="M 28,112 A 96,96 0 0,1 212,112 L 120,112 Z"
-                          fill="url(#dialFaceGrad)"
-                        />
+                    <Slider value={tactileSlider} min={0} max={100} onChange={setTactileSlider} />
 
-                        {/* Outer Precision Scale Arc */}
-                        <path
-                          d="M 32,112 A 92,92 0 0,1 208,112"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.25"
-                          strokeOpacity="0.3"
-                        />
-
-                        {/* Dial Scale Ticks */}
-                        {[-60, -45, -30, -15, 0, 15, 30, 45, 60].map((deg, idx) => {
-                          const rad = (deg - 90) * (Math.PI / 180);
-                          const x1 = 120 + 92 * Math.cos(rad);
-                          const y1 = 112 + 92 * Math.sin(rad);
-                          const tickLen = idx % 2 === 0 ? 8 : 4;
-                          const x2 = 120 + (92 - tickLen) * Math.cos(rad);
-                          const y2 = 112 + (92 - tickLen) * Math.sin(rad);
-                          const isHot = deg >= 30;
-
+                    {/* Discrete 24-Segment LED Meter Bar */}
+                    <div className="space-y-1 pt-1">
+                      <div className="flex items-center justify-between text-[9px] font-mono text-text-muted">
+                        <span>MIN</span>
+                        <span>50%</span>
+                        <span>MAX</span>
+                      </div>
+                      <div className="flex gap-0.5 h-1.5 w-full">
+                        {Array.from({ length: 24 }).map((_, i) => {
+                          const active = (i / 23) * 100 <= tactileSlider;
                           return (
-                            <line
-                              key={deg}
-                              x1={x1}
-                              y1={y1}
-                              x2={x2}
-                              y2={y2}
-                              stroke="currentColor"
-                              strokeWidth={idx % 2 === 0 ? "1.5" : "1"}
-                              strokeOpacity={isHot ? "0.85" : "0.45"}
-                              className={isHot ? "text-amber-500 dark:text-amber-400" : "text-foreground"}
+                            <div
+                              key={i}
+                              className={`flex-1 h-full rounded-[1px] transition-colors duration-150 ${
+                                active
+                                  ? 'bg-foreground/80'
+                                  : 'bg-muted/40'
+                              }`}
                             />
                           );
                         })}
-
-                        {/* Dial Scale Labels */}
-                        <text x="34" y="107" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/75 select-none">-20</text>
-                        <text x="64" y="58" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/75 select-none">-10</text>
-                        <text x="120" y="34" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/90 font-medium select-none">0 dB</text>
-                        <text x="176" y="58" textAnchor="middle" className="text-[8px] font-mono fill-muted-foreground/75 select-none">+3</text>
-                        <text x="206" y="107" textAnchor="middle" className="text-[8px] font-mono fill-amber-500 font-medium select-none">+6</text>
-
-                        {/* Smooth Ballistic Needle */}
-                        <g
-                          style={{
-                            transformOrigin: '120px 112px',
-                            transform: `rotate(${-60 + (computedRms / 100) * 120}deg)`,
-                            transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                          }}
-                        >
-                          <polygon
-                            points="118.5,112 120,26 121.5,112"
-                            fill="currentColor"
-                            className="text-foreground"
-                            filter="url(#needleShadow)"
-                          />
-                          <line
-                            x1="120"
-                            y1="26"
-                            x2="120"
-                            y2="44"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            className="text-amber-500"
-                            strokeLinecap="round"
-                          />
-                        </g>
-
-                        {/* Milled Brass/Steel Pivot Hub */}
-                        <circle cx="120" cy="112" r="9" fill="currentColor" className="text-card" stroke="currentColor" strokeWidth="2" strokeOpacity="0.4" />
-                        <circle cx="120" cy="112" r="5" fill="currentColor" className="text-foreground/80" />
-                        <circle cx="120" cy="112" r="2" fill="currentColor" className="text-background" />
-                      </svg>
-                    </div>
-
-                    {/* Digital Telemetry Readout */}
-                    <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className="text-xl font-mono font-medium text-text-primary tracking-tight">
-                        {computedRms}
-                      </span>
-                      <span className="text-[11px] font-mono text-text-muted">% RMS</span>
-                      <span className="text-[10px] font-mono ml-2 px-1.5 py-0.5 rounded bg-secondary/80 border border-border/50 text-text-muted">
-                        {computedRms > 85 ? 'PEAK' : computedRms > 50 ? 'NOMINAL' : 'LOW'}
-                      </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[10px] font-mono text-center">
-                    <div className="p-1.5 rounded-lg bg-secondary/60 border border-border/50">
-                      <span className="text-text-muted block">BALLISTIC RMS</span>
-                      <span className="text-text-primary font-medium text-xs">{computedRms}%</span>
-                    </div>
-                    <div className="p-1.5 rounded-lg bg-secondary/60 border border-border/50">
-                      <span className="text-text-muted block">PEAK HEADROOM</span>
-                      <span className="text-text-primary font-medium text-xs">{(100 - computedRms).toFixed(0)}%</span>
-                    </div>
+                  {/* Sensitivity Switcher */}
+                  <div className="pt-2 border-t border-border/50 flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Resolution:</span>
+                    <SegmentedControl
+                      value={precisionMode}
+                      onChange={(v) => setPrecisionMode(v as any)}
+                      size="sm"
+                      variant="tactile"
+                      options={[
+                        { value: 'fine', label: '0.1x Fine' },
+                        { value: 'standard', label: '1x Std' },
+                        { value: 'coarse', label: '5x Coarse' },
+                      ]}
+                    />
                   </div>
                 </div>
 
-                {/* Column 3: Linear Well, Switch & Tactile Buttons (4 cols) */}
+                {/* Column 3: Telemetry & Surface Metrics (4 cols) */}
                 <div className="md:col-span-4 p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well flex flex-col justify-between space-y-4">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted font-medium">
-                        Linear Sink & Buttons
+                        Surface Telemetry
                       </span>
-                      <Badge variant="engraved" className="text-[10px]">Tactile Tier</Badge>
+                      <Badge variant="status" status="success" className="text-[10px]">Nominal</Badge>
                     </div>
                     <p className="text-xs text-text-secondary">
-                      Physical highlights and recessed sink wells reacting to tactile actuation.
+                      Real-time optical travel, return velocity, and tactile headroom feedback.
                     </p>
                   </div>
 
-                  {/* Linear Slider Well */}
-                  <div className="space-y-2 p-3 rounded-xl bg-card/60 border border-border/60">
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <div className="flex items-center gap-1.5 text-text-muted">
-                        <Volume2 className="w-3.5 h-3.5" />
-                        <span>Attenuator</span>
+                  {/* Telemetry Radial Gauge / Metrics Card */}
+                  <div className="py-2 flex flex-col items-center justify-center">
+                    <div className="relative w-32 h-32 flex items-center justify-center">
+                      <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="48"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="6"
+                          className="text-muted/30"
+                        />
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="48"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="6"
+                          strokeDasharray={2 * Math.PI * 48}
+                          strokeDashoffset={2 * Math.PI * 48 * (1 - tactileSlider / 100)}
+                          strokeLinecap="round"
+                          className="text-foreground transition-all duration-300"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-mono font-medium tracking-tight text-text-primary">
+                          {tactileSlider}%
+                        </span>
+                        <span className="text-[9px] font-mono uppercase tracking-widest text-text-muted">
+                          CAPACITY
+                        </span>
                       </div>
-                      <span className="text-text-primary font-medium">{tactileSlider}%</span>
                     </div>
-                    <Slider value={tactileSlider} min={0} max={100} onChange={setTactileSlider} />
                   </div>
 
-                  {/* Spring Damping Switch */}
-                  <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-card/60 border border-border/60">
-                    <div className="space-y-0.5">
-                      <div className="text-xs font-medium text-text-primary">Quintic Damping</div>
-                      <div className="text-[10px] text-text-muted">Smooth spring deceleration</div>
+                  {/* 4 Architectural Data Metrics Cells */}
+                  <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[10px] font-mono text-center">
+                    <div className="p-2 rounded-lg bg-secondary/60 border border-border/50">
+                      <span className="text-text-muted block">RETURN LATENCY</span>
+                      <span className="text-text-primary font-medium text-xs">{computedLatency}ms</span>
                     </div>
-                    <Switch checked={tactileDamping} onCheckedChange={setTactileDamping} size="sm" />
-                  </div>
-
-                  {/* Tactile Button Actions Hierarchy */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <Button
-                      variant="tactile"
-                      size="sm"
-                      onClick={() => setPressedBtn('raised')}
-                      className={pressedBtn === 'raised' ? 'ring-1 ring-primary/40' : ''}
-                    >
-                      Raised Rim
-                    </Button>
-                    <Button
-                      variant="recessed"
-                      size="sm"
-                      onClick={() => setPressedBtn('recessed')}
-                      className={pressedBtn === 'recessed' ? 'ring-1 ring-primary/40' : ''}
-                    >
-                      Recessed Sink
-                    </Button>
+                    <div className="p-2 rounded-lg bg-secondary/60 border border-border/50">
+                      <span className="text-text-muted block">HEADROOM</span>
+                      <span className="text-text-primary font-medium text-xs">{computedHeadroom}%</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Deck: Live Harmonic Oscilloscope / Telemetry Waveform */}
+              {/* Bottom Deck: Real-Time Telemetry Throughput Stream */}
               <div className="p-4 sm:p-5 rounded-2xl bg-secondary/35 border border-border/70 tactile-well space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
-                    <Radio className="w-4 h-4 text-text-muted animate-pulse" />
+                    <Activity className="w-4 h-4 text-text-muted animate-pulse" />
                     <span className="font-mono font-medium text-text-primary">
-                      LIVE HARMONIC OSCILLOSCOPE
+                      REAL-TIME THROUGHPUT STREAM
                     </span>
                     <span className="text-[10px] font-mono text-text-muted hidden md:inline">
-                      // BUFFER: 512 SAMPLES · LATENCY: 0.8ms
+                      // BUFFER: 512 SAMPLES · LATENCY: {computedLatency}ms
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-mono text-text-muted">Waveform:</span>
+                    <span className="text-[11px] font-mono text-text-muted">Stream Mode:</span>
                     <SegmentedControl
-                      value={waveMode}
-                      onChange={setWaveMode}
+                      value={streamMode}
+                      onChange={(v) => setStreamMode(v as any)}
                       size="sm"
                       variant="tactile"
                       options={[
-                        { value: 'harmonic', label: 'Harmonic' },
+                        { value: 'continuous', label: 'Continuous' },
                         { value: 'transient', label: 'Transient' },
                       ]}
                     />
                   </div>
                 </div>
 
-                {/* Oscilloscope Screen with Ambient Phosphor Bezier Curve */}
+                {/* Telemetry Stream Graph with Ambient Phosphor Bezier Curve */}
                 <div className="relative h-24 w-full rounded-xl bg-background/90 border border-border/70 overflow-hidden shadow-inner-tactile flex items-center justify-center">
                   {/* Subtle Grid Lines */}
                   <div
-                    className="absolute inset-0 opacity-[0.08]"
+                    className="absolute inset-0 opacity-[0.06]"
                     style={{
                       backgroundImage: 'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
                       backgroundSize: '30px 20px',
                     }}
                   />
 
-                  {/* Oscilloscope Bezier Waveform */}
+                  {/* Bezier Waveform */}
                   <svg
                     viewBox="0 0 600 80"
                     preserveAspectRatio="none"
@@ -553,7 +511,7 @@ export default function HomePage() {
                   >
                     <defs>
                       <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="currentColor" stopOpacity="0.16" />
+                        <stop offset="0%" stopColor="currentColor" stopOpacity="0.12" />
                         <stop offset="100%" stopColor="currentColor" stopOpacity="0.0" />
                       </linearGradient>
                     </defs>
@@ -566,7 +524,7 @@ export default function HomePage() {
                       d={svgPath}
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="1.75"
+                      strokeWidth="1.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       className="text-foreground/80 transition-all duration-300"
@@ -574,12 +532,12 @@ export default function HomePage() {
                   </svg>
                 </div>
 
-                {/* Oscilloscope Footer Stats */}
+                {/* Telemetry Footer Stats */}
                 <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono text-text-muted pt-1">
-                  <span>FREQUENCY: {tactileFreq} Hz</span>
-                  <span>AMPLITUDE: {tactileGain}%</span>
-                  <span>DAMPING: {tactileDamping ? 'QUINTIC (ACTIVE)' : 'OFF'}</span>
-                  <span>PEAK HEADROOM: {(100 - computedRms).toFixed(0)}%</span>
+                  <span>SAMPLING: 1,000 Hz</span>
+                  <span>CAPACITY: {computedCapacity}%</span>
+                  <span>DAMPING: {tactileDamping ? 'QUINTIC (ACTIVE)' : 'LINEAR'}</span>
+                  <span>HEADROOM: {computedHeadroom}%</span>
                 </div>
               </div>
             </div>
