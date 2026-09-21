@@ -86,6 +86,8 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
 
   // Sidebar demo state
   const [sidebarActiveId, setSidebarActiveId] = React.useState('primitives');
+  const [railActiveTab, setRailActiveTab] = React.useState('overview');
+  const [studioActiveTab, setStudioActiveTab] = React.useState('overview');
 
   // Checkbox & Radio state
   const [chk1, setChk1] = React.useState(true);
@@ -1375,19 +1377,31 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'rail-sidebar':
       return (
         <ComponentPreview
-          code={`<div className="h-[560px] border border-border/80 rounded-2xl overflow-hidden flex bg-card shadow-tactile">\n  <RailSidebar\n    activeId="overview"\n    workspaceGlyph="N"\n    workspaceName="NickUI Core Studio"\n    collapsible={true}\n  />\n  <div className="flex-1 p-6 flex flex-col justify-between overflow-hidden">\n    <div className="space-y-4">\n      <div className="flex items-center justify-between pb-3 border-b border-border/60">\n        <span className="text-xs font-mono text-text-muted">OPERATIONS // CLUSTER-ALPHA</span>\n        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Nominal · 0.92ms</span>\n      </div>\n      <div className="grid grid-cols-3 gap-3">\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[9px] font-mono text-text-muted uppercase">Ingress</div>\n          <div className="text-base font-mono font-medium text-text-primary">18.4 GB/s</div>\n        </div>\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[9px] font-mono text-text-muted uppercase">Memory</div>\n          <div className="text-base font-mono font-medium text-text-primary">54.2%</div>\n        </div>\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[9px] font-mono text-text-muted uppercase">Consensus</div>\n          <div className="text-base font-mono font-medium text-text-primary">99.98%</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>`}
+          code={`<div className="h-[560px] border border-border/80 rounded-2xl overflow-hidden flex bg-card shadow-tactile">\n  <RailSidebar\n    activeId="overview"\n    workspaceName="NickUI Core Studio"\n    collapsible={true}\n  />\n  <div className="flex-1 p-6 flex flex-col justify-between overflow-hidden">\n    <div className="space-y-4">\n      <div className="flex items-center justify-between pb-3 border-b border-border/60">\n        <span className="text-xs font-mono text-text-muted">OPERATIONS // CLUSTER-ALPHA</span>\n        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Nominal · 0.92ms</span>\n      </div>\n      <div className="grid grid-cols-3 gap-3">\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[9px] font-mono text-text-muted uppercase">Ingress</div>\n          <div className="text-base font-mono font-medium text-text-primary">18.4 GB/s</div>\n        </div>\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[9px] font-mono text-text-muted uppercase">Memory</div>\n          <div className="text-base font-mono font-medium text-text-primary">54.2%</div>\n        </div>\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[9px] font-mono text-text-muted uppercase">Consensus</div>\n          <div className="text-base font-mono font-medium text-text-primary">99.98%</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>`}
         >
           <div className="h-[560px] w-full flex justify-center py-2">
-            <div className="h-full w-full max-w-3xl border border-border/80 rounded-2xl overflow-hidden shadow-tactile flex bg-card">
-              <RailSidebar collapsible={true} />
+            <div className="h-full w-full max-w-4xl border border-border/80 rounded-2xl overflow-hidden shadow-tactile flex bg-card">
+              <RailSidebar
+                activeId={railActiveTab}
+                onSelect={setRailActiveTab}
+                collapsible={true}
+              />
               <div className="flex-1 p-5 sm:p-6 bg-secondary/10 flex flex-col justify-between overflow-hidden">
                 <div className="space-y-4">
+                  {/* Top Canvas Header */}
                   <div className="flex items-center justify-between pb-3 border-b border-border/60">
                     <div>
-                      <span className="text-xs font-mono text-text-muted uppercase tracking-wider">
-                        CONSOLE // CLUSTER-MESH
+                      <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                        CONSOLE // {railActiveTab.toUpperCase()}
                       </span>
-                      <h3 className="text-sm font-medium text-text-primary">Operations & KPIs</h3>
+                      <h3 className="text-sm font-medium text-text-primary">
+                        {railActiveTab === 'overview' && 'Operations & Live KPIs'}
+                        {railActiveTab === 'analytics' && 'Revenue & Telemetry Velocity'}
+                        {railActiveTab === 'nodes' && 'Cluster Node Infrastructure'}
+                        {railActiveTab === 'security' && 'Access Control & Compliance'}
+                        {railActiveTab === 'deployments' && 'Release Pipelines & CI/CD'}
+                        {railActiveTab === 'config' && 'System Parameters & Kinematics'}
+                      </h3>
                     </div>
                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -1395,48 +1409,66 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                     </span>
                   </div>
 
-                  {/* Micro KPI Row */}
-                  <div className="grid grid-cols-3 gap-3">
+                  {/* Dynamic KPI Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">
-                      <div className="text-[9px] font-mono text-text-muted uppercase">Ingress</div>
-                      <div className="text-base font-mono font-medium text-text-primary">18.4 GB/s</div>
-                      <div className="text-[9px] font-mono text-emerald-400">+12% vs avg</div>
+                      <div className="text-[9px] font-mono text-text-muted uppercase">
+                        {railActiveTab === 'analytics' ? 'Total Volume' : railActiveTab === 'nodes' ? 'Active Nodes' : 'Ingress Rate'}
+                      </div>
+                      <div className="text-base font-mono font-medium text-text-primary">
+                        {railActiveTab === 'analytics' ? '$142,850' : railActiveTab === 'nodes' ? '12 / 12' : '18.4 GB/s'}
+                      </div>
+                      <div className="text-[9px] font-mono text-emerald-400">
+                        {railActiveTab === 'analytics' ? '+24.2% MoM' : railActiveTab === 'nodes' ? '100% capacity' : '+12% vs avg'}
+                      </div>
                     </div>
                     <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">
-                      <div className="text-[9px] font-mono text-text-muted uppercase">Memory</div>
-                      <div className="text-base font-mono font-medium text-text-primary">54.2%</div>
-                      <div className="text-[9px] font-mono text-text-muted">138 / 256 GB</div>
+                      <div className="text-[9px] font-mono text-text-muted uppercase">
+                        {railActiveTab === 'security' ? 'Security Posture' : 'Memory Allocated'}
+                      </div>
+                      <div className="text-base font-mono font-medium text-text-primary">
+                        {railActiveTab === 'security' ? 'Strict mTLS' : '54.2%'}
+                      </div>
+                      <div className="text-[9px] font-mono text-text-muted">
+                        {railActiveTab === 'security' ? 'Zero faults' : '138 / 256 GB'}
+                      </div>
                     </div>
                     <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">
-                      <div className="text-[9px] font-mono text-text-muted uppercase">Consensus</div>
-                      <div className="text-base font-mono font-medium text-text-primary">99.98%</div>
-                      <div className="text-[9px] font-mono text-emerald-400">0 faults</div>
+                      <div className="text-[9px] font-mono text-text-muted uppercase">
+                        {railActiveTab === 'deployments' ? 'Canary Health' : 'Consensus SLA'}
+                      </div>
+                      <div className="text-base font-mono font-medium text-text-primary">
+                        {railActiveTab === 'deployments' ? 'v2.4.1 (100%)' : '99.98%'}
+                      </div>
+                      <div className="text-[9px] font-mono text-emerald-400">
+                        {railActiveTab === 'deployments' ? 'Synced' : '0 Byzantine drops'}
+                      </div>
                     </div>
                   </div>
 
                   {/* Micro Topology Feed */}
                   <div className="p-3 rounded-xl bg-secondary/20 border border-border/50 space-y-2 text-xs font-mono">
                     <div className="text-[10px] text-text-muted uppercase flex justify-between">
-                      <span>Active Edge Relay</span>
-                      <span>Latency</span>
+                      <span>Edge Relay Route</span>
+                      <span>Latency & Status</span>
                     </div>
                     <div className="flex justify-between text-text-secondary text-[11px] pb-1 border-b border-border/30">
                       <span>edge-us-east-1a (wireguard)</span>
-                      <span className="text-emerald-400">0.62ms</span>
+                      <span className="text-emerald-400">0.62ms · Active</span>
                     </div>
                     <div className="flex justify-between text-text-secondary text-[11px] pb-1 border-b border-border/30">
                       <span>edge-eu-central-1 (mTLS)</span>
-                      <span className="text-emerald-400">0.84ms</span>
+                      <span className="text-emerald-400">0.84ms · Active</span>
                     </div>
                     <div className="flex justify-between text-text-secondary text-[11px]">
                       <span>edge-ap-northeast-1 (mTLS)</span>
-                      <span className="text-emerald-400">1.12ms</span>
+                      <span className="text-emerald-400">1.12ms · Active</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-border/40 text-[11px] font-mono text-text-muted flex justify-between">
-                  <span>Click bottom toggle on rail to expand</span>
+                  <span>Selected: {railActiveTab} · Toggle rail to expand</span>
                   <span>v0.1.1</span>
                 </div>
               </div>
@@ -1448,26 +1480,39 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'studio-sidebar':
       return (
         <ComponentPreview
-          code={`<div className="h-[580px] p-3 bg-background border border-border/80 rounded-2xl overflow-hidden flex gap-3 shadow-tactile">\n  <StudioSidebar activeId="overview" />\n  <div className="flex-1 p-5 rounded-2xl bg-card border border-border/70 flex flex-col justify-between">\n    <div className="space-y-3">\n      <div className="flex items-center justify-between pb-3 border-b border-border/60">\n        <span className="text-xs font-mono text-text-muted">STUDIO WORKSPACE // PRODUCTION</span>\n        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary text-text-secondary">Active</span>\n      </div>\n      <div className="grid grid-cols-2 gap-3">\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[10px] font-mono text-text-muted uppercase">Throughput</div>\n          <div className="text-lg font-mono font-medium text-text-primary">48.2 GB/s</div>\n        </div>\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[10px] font-mono text-text-muted uppercase">Health Index</div>\n          <div className="text-lg font-mono font-medium text-emerald-400">99.8%</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>`}
+          code={`<div className="h-[580px] p-3 bg-background border border-border/80 rounded-2xl overflow-hidden flex gap-3 shadow-tactile">\n  <StudioSidebar\n    variant="floating"\n    activeId="overview"\n  />\n  <div className="flex-1 p-5 rounded-2xl bg-card border border-border/70 flex flex-col justify-between">\n    <div className="space-y-3">\n      <div className="flex items-center justify-between pb-3 border-b border-border/60">\n        <span className="text-xs font-mono text-text-muted">STUDIO WORKSPACE // PRODUCTION</span>\n        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary text-text-secondary">Active</span>\n      </div>\n      <div className="grid grid-cols-2 gap-3">\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[10px] font-mono text-text-muted uppercase">Throughput</div>\n          <div className="text-lg font-mono font-medium text-text-primary">48.2 GB/s</div>\n        </div>\n        <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">\n          <div className="text-[10px] font-mono text-text-muted uppercase">Health Index</div>\n          <div className="text-lg font-mono font-medium text-emerald-400">99.8%</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>`}
         >
           <div className="h-[580px] w-full flex justify-center py-2">
             <div className="h-full w-full max-w-4xl p-3 bg-background border border-border/80 rounded-2xl overflow-hidden shadow-tactile flex gap-3">
-              <StudioSidebar />
-              <div className="flex-1 p-5 rounded-xl bg-card border border-border/70 flex flex-col justify-between overflow-hidden">
+              <StudioSidebar
+                variant="floating"
+                activeId={studioActiveTab}
+                onSelect={setStudioActiveTab}
+              />
+              <div className="flex-1 p-5 rounded-xl bg-card border border-border/70 flex flex-col justify-between overflow-hidden shadow-2xs">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-border/60">
                     <div>
                       <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
-                        WORKSPACE CANVAS
+                        WORKSPACE CANVAS // {studioActiveTab.toUpperCase()}
                       </span>
-                      <h3 className="text-sm font-medium text-text-primary">Operations & Cluster Mesh</h3>
+                      <h3 className="text-sm font-medium text-text-primary">
+                        {studioActiveTab === 'overview' && 'Operations & Cluster Mesh'}
+                        {studioActiveTab === 'clusters' && 'Distributed Nodes & Geographies'}
+                        {studioActiveTab === 'telemetry' && 'High-Frequency Ingress Telemetry'}
+                        {studioActiveTab === 'storage' && 'Datastores, NVMe Pools & Volumes'}
+                        {studioActiveTab === 'deployments' && 'Continuous Release Pipelines'}
+                        {studioActiveTab === 'security' && 'Tenant Isolation & Access Governance'}
+                        {studioActiveTab === 'audit' && 'Consensus Logs & Heartbeat Tracing'}
+                        {studioActiveTab === 'config' && 'Studio Preferences & Calibration'}
+                      </h3>
                     </div>
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                       48 / 48 Nodes Active
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="p-3 rounded-xl bg-secondary/30 border border-border/60">
                       <div className="text-[9px] font-mono text-text-muted uppercase">Throughput Rate</div>
                       <div className="text-lg font-mono font-medium text-text-primary">48.2 GB/s</div>
@@ -1481,21 +1526,21 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                   </div>
 
                   <div className="p-3 rounded-xl bg-secondary/20 border border-border/50 space-y-2 text-xs font-mono">
-                    <div className="text-[10px] text-text-muted uppercase">Cluster Deployment Status</div>
+                    <div className="text-[10px] text-text-muted uppercase">Subsystem Trace Log</div>
                     <div className="flex justify-between text-text-secondary text-[11px] pb-1 border-b border-border/30">
                       <span>api-gateway · v2.4.1</span>
-                      <span className="text-emerald-400">Synced</span>
+                      <span className="text-emerald-400">Synced · 0.4ms</span>
                     </div>
                     <div className="flex justify-between text-text-secondary text-[11px]">
                       <span>auth-service · v1.8.0</span>
-                      <span className="text-emerald-400">Synced</span>
+                      <span className="text-emerald-400">Synced · 0.7ms</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-border/40 text-[11px] font-mono text-text-muted flex justify-between">
-                  <span>Detached Studio Island Architecture</span>
-                  <span>16px Spatial Gaps</span>
+                  <span>Selected: {studioActiveTab} · Detached Island Layout</span>
+                  <span>12px Spatial Gaps</span>
                 </div>
               </div>
             </div>
