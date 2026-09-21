@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { cn } from '@/lib/utils';
 import { Button, ButtonVariant, ButtonSize, ButtonDepth } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
@@ -42,8 +43,18 @@ import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Knob } from '@/components/ui/knob';
-import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity, Radio as RadioIcon, Layers } from 'lucide-react';
+import {
+  AiChurning,
+  ChurningPattern,
+  ChurningVariant,
+  AiThinking,
+  ThinkingStatus,
+  AiStreamingText,
+  AiPromptBar,
+} from '@/components/ui';
+import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity, Radio as RadioIcon, Layers, Brain, Globe, RefreshCw, Send, Compass } from 'lucide-react';
 import { ComponentPreview } from '@/components/docs/ComponentPreview';
+
 
 export function ComponentInteractiveHarness({ slug }: { slug: string }) {
   // Button state
@@ -128,6 +139,28 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
   const [candleHeight, setCandleHeight] = React.useState(280);
   const [candleShowVolume, setCandleShowVolume] = React.useState(true);
   const [candleShowAxes, setCandleShowAxes] = React.useState(true);
+
+  // AI Churning state
+  const [churnPattern, setChurnPattern] = React.useState<ChurningPattern>('wavefront');
+  const [churnGridSize, setChurnGridSize] = React.useState<3 | 4>(3);
+  const [churnVariant, setChurnVariant] = React.useState<ChurningVariant>('tactile');
+  const [churnShowTelemetry, setChurnShowTelemetry] = React.useState(true);
+  const [churnPaused, setChurnPaused] = React.useState(false);
+
+  // AI Thinking state
+  const [thinkingStatus, setThinkingStatus] = React.useState<ThinkingStatus>('completed');
+  const [thinkingExpanded, setThinkingExpanded] = React.useState(true);
+
+  // AI Streaming Text state
+  const [streamIsActive, setStreamIsActive] = React.useState(false);
+  const [streamContent, setStreamContent] = React.useState(
+    'Catmull-Rom cubic splines ensure continuous first derivatives across telemetry points, eliminating sharp discontinuities while passing directly through all control knots.'
+  );
+
+  // AI Prompt Bar state
+  const [promptLoading, setPromptLoading] = React.useState(false);
+  const [promptSubmitted, setPromptSubmitted] = React.useState<string | null>(null);
+
 
 
   switch (slug) {
@@ -593,35 +626,93 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
         </ComponentPreview>
       );
 
-    case 'command-palette':
+    case 'command-palette': {
       const sampleItems: CommandItem[] = [
-        { id: '1', title: 'Start Project Workspace', category: 'General', shortcut: '⌘N', icon: <Sparkles className="w-4 h-4" />, onSelect: () => setPaletteSelected('Start Project Workspace') },
-        { id: '2', title: 'Deploy Cluster Worker', category: 'Operations', shortcut: '⌘D', icon: <Terminal className="w-4 h-4" />, onSelect: () => setPaletteSelected('Deploy Cluster Worker') },
-        { id: '3', title: 'Export Machine Metadata', category: 'Operations', shortcut: '⌘E', icon: <Download className="w-4 h-4" />, onSelect: () => setPaletteSelected('Export Machine Metadata') },
+        {
+          id: '1',
+          title: 'Inspect Cluster Telemetry',
+          description: 'Review active node status, latency percentiles, and consensus matrix.',
+          category: 'Commands',
+          shortcut: '⌘C',
+          icon: <Layers className="w-4 h-4" />,
+          onSelect: () => setPaletteSelected('Inspect Cluster Telemetry'),
+        },
+        {
+          id: '2',
+          title: 'Switch to Technical Docs Layout',
+          description: 'Open three-column technical telemetry layout with sculpted tab notch.',
+          category: 'Navigation',
+          shortcut: '⌘D',
+          icon: <Compass className="w-4 h-4" />,
+          onSelect: () => setPaletteSelected('Switch to Technical Docs Layout'),
+        },
+        {
+          id: '3',
+          title: 'Run Consensus Verification Kernel',
+          description: 'Trigger Catmull-Rom cubic spline verification algorithm.',
+          category: 'Commands',
+          shortcut: '⌘R',
+          icon: <Terminal className="w-4 h-4" />,
+          onSelect: () => setPaletteSelected('Run Consensus Verification Kernel'),
+        },
+        {
+          id: '4',
+          title: 'Analyze Performance Bottlenecks with AI',
+          description: 'Generate reasoning trace on current frame drop rates.',
+          category: 'AI Prompts',
+          shortcut: '⌘A',
+          icon: <Sparkles className="w-4 h-4" />,
+          onSelect: () => setPaletteSelected('Analyze Performance Bottlenecks with AI'),
+        },
+        {
+          id: '5',
+          title: 'Haptic & Tactile Depth Settings',
+          description: 'Tune rotary dials, spring tension, and recessed chassis contrast.',
+          category: 'System',
+          shortcut: '⌘,',
+          icon: <Settings className="w-4 h-4" />,
+          onSelect: () => setPaletteSelected('Haptic & Tactile Depth Settings'),
+        },
       ];
 
       return (
         <div className="space-y-4">
           <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border border-border/60 text-xs">
-            <span className="text-text-muted">Last selected command: <strong className="text-text-primary font-mono">{paletteSelected}</strong></span>
-            <span className="font-mono text-[10px] text-text-muted">Press ⌘K or click below</span>
+            <span className="text-text-muted">
+              Last executed:{' '}
+              <strong className="text-text-primary font-mono">{paletteSelected}</strong>
+            </span>
+            <span className="font-mono text-[10px] text-text-muted">Press ⌘K or Tab to switch to Ask AI</span>
           </div>
 
           <ComponentPreview
-            code={`<CommandPalette\n  isOpen={isOpen}\n  onClose={() => setIsOpen(false)}\n  items={commandItems}\n/>`}
+            code={`<CommandPalette
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  items={commandItems}
+  onAiPrompt={(prompt) => console.log('AI Prompt:', prompt)}
+/>`}
           >
-            <Button variant="default" onClick={() => setPaletteOpen(true)} leftIcon={<Search className="w-3.5 h-3.5" />}>
-              Open Command Palette (⌘K)
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="default"
+                onClick={() => setPaletteOpen(true)}
+                leftIcon={<Search className="w-3.5 h-3.5" />}
+              >
+                Open Command Palette (⌘K)
+              </Button>
+            </div>
           </ComponentPreview>
 
           <CommandPalette
             isOpen={paletteOpen}
             onClose={() => setPaletteOpen(false)}
             items={sampleItems}
+            onAiPrompt={(p) => setPaletteSelected(`AI: "${p}"`)}
           />
         </div>
       );
+    }
 
     case 'switch':
       return (
@@ -1780,6 +1871,323 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                 showAxes={candleShowAxes}
                 unit="$"
                 className="w-full max-w-2xl"
+              />
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'ai-churning': {
+      return (
+        <div className="space-y-4">
+          {/* Controls Bar */}
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Pattern:</span>
+              {(['wavefront', 'dots', 'orbit', 'pulse', 'matrix'] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setChurnPattern(p)}
+                  className={cn(
+                    'px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer',
+                    churnPattern === p
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  )}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Grid:</span>
+              {([3, 4] as const).map((g) => (
+                <button
+                  key={g}
+                  onClick={() => setChurnGridSize(g)}
+                  className={cn(
+                    'px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer',
+                    churnGridSize === g
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  )}
+                >
+                  {g}x{g}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Variant:</span>
+              {(['tactile', 'recessed', 'minimal'] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setChurnVariant(v)}
+                  className={cn(
+                    'px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer',
+                    churnVariant === v
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  )}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setChurnShowTelemetry(!churnShowTelemetry)}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border',
+                churnShowTelemetry
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              )}
+            >
+              Telemetry: {churnShowTelemetry ? 'Enabled' : 'Disabled'}
+            </button>
+
+            <button
+              onClick={() => setChurnPaused(!churnPaused)}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border',
+                churnPaused
+                  ? 'bg-destructive/10 text-destructive border-destructive/30'
+                  : 'bg-secondary text-text-primary border-border'
+              )}
+            >
+              {churnPaused ? 'Resume State' : 'Pause State'}
+            </button>
+          </div>
+
+          <ComponentPreview
+            code={`<AiChurning
+  label="Synthesizing architecture"
+  sublabel="Evaluating consensus constraints"
+  pattern="${churnPattern}"
+  gridSize={${churnGridSize}}
+  variant="${churnVariant}"
+  showTelemetry={${churnShowTelemetry}}
+  isPaused={${churnPaused}}
+/>`}
+          >
+            <div className="w-full flex flex-col items-center justify-center py-10 gap-6">
+              <AiChurning
+                label="Synthesizing architecture"
+                sublabel="Evaluating consensus constraints and memory bandwidth"
+                pattern={churnPattern}
+                gridSize={churnGridSize}
+                variant={churnVariant}
+                showTelemetry={churnShowTelemetry}
+                isPaused={churnPaused}
+              />
+
+              <div className="flex items-center gap-4 text-xs font-mono text-text-muted">
+                <span>Pattern: <strong className="text-text-primary">{churnPattern}</strong></span>
+                <span>·</span>
+                <span>Matrix: <strong className="text-text-primary">{churnGridSize}x{churnGridSize}</strong></span>
+                <span>·</span>
+                <span>Chassis: <strong className="text-text-primary">{churnVariant}</strong></span>
+              </div>
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'ai-thinking': {
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="text-text-muted font-medium">Status:</span>
+              {(['thinking', 'completed'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setThinkingStatus(s)}
+                  className={cn(
+                    'px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer',
+                    thinkingStatus === s
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  )}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setThinkingExpanded(!thinkingExpanded)}
+              className="px-2.5 py-1 rounded-md text-xs bg-secondary text-text-primary border border-border cursor-pointer"
+            >
+              {thinkingExpanded ? 'Collapse Accordion' : 'Expand Accordion'}
+            </button>
+          </div>
+
+          <ComponentPreview
+            code={`<AiThinking
+  status="${thinkingStatus}"
+  duration="${thinkingStatus === 'thinking' ? 'Streaming...' : '4.2s'}"
+  expanded={${thinkingExpanded}}
+  onExpandedChange={setExpanded}
+  steps={[
+    { id: '1', title: 'Parse telemetry constraints', status: 'done', duration: '120ms' },
+    { id: '2', title: 'Synthesize optimal execution kernel', status: 'done', duration: '480ms' },
+    { id: '3', title: 'Run static validation against consensus matrix', status: 'done', duration: '310ms' },
+  ]}
+  reasoningText="Evaluating boundary conditions reveals memory bandwidth constraints require Catmull-Rom cubic splines."
+/>`}
+          >
+            <div className="w-full flex items-center justify-center py-6">
+              <AiThinking
+                status={thinkingStatus}
+                duration={thinkingStatus === 'thinking' ? 'Streaming...' : '4.2s'}
+                expanded={thinkingExpanded}
+                onExpandedChange={setThinkingExpanded}
+                className="w-full max-w-xl"
+              />
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'ai-streaming-text': {
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <button
+              onClick={() => setStreamIsActive(!streamIsActive)}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border',
+                streamIsActive
+                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30'
+                  : 'bg-secondary text-text-primary border-border'
+              )}
+            >
+              Streaming Caret: {streamIsActive ? 'Active' : 'Inactive'}
+            </button>
+
+            <button
+              onClick={() => {
+                setStreamContent(
+                  'Catmull-Rom cubic splines guarantee C1 continuity across all knot vectors. In high-frequency orderbook visualization, this ensures smooth interpolation without artificial oscillations.'
+                );
+              }}
+              className="px-2.5 py-1 rounded-md text-xs bg-secondary hover:bg-secondary/70 text-text-primary border border-border cursor-pointer transition-colors"
+            >
+              Reset Content
+            </button>
+          </div>
+
+          <ComponentPreview
+            code={`<AiStreamingText
+  content="${streamContent}"
+  isStreaming={${streamIsActive}}
+  sources={[
+    {
+      id: '1',
+      domain: 'kernel.org',
+      title: 'Real-time telemetry buffer architecture',
+      confidence: 98,
+    },
+    {
+      id: '2',
+      domain: 'arxiv.org',
+      title: 'Catmull-Rom Spline Interpolation for Financial Streams',
+      confidence: 94,
+    }
+  ]}
+  followUps={[
+    'How does this compare to B-spline interpolation?',
+    'Benchmark memory consumption across 100k nodes',
+    'Generate TypeScript implementation',
+  ]}
+  onFollowUpClick={(prompt) => console.log(prompt)}
+/>`}
+          >
+            <div className="w-full flex items-center justify-center py-6">
+              <AiStreamingText
+                content={streamContent}
+                isStreaming={streamIsActive}
+                sources={[
+                  {
+                    id: '1',
+                    domain: 'kernel.org',
+                    title: 'Real-time telemetry buffer architecture',
+                    snippet: 'Low-latency ring buffer synchronization using memory fences and Catmull-Rom cubic splines.',
+                    confidence: 98,
+                  },
+                  {
+                    id: '2',
+                    domain: 'arxiv.org',
+                    title: 'Catmull-Rom Spline Interpolation for Financial Streams',
+                    snippet: 'Comparative analysis of Catmull-Rom vs Akima splines under high-throughput orderbook ingestion.',
+                    confidence: 94,
+                  },
+                ]}
+                followUps={[
+                  'How does this compare to B-spline interpolation?',
+                  'Benchmark memory consumption across 100k nodes',
+                  'Generate TypeScript implementation',
+                ]}
+                onFollowUpClick={(prompt) => setStreamContent(`Selected follow-up: "${prompt}". Synthesizing specialized benchmark analysis...`)}
+                className="w-full max-w-xl"
+              />
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'ai-prompt-bar': {
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <button
+              onClick={() => setPromptLoading(!promptLoading)}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border',
+                promptLoading
+                  ? 'bg-destructive/10 text-destructive border-destructive/30'
+                  : 'bg-secondary text-text-primary border-border'
+              )}
+            >
+              Simulate Loading: {promptLoading ? 'Active' : 'Off'}
+            </button>
+
+            {promptSubmitted && (
+              <span className="font-mono text-text-muted text-xs">
+                Last prompt: <strong className="text-text-primary">"{promptSubmitted}"</strong>
+              </span>
+            )}
+          </div>
+
+          <ComponentPreview
+            code={`<AiPromptBar
+  placeholder="Ask anything, explore architectures, or simulate consensus..."
+  models={['Claude 3.5 Sonnet', 'GPT-4o', 'DeepSeek R1', 'NickUI-Architect']}
+  isLoading={${promptLoading}}
+  onStop={() => setIsLoading(false)}
+  onSubmit={(prompt, options) => {
+    console.log('Submitted:', prompt, options);
+  }}
+/>`}
+          >
+            <div className="w-full flex items-center justify-center py-6">
+              <AiPromptBar
+                placeholder="Ask anything, explore architectures, or simulate consensus..."
+                isLoading={promptLoading}
+                onStop={() => setPromptLoading(false)}
+                onSubmit={(prompt) => {
+                  setPromptSubmitted(prompt);
+                  setPromptLoading(true);
+                  setTimeout(() => setPromptLoading(false), 2000);
+                }}
+                className="w-full max-w-xl"
               />
             </div>
           </ComponentPreview>

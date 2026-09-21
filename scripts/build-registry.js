@@ -54,6 +54,10 @@ const slugToFile = {
   'candlestick-chart': 'charts/candlestick-chart.tsx',
   'segmented-control': 'segmented-control.tsx',
   'knob': 'knob.tsx',
+  'ai-churning': 'ai-churning.tsx',
+  'ai-thinking': 'ai-thinking.tsx',
+  'ai-streaming-text': 'ai-streaming-text.tsx',
+  'ai-prompt-bar': 'ai-prompt-bar.tsx',
 };
 
 const components = JSON.parse(fs.readFileSync(registryJsonPath, 'utf8'));

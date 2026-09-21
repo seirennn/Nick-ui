@@ -27,3 +27,8 @@ export * from './magnetic-tabs';
 export * from './stack-deck';
 export * from './segmented-control';
 export * from './knob';
+export * from './ai-churning';
+export * from './ai-thinking';
+export * from './ai-streaming-text';
+export * from './ai-prompt-bar';
+
