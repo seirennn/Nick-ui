@@ -16,14 +16,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Gauge } from '@/components/ui/gauge';
 import { Sparkline } from '@/components/ui/charts/sparkline';
 import { AnalyticsDashboard } from '@/components/blocks/AnalyticsDashboard';
-import { OtpInput } from '@/components/ui/otp-input';
-import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDescription, SpotlightCardContent } from '@/components/ui/spotlight-card';
-import { FolderPreview } from '@/components/ui/folder-preview';
-import { MagneticTabs } from '@/components/ui/magnetic-tabs';
-import { StackDeck } from '@/components/ui/stack-deck';
+import { TactileMetricCard } from '@/components/ui/charts/tactile-metric-card';
+import { AiChurning, type ChurningPattern } from '@/components/ui/ai-churning';
+import { AiPromptBar } from '@/components/ui/ai-prompt-bar';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { BrandLogo } from '@/components/brand/BrandLogo';
-import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Sparkles, Terminal, Activity, HardDrive, ShieldCheck, RotateCcw } from 'lucide-react';
+import { Search, ChevronDown, Check, ArrowRight, Layers, Sliders, Cpu, Copy, Sparkles, Terminal, Activity, HardDrive, ShieldCheck, RotateCcw, Compass } from 'lucide-react';
 import componentsData from '@/registry/components.json';
 
 export default function HomePage() {
@@ -40,8 +38,13 @@ export default function HomePage() {
   const [streamMode, setStreamMode] = React.useState<'continuous' | 'transient'>('continuous');
   const [pressedBtn, setPressedBtn] = React.useState<'raised' | 'recessed' | 'engraved'>('raised');
 
-  const [homeOtp, setHomeOtp] = React.useState('849201');
-  const [homeTab, setHomeTab] = React.useState('schematics');
+  // Signature Interactions state
+  const [churningPattern, setChurningPattern] = React.useState<ChurningPattern>('wavefront');
+  const [commandCategory, setCommandCategory] = React.useState<'All' | 'Commands' | 'AI' | 'System'>('All');
+  const [commandQuery, setCommandQuery] = React.useState('');
+  const [activeCommandId, setActiveCommandId] = React.useState<string | null>(null);
+  const [aiPromptModel, setAiPromptModel] = React.useState('Claude 3.5 Sonnet');
+  const [aiPromptLoading, setAiPromptLoading] = React.useState(false);
 
   const computedCapacity = tactileSlider;
   const computedHeadroom = 100 - Math.round(tactileSlider * 0.65);
@@ -95,6 +98,43 @@ export default function HomePage() {
     setStreamMode('continuous');
     setPressedBtn('raised');
   };
+
+  const consoleCommands = [
+    {
+      id: 'cluster',
+      title: 'Inspect Cluster Telemetry',
+      category: 'Commands',
+      shortcut: '⌘C',
+      icon: <Layers className="w-3.5 h-3.5" />,
+    },
+    {
+      id: 'docs',
+      title: 'Switch to Technical Docs',
+      category: 'Navigation',
+      shortcut: '⌘D',
+      icon: <Compass className="w-3.5 h-3.5" />,
+    },
+    {
+      id: 'consensus',
+      title: 'Run Consensus Verification',
+      category: 'Commands',
+      shortcut: '⌘R',
+      icon: <Terminal className="w-3.5 h-3.5" />,
+    },
+    {
+      id: 'perf',
+      title: 'Analyze Frame Bottlenecks',
+      category: 'AI',
+      shortcut: '⌘A',
+      icon: <Sparkles className="w-3.5 h-3.5" />,
+    },
+  ];
+
+  const filteredCommands = consoleCommands.filter((cmd) => {
+    const matchesCategory = commandCategory === 'All' || cmd.category === commandCategory;
+    const matchesQuery = !commandQuery || cmd.title.toLowerCase().includes(commandQuery.toLowerCase());
+    return matchesCategory && matchesQuery;
+  });
 
   const handleCopyInstall = () => {
     navigator.clipboard.writeText('pnpm add @sehrennn/nickui');
@@ -556,7 +596,7 @@ export default function HomePage() {
                   Environmental & Tactile Depth
                 </h2>
                 <p className="text-body text-text-secondary mt-1 max-w-xl text-xs sm:text-sm">
-                  Adapted from advanced micro-interaction research with architectural restraint: ambient cursor-driven light, fanned archival folders, spring-driven magnetic decks, and milled numeric wells.
+                  Adapted from advanced micro-interaction research with architectural restraint: ambient spline telemetry, atmospheric pixel-grid churning, keyboard-first command orchestration, and contextual generative input.
                 </p>
               </div>
               <Link href="/components">
@@ -568,189 +608,237 @@ export default function HomePage() {
 
             {/* 2x2 Architectural Grid of High-Fidelity Showcases */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* 1. Ambient Spotlight Sensor Card */}
-              <SpotlightCard variant="tactile" className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between">
-                <SpotlightCardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-text-muted" />
-                      <span className="text-[10px] font-mono text-text-muted uppercase">Telemetry Node</span>
-                    </div>
-                    <Badge variant="status" status="success">Active</Badge>
-                  </div>
-                  <SpotlightCardTitle className="mt-2 text-base">Ambient Optical Surface</SpotlightCardTitle>
-                  <SpotlightCardDescription className="text-xs">
-                    Light functions as an environmental condition, softly illuminating the surface texture without explicit border tracing.
-                  </SpotlightCardDescription>
-                </SpotlightCardHeader>
-                <SpotlightCardContent className="my-4">
-                  <div className="p-3.5 rounded-xl bg-secondary/40 border border-border/50 space-y-2 text-xs">
-                    <div className="flex justify-between text-text-muted">
-                      <span>Ambient Light Radius</span>
-                      <span className="font-mono text-text-primary">420px soft falloff</span>
-                    </div>
-                    <div className="flex justify-between text-text-muted">
-                      <span>Depth Surface</span>
-                      <span className="font-mono text-text-primary">Tactile Tier</span>
-                    </div>
-                  </div>
-                </SpotlightCardContent>
-                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                  <span>SPOTLIGHT CARD</span>
-                  <Link href="/components/spotlight-card" className="hover:text-text-primary transition-colors">
-                    View Spec →
-                  </Link>
-                </div>
-              </SpotlightCard>
-
-              {/* 2. Interactive Archival Folder Preview */}
+              {/* 1. Architectural Spline Telemetry Card */}
               <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-text-muted uppercase">Archival Stacks</span>
-                    <Badge variant="engraved" className="text-[10px]">Fanned Cards</Badge>
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Telemetry // Analytics</span>
+                    <Badge variant="outline" className="text-[10px]">Node Trajectory</Badge>
                   </div>
-                  <h4 className="text-base font-medium text-text-primary">Interactive Archival Folder</h4>
+                  <h4 className="text-base font-medium text-text-primary">Tactile Metric Spline</h4>
                   <p className="text-xs text-text-secondary leading-relaxed">
-                    Cascading schematic bundles fanning dynamically upon hover and tactile click.
+                    Interactive cubic spline with hoverable nodes, dynamic income tooltip pill, and milled tactile well.
                   </p>
                 </div>
 
-                <div className="py-2 flex items-center justify-center">
-                  <FolderPreview
-                    title="Avionics Schematics"
-                    category="ARCHIVAL BUNDLE // 2026"
-                    triggerMode="both"
-                    files={[
-                      { id: '1', title: 'Power Regulation Bus', subtitle: '48V DC bus conversion', badge: 'Spec 01' },
-                      { id: '2', title: 'Fiber Backplane Topo', subtitle: '800 Gbps optical link', badge: 'Spec 02' },
-                      { id: '3', title: 'Cryo-Manifold Study', subtitle: 'Zero thermal creep test', badge: 'Spec 03' },
-                    ]}
+                <div className="py-1">
+                  <TactileMetricCard
+                    title="Cluster Ingress"
+                    value="$128,450"
+                    periodLabel="2026"
+                    deltaText="+18.4%"
+                    deltaSubtext="vs prior cycle"
+                    className="border border-border/60 shadow-none bg-secondary/30 p-4 rounded-xl"
                   />
                 </div>
 
                 <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                  <span>FOLDER PREVIEW</span>
-                  <Link href="/components/folder-preview" className="hover:text-text-primary transition-colors">
+                  <span>TACTILE METRIC CARD</span>
+                  <Link href="/components/charts" className="hover:text-text-primary transition-colors">
                     View Spec →
                   </Link>
                 </div>
               </div>
 
-              {/* 3. Dedicated Milled OTP Verification */}
+              {/* 2. Atmospheric AI Churning & Pixel-Grid Loader Card */}
               <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-text-muted uppercase">Tactile Wells</span>
-                    <Badge variant="engraved" className="text-[10px]">6-Digit Auth</Badge>
+                    <span className="text-[10px] font-mono text-text-muted uppercase">State Continuity // AI Core</span>
+                    <Badge variant="engraved" className="text-[10px]">Pixel Grid</Badge>
                   </div>
-                  <h4 className="text-base font-medium text-text-primary">Milled OTP Verification</h4>
+                  <h4 className="text-base font-medium text-text-primary">Atmospheric AI Churning</h4>
                   <p className="text-xs text-text-secondary leading-relaxed">
-                    Tactile recessed key wells with spring elevation, automatic progression, and cryptographic token verification.
+                    Subtle pixel-grid wavefront and orbit animations communicating long-running system state without interaction affordance.
                   </p>
                 </div>
 
-                <div className="py-4 flex flex-col items-center justify-center space-y-3">
-                  <OtpInput
-                    length={6}
-                    variant="tactile"
-                    value={homeOtp}
-                    onChange={setHomeOtp}
-                  />
-                  <div className="flex items-center gap-2 text-[11px] font-mono">
-                    {homeOtp.length === 6 ? (
-                      <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                        <Check className="w-3 h-3" />
-                        TOKEN VERIFIED // SEC_OK
-                      </span>
-                    ) : (
-                      <span className="text-text-muted bg-secondary/60 px-2.5 py-1 rounded-full border border-border/50">
-                        ENTER {6 - homeOtp.length} MORE DIGITS
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                  <span>OTP INPUT</span>
-                  <Link href="/components/otp-input" className="hover:text-text-primary transition-colors">
-                    View Spec →
-                  </Link>
-                </div>
-              </div>
-
-              {/* 4. Dedicated Magnetic Deck Switcher */}
-              <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
-                <div className="space-y-1">
+                <div className="space-y-3 py-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-text-muted uppercase">Spring Dynamics</span>
-                    <Badge variant="outline" className="text-[10px]">Magnetic Physics</Badge>
-                  </div>
-                  <h4 className="text-base font-medium text-text-primary">Magnetic Deck Switcher</h4>
-                  <p className="text-xs text-text-secondary leading-relaxed">
-                    Frictionless tab navigation with spring-damped magnetic tension, driving stacked depth layers.
-                  </p>
-                </div>
-
-                <div className="py-2 space-y-3">
-                  <div className="flex justify-center">
-                    <MagneticTabs
-                      variant="tactile"
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Pattern:</span>
+                    <SegmentedControl
+                      value={churningPattern}
+                      onChange={(v) => setChurningPattern(v as any)}
                       size="sm"
-                      value={homeTab}
-                      onValueChange={setHomeTab}
-                      tabs={[
-                        { id: 'schematics', label: 'Schematics' },
-                        { id: 'telemetry', label: 'Telemetry', badge: 'Live' },
-                        { id: 'specs', label: 'Specs' }
+                      variant="tactile"
+                      options={[
+                        { value: 'wavefront', label: 'Wave' },
+                        { value: 'dots', label: 'Dots' },
+                        { value: 'orbit', label: 'Orbit' },
+                        { value: 'matrix', label: 'Matrix' },
                       ]}
                     />
                   </div>
 
-                  {/* Active Deck Telemetry Layer */}
-                  <div className="p-3.5 rounded-xl bg-secondary/40 border border-border/50 text-xs font-mono space-y-2">
-                    {homeTab === 'schematics' && (
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-text-muted text-[11px]">
-                          <span>ACTIVE LAYER</span>
-                          <span className="text-text-primary font-medium">REV_04_BUS.CAD</span>
-                        </div>
-                        <div className="flex justify-between text-text-muted text-[11px]">
-                          <span>GEOMETRY NODES</span>
-                          <span className="text-text-primary font-medium">1,420 VECTORS</span>
-                        </div>
-                      </div>
-                    )}
-                    {homeTab === 'telemetry' && (
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-text-muted text-[11px]">
-                          <span>INGRESS LATENCY</span>
-                          <span className="text-emerald-500 font-medium">0.42 ms</span>
-                        </div>
-                        <div className="flex justify-between text-text-muted text-[11px]">
-                          <span>SAMPLING JITTER</span>
-                          <span className="text-text-primary font-medium">±0.02%</span>
-                        </div>
-                      </div>
-                    )}
-                    {homeTab === 'specs' && (
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-text-muted text-[11px]">
-                          <span>THERMAL DISSIPATION</span>
-                          <span className="text-text-primary font-medium">14.8 W / m²</span>
-                        </div>
-                        <div className="flex justify-between text-text-muted text-[11px]">
-                          <span>SPRING CONSTANT</span>
-                          <span className="text-text-primary font-medium">k = 240 N/m</span>
-                        </div>
-                      </div>
-                    )}
+                  <div className="p-4 rounded-2xl bg-secondary/25 border border-border/60 flex items-center justify-center">
+                    <AiChurning
+                      pattern={churningPattern}
+                      variant="tactile"
+                      label="Synthesizing Schema"
+                      sublabel="Ingesting architecture AST"
+                      showTelemetry={true}
+                      showTimer={true}
+                      className="w-full"
+                    />
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                  <span>MAGNETIC TABS</span>
-                  <Link href="/components/magnetic-tabs" className="hover:text-text-primary transition-colors">
+                  <span>AI CHURNING</span>
+                  <Link href="/components/ai-churning" className="hover:text-text-primary transition-colors">
+                    View Spec →
+                  </Link>
+                </div>
+              </div>
+
+              {/* 3. Tactile Command Console Card */}
+              <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Orchestration // System</span>
+                    <Badge variant="outline" className="text-[10px]">Keyboard First</Badge>
+                  </div>
+                  <h4 className="text-base font-medium text-text-primary">Tactile Command Console</h4>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Instant keyboard-driven command execution with category filters, tactile selection wells, and monospaced shortcuts.
+                  </p>
+                </div>
+
+                <div className="space-y-2.5 py-1">
+                  {/* Search Input Well */}
+                  <div className="relative flex items-center">
+                    <Search className="w-3.5 h-3.5 absolute left-3 text-text-muted pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Filter commands or shortcuts..."
+                      value={commandQuery}
+                      onChange={(e) => setCommandQuery(e.target.value)}
+                      className="w-full pl-9 pr-12 py-1.5 rounded-xl bg-secondary/40 border border-border/60 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-primary/40 font-mono"
+                    />
+                    <span className="absolute right-2.5 pointer-events-none">
+                      <Kbd>⌘K</Kbd>
+                    </span>
+                  </div>
+
+                  {/* Category Filter Pills */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                    {(['All', 'Commands', 'AI', 'System'] as const).map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setCommandCategory(cat)}
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-mono transition-colors cursor-pointer ${
+                          commandCategory === cat
+                            ? 'bg-primary text-primary-foreground font-medium'
+                            : 'bg-secondary/60 text-text-muted hover:text-text-primary border border-border/50'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Filtered Command List */}
+                  <div className="space-y-1 rounded-xl bg-secondary/25 border border-border/60 p-1.5">
+                    {filteredCommands.map((cmd) => {
+                      const isExecuted = activeCommandId === cmd.id;
+                      return (
+                        <button
+                          key={cmd.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveCommandId(cmd.id);
+                            setTimeout(() => setActiveCommandId(null), 2000);
+                          }}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all cursor-pointer ${
+                            isExecuted
+                              ? 'bg-card border border-border shadow-xs'
+                              : 'hover:bg-card/70 border border-transparent'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-text-muted">{cmd.icon}</span>
+                            <span className="text-xs text-text-primary font-medium truncate">{cmd.title}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {isExecuted ? (
+                              <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                                <Check className="w-3 h-3" />
+                                OK
+                              </span>
+                            ) : (
+                              <Kbd>{cmd.shortcut}</Kbd>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                  <span>COMMAND PALETTE</span>
+                  <Link href="/components/command-palette" className="hover:text-text-primary transition-colors">
+                    View Spec →
+                  </Link>
+                </div>
+              </div>
+
+              {/* 4. Architectural AI Prompt Bar Card */}
+              <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-tactile flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-text-muted uppercase">Generative Surfaces // Input</span>
+                    <Badge variant="engraved" className="text-[10px]">Contextual Bar</Badge>
+                  </div>
+                  <h4 className="text-base font-medium text-text-primary">Architectural Prompt Console</h4>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Tactile prompt input with dynamic model switching, integrated tool toggles (Reason, Web, Code), and file attachments.
+                  </p>
+                </div>
+
+                <div className="space-y-3 py-1">
+                  {/* Quick prompt tags */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                    <span className="text-[10px] font-mono text-text-muted shrink-0">Try:</span>
+                    {[
+                      'Simulate Consensus',
+                      'Analyze Latency',
+                      'Export Schematics',
+                    ].map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          setAiPromptLoading(true);
+                          setTimeout(() => setAiPromptLoading(false), 1800);
+                        }}
+                        className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-secondary/60 text-text-muted hover:text-text-primary border border-border/50 transition-colors shrink-0 cursor-pointer"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="p-2 rounded-2xl bg-secondary/25 border border-border/60">
+                    <AiPromptBar
+                      placeholder="Ask anything, analyze cluster topology, or run simulation..."
+                      variant="tactile"
+                      models={['Claude 3.5 Sonnet', 'GPT-4o', 'DeepSeek R1', 'NickUI-Architect']}
+                      selectedModel={aiPromptModel}
+                      onModelChange={setAiPromptModel}
+                      isLoading={aiPromptLoading}
+                      onSubmit={() => {
+                        setAiPromptLoading(true);
+                        setTimeout(() => setAiPromptLoading(false), 2000);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                  <span>AI PROMPT BAR</span>
+                  <Link href="/components/ai-prompt-bar" className="hover:text-text-primary transition-colors">
                     View Spec →
                   </Link>
                 </div>
