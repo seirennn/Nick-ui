@@ -20,12 +20,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio';
 import { Gauge } from '@/components/ui/gauge';
 import { Sparkline, AreaChart, BarChart, DotMatrixChart, TactileTrendCard, TactileMetricCard, TactileBarCard } from '@/components/ui/charts';
 import { RailSidebar } from '@/components/ui/rail-sidebar';
+import { StudioSidebar } from '@/components/ui/studio-sidebar';
 import { OtpInput, OtpInputVariant } from '@/components/ui/otp-input';
 import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDescription, SpotlightCardContent } from '@/components/ui/spotlight-card';
 import { FolderPreview } from '@/components/ui/folder-preview';
 import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
-import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity } from 'lucide-react';
+import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity, Radio as RadioIcon } from 'lucide-react';
 import { ComponentPreview } from '@/components/docs/ComponentPreview';
 
 export function ComponentInteractiveHarness({ slug }: { slug: string }) {
@@ -322,21 +323,29 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'sidebar':
       return (
         <ComponentPreview
-          code={`<Sidebar\n  groups={[\n    {\n      title: "Foundations",\n      items: [\n        { id: "1", label: "Colors", href: "#" },\n        { id: "2", label: "Typography", href: "#" }\n      ]\n    }\n  ]}\n/>`}
+          code={`<Sidebar\n  groups={[\n    {\n      title: "Architecture",\n      items: [\n        { id: "1", label: "System Primitives", href: "#", icon: Cpu },\n        { id: "2", label: "Network Transport", href: "#", icon: RadioIcon },\n        { id: "3", label: "Bayesian BKT Model", href: "#", icon: Activity, badge: "v2" }\n      ]\n    }\n  ]}\n/>`}
         >
-          <div className="w-56 p-3 rounded-xl border border-border bg-card/60 space-y-3">
-            <div className="text-sidebar-category uppercase tracking-wider text-text-muted font-medium px-2">
+          <div className="w-64 p-3 rounded-xl border border-border/80 bg-card/60 space-y-3">
+            <div className="text-[10px] font-mono font-medium uppercase tracking-wider text-text-muted/80 px-2.5">
               Architecture
             </div>
             <div className="space-y-1">
-              <div className="px-2.5 py-1.5 rounded-lg text-ui bg-sidebar-accent text-text-primary font-medium">
-                System Primitives
+              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs bg-secondary text-text-primary font-medium border border-border/70 shadow-2xs">
+                <Cpu className="w-3.5 h-3.5 text-text-primary shrink-0" />
+                <span>System Primitives</span>
               </div>
-              <div className="px-2.5 py-1.5 rounded-lg text-ui text-text-secondary hover:text-text-primary">
-                Network Transport
+              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-text-secondary hover:text-text-primary hover:bg-secondary/40 transition-colors">
+                <RadioIcon className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                <span>Network Transport</span>
               </div>
-              <div className="px-2.5 py-1.5 rounded-lg text-ui text-text-secondary hover:text-text-primary">
-                Bayesian BKT Model
+              <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs text-text-secondary hover:text-text-primary hover:bg-secondary/40 transition-colors">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Activity className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                  <span className="truncate">Bayesian BKT Model</span>
+                </div>
+                <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-secondary/80 text-text-muted border border-border/50">
+                  v2
+                </span>
               </div>
             </div>
           </div>
@@ -582,8 +591,8 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'gauge':
       return (
         <div className="space-y-4">
-          <div className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30 border border-border/60 text-xs">
-            <span className="text-text-muted">Dial Value: {gaugeVal}%</span>
+          <div className="flex flex-wrap items-center justify-between gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <span className="text-text-muted font-medium">Dial Telemetry: <span className="font-mono text-text-primary">{gaugeVal}%</span></span>
             <input
               type="range"
               min={0}
@@ -595,12 +604,12 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
           </div>
 
           <ComponentPreview
-            code={`<Gauge\n  value={${gaugeVal}}\n  label="CPU LOAD"\n  unit="%"\n  variant="accent"\n  size={140}\n/>`}
+            code={`<div className="flex items-center gap-8 flex-wrap justify-center">\n  <Gauge value={${gaugeVal}} label="CORE UTIL" unit="%" size={140} variant="tactile" />\n  <Gauge value={${Math.min(100, Math.round(gaugeVal * 0.85))}} label="MEM BUFFER" unit="%" size={140} variant="warning" />\n  <Gauge value={${Math.min(100, Math.round(gaugeVal * 1.15))}} label="IOPS SPIKE" unit="%" size={140} variant="${gaugeVal > 75 ? 'critical' : 'recessed'}" />\n</div>`}
           >
-            <div className="flex items-center gap-6 flex-wrap justify-center">
-              <Gauge value={gaugeVal} label="CORE UTIL" unit="%" size={135} variant="accent" />
-              <Gauge value={Math.min(100, Math.round(gaugeVal * 0.85))} label="MEM BUFFER" unit="%" size={135} variant="warning" />
-              <Gauge value={Math.min(100, Math.round(gaugeVal * 1.15))} label="IOPS SPIKE" unit="%" size={135} variant={gaugeVal > 75 ? 'danger' : 'success'} />
+            <div className="flex items-center gap-8 flex-wrap justify-center py-4">
+              <Gauge value={gaugeVal} label="CORE UTIL" unit="%" size={140} variant="tactile" />
+              <Gauge value={Math.min(100, Math.round(gaugeVal * 0.85))} label="MEM BUFFER" unit="%" size={140} variant="warning" />
+              <Gauge value={Math.min(100, Math.round(gaugeVal * 1.15))} label="IOPS SPIKE" unit="%" size={140} variant={gaugeVal > 75 ? 'critical' : 'recessed'} />
             </div>
           </ComponentPreview>
         </div>
@@ -609,20 +618,29 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'sparkline':
       return (
         <ComponentPreview
-          code={`<Sparkline data={[24, 38, 31, 45, 52, 68, 74, 82]} width={140} height={36} color="#38bdf8" />`}
+          code={`<Sparkline data={[24, 38, 31, 45, 52, 68, 74, 82]} width={160} height={40} />`}
         >
-          <div className="flex items-center gap-6 flex-wrap justify-center">
-            <div className="p-3 rounded-xl bg-card border border-border/80 tactile-surface flex flex-col gap-1">
-              <span className="text-xs font-mono text-text-muted">Throughput Trend</span>
-              <Sparkline data={[24, 38, 31, 45, 52, 68, 74, 82]} width={140} height={36} color="#38bdf8" />
+          <div className="flex items-center gap-6 flex-wrap justify-center py-4">
+            <div className="p-3.5 rounded-xl bg-card border border-border/80 tactile-surface flex flex-col gap-2">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-text-muted">Throughput</span>
+                <span className="text-text-primary font-medium">82 Mb/s</span>
+              </div>
+              <Sparkline data={[24, 38, 31, 45, 52, 68, 74, 82]} width={160} height={40} />
             </div>
-            <div className="p-3 rounded-xl bg-card border border-border/80 tactile-surface flex flex-col gap-1">
-              <span className="text-xs font-mono text-text-muted">Error Margin Trend</span>
-              <Sparkline data={[14, 12, 10, 8, 9, 6, 4, 3]} width={140} height={36} color="#10b981" />
+            <div className="p-3.5 rounded-xl bg-card border border-border/80 tactile-surface flex flex-col gap-2">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-text-muted">Error Margin</span>
+                <span className="text-emerald-500 font-medium">0.03%</span>
+              </div>
+              <Sparkline data={[14, 12, 10, 8, 9, 6, 4, 3]} width={160} height={40} color="#10b981" />
             </div>
-            <div className="p-3 rounded-xl bg-card border border-border/80 tactile-surface flex flex-col gap-1">
-              <span className="text-xs font-mono text-text-muted">Thermal Jitter</span>
-              <Sparkline data={[45, 62, 58, 79, 84, 91, 78, 88]} width={140} height={36} color="#f59e0b" />
+            <div className="p-3.5 rounded-xl bg-card border border-border/80 tactile-surface flex flex-col gap-2">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-text-muted">Thermal Jitter</span>
+                <span className="text-amber-500 font-medium">88 °C</span>
+              </div>
+              <Sparkline data={[45, 62, 58, 79, 84, 91, 78, 88]} width={160} height={40} color="#f59e0b" />
             </div>
           </div>
         </ComponentPreview>
@@ -631,9 +649,9 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'area-chart':
       return (
         <ComponentPreview
-          code={`<AreaChart\n  data={[\n    { label: '00:00', value: 120 },\n    { label: '04:00', value: 240 },\n    { label: '08:00', value: 410 },\n    { label: '12:00', value: 580 },\n    { label: '16:00', value: 510 },\n    { label: '20:00', value: 640 },\n    { label: '24:00', value: 490 }\n  ]}\n  height={220}\n  color="#38bdf8"\n  unit=" Mb/s"\n/>`}
+          code={`<AreaChart\n  data={[\n    { label: '00:00', value: 120, formattedValue: '120 Mb/s' },\n    { label: '04:00', value: 240, formattedValue: '240 Mb/s' },\n    { label: '08:00', value: 410, formattedValue: '410 Mb/s' },\n    { label: '12:00', value: 580, formattedValue: '580 Mb/s' },\n    { label: '16:00', value: 510, formattedValue: '510 Mb/s' },\n    { label: '20:00', value: 640, formattedValue: '640 Mb/s' },\n    { label: '24:00', value: 490, formattedValue: '490 Mb/s' }\n  ]}\n  height={220}\n  unit=" Mb/s"\n/>`}
         >
-          <div className="w-full max-w-xl">
+          <div className="w-full max-w-xl py-4">
             <AreaChart
               data={[
                 { label: '00:00', value: 120, formattedValue: '120 Mb/s' },
@@ -645,7 +663,6 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                 { label: '24:00', value: 490, formattedValue: '490 Mb/s' },
               ]}
               height={220}
-              color="#38bdf8"
               unit=" Mb/s"
             />
           </div>
@@ -655,9 +672,9 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'bar-chart':
       return (
         <ComponentPreview
-          code={`<BarChart\n  data={[\n    { label: '60Hz', value: 42 },\n    { label: '120Hz', value: 68 },\n    { label: '250Hz', value: 85 },\n    { label: '1kHz', value: 92 },\n    { label: '4kHz', value: 74 },\n    { label: '8kHz', value: 55 }\n  ]}\n  height={210}\n  barColor="#f59e0b"\n  unit=" dB"\n/>`}
+          code={`<BarChart\n  data={[\n    { label: '60Hz', value: 42, formattedValue: '-14 dB' },\n    { label: '120Hz', value: 68, formattedValue: '-6 dB' },\n    { label: '250Hz', value: 85, formattedValue: '-2 dB' },\n    { label: '1kHz', value: 92, formattedValue: '0 dB' },\n    { label: '4kHz', value: 74, formattedValue: '-4 dB' },\n    { label: '8kHz', value: 55, formattedValue: '-9 dB' },\n    { label: '16kHz', value: 38, formattedValue: '-15 dB' }\n  ]}\n  height={220}\n  unit=" dB"\n/>`}
         >
-          <div className="w-full max-w-xl">
+          <div className="w-full max-w-xl py-4">
             <BarChart
               data={[
                 { label: '60Hz', value: 42, formattedValue: '-14 dB' },
@@ -668,8 +685,7 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
                 { label: '8kHz', value: 55, formattedValue: '-9 dB' },
                 { label: '16kHz', value: 38, formattedValue: '-15 dB' },
               ]}
-              height={210}
-              barColor="#f59e0b"
+              height={220}
               unit=" dB"
             />
           </div>
@@ -994,17 +1010,24 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'rail-sidebar':
       return (
         <ComponentPreview
-          code={`<div className="h-96 border border-border/80 rounded-2xl overflow-hidden">
-  <RailSidebar
-    activeId="overview"
-    workspaceGlyph="N"
-    workspaceName="NickUI Core Studio"
-  />
-</div>`}
+          code={`<div className="h-96 border border-border/80 rounded-2xl overflow-hidden">\n  <RailSidebar\n    activeId="overview"\n    workspaceGlyph="N"\n    workspaceName="NickUI Core Studio"\n  />\n</div>`}
         >
           <div className="h-96 w-full flex justify-center py-4">
             <div className="h-full border border-border/80 rounded-2xl overflow-hidden shadow-sm">
               <RailSidebar />
+            </div>
+          </div>
+        </ComponentPreview>
+      );
+
+    case 'studio-sidebar':
+      return (
+        <ComponentPreview
+          code={`<div className="h-[480px] border border-border/80 rounded-2xl overflow-hidden shadow-sm">\n  <StudioSidebar activeId="overview" />\n</div>`}
+        >
+          <div className="h-[480px] w-full flex justify-center py-4">
+            <div className="h-full border border-border/80 rounded-2xl overflow-hidden shadow-tactile">
+              <StudioSidebar />
             </div>
           </div>
         </ComponentPreview>

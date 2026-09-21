@@ -64,12 +64,16 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
     },
     ref
   ) => {
+    const rawId = React.useId();
+    const id = rawId.replace(/[^a-zA-Z0-9]/g, '');
+    const activeLayoutId = `railActive-${id}`;
+
     const [selected, setSelected] = React.useState(activeId);
     const [hoveredId, setHoveredId] = React.useState<string | null>(null);
 
-    const handleItemClick = (id: string) => {
-      setSelected(id);
-      onSelect?.(id);
+    const handleItemClick = (itemId: string) => {
+      setSelected(itemId);
+      onSelect?.(itemId);
     };
 
     return (
@@ -85,10 +89,10 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
         {...props}
       >
         {/* Top: Workspace Glyph / Brand */}
-        <div className="flex flex-col items-center w-full px-3 gap-4">
+        <div className="flex flex-col items-center w-full px-3 gap-3.5">
           <div
             onClick={onToggleExpanded}
-            className="w-10 h-10 rounded-xl bg-secondary border border-border/80 flex items-center justify-center shadow-2xs cursor-pointer hover:border-text-primary/40 transition-all p-1.5"
+            className="w-10 h-10 rounded-xl bg-secondary/80 border border-border/70 flex items-center justify-center shadow-2xs cursor-pointer hover:border-text-primary/40 transition-all p-1.5"
             title={workspaceName}
           >
             {workspaceLogo ? (
@@ -98,7 +102,7 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
             )}
           </div>
 
-          <div className="w-8 border-b border-border/60" />
+          <div className="w-8 border-b border-border/50" />
         </div>
 
         {/* Middle: Navigation Wells */}
@@ -121,7 +125,7 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
                   className={cn(
                     'relative w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer',
                     isActive
-                      ? 'bg-secondary text-text-primary shadow-xs border border-border'
+                      ? 'bg-secondary text-text-primary shadow-xs border border-border/90'
                       : 'text-text-muted hover:text-text-primary hover:bg-secondary/50'
                   )}
                   aria-label={item.label}
@@ -131,7 +135,7 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
                   {/* Active Indicator Bar on left edge */}
                   {isActive && (
                     <motion.div
-                      layoutId="railActiveIndicator"
+                      layoutId={activeLayoutId}
                       className="absolute -left-2 w-1 h-5 rounded-r-full bg-text-primary"
                       transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                     />
@@ -139,53 +143,49 @@ export const RailSidebar = React.forwardRef<HTMLElement, RailSidebarProps>(
 
                   {/* Subdued badge count */}
                   {item.badge && !isExpanded && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-card" />
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-secondary border border-border text-[9px] font-mono text-text-muted flex items-center justify-center">
+                      {item.badge}
+                    </span>
                   )}
                 </button>
 
-                {/* Floating Tooltip for Compact Mode */}
-                {!isExpanded && isHovered && (
-                  <motion.div
-                    initial={{ opacity: 0, x: 8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute left-14 z-50 px-3 py-1.5 rounded-lg bg-popover text-popover-foreground border border-border shadow-md whitespace-nowrap flex items-center gap-2.5 pointer-events-none"
-                  >
-                    <span className="text-xs font-medium">{item.label}</span>
-                    {item.shortcut && (
-                      <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/60">
-                        {item.shortcut}
-                      </kbd>
-                    )}
-                  </motion.div>
-                )}
+                {/* Floating Architectural Tooltip */}
+                <AnimatePresence>
+                  {isHovered && !isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-full ml-3 z-50 px-3 py-1.5 rounded-lg bg-card border border-border/90 text-xs font-mono text-text-primary shadow-tactile whitespace-nowrap pointer-events-none flex items-center gap-2"
+                    >
+                      <span>{item.label}</span>
+                      {item.shortcut && (
+                        <span className="text-[10px] text-text-muted bg-secondary px-1.5 py-0.5 rounded border border-border/50">
+                          {item.shortcut}
+                        </span>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
         </nav>
 
-        {/* Bottom: Status & Quick Commands */}
+        {/* Bottom: Quick Command Palette Trigger */}
         <div className="flex flex-col items-center w-full px-3 gap-3">
-          {/* Quick command search trigger */}
+          <div className="w-8 border-b border-border/50" />
+
           <button
             type="button"
             onClick={onCommandClick}
-            aria-label="Quick Command (⌘K)"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-secondary/60 transition-colors cursor-pointer border border-transparent hover:border-border/60"
+            className="w-10 h-10 rounded-xl bg-secondary/60 hover:bg-secondary text-text-muted hover:text-text-primary border border-border/70 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+            title="Open Command Palette (Cmd+K)"
+            aria-label="Command Palette"
           >
-            <Search className="w-4 h-4" />
+            <Terminal className="w-4 h-4" />
           </button>
-
-          {/* Live stream heartbeat pulse */}
-          <div
-            className="w-10 h-10 rounded-xl bg-secondary/40 border border-border/40 flex items-center justify-center text-emerald-500"
-            title="System Telemetry: Nominal"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-          </div>
         </div>
       </aside>
     );

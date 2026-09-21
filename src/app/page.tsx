@@ -224,7 +224,7 @@ export default function HomePage() {
                     label="VU METER"
                     unit="%"
                     size={105}
-                    variant="accent"
+                    variant="tactile"
                     className="border-0 bg-transparent p-0 shadow-none"
                   />
                 </div>

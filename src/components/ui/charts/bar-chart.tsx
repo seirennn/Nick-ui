@@ -22,8 +22,8 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function BarChart({
   data,
-  height = 200,
-  barColor = 'currentColor',
+  height = 220,
+  barColor = 'var(--text-primary)',
   showGrid = true,
   showAxes = true,
   unit = '',
@@ -50,37 +50,58 @@ export function BarChart({
       <div
         ref={containerRef}
         style={{ height }}
-        className="w-full flex items-center justify-center rounded-xl bg-card border border-border/60 text-xs text-text-muted"
+        className="w-full flex items-center justify-center rounded-[20px] bg-card border border-border/60 text-xs font-mono text-text-muted"
       >
-        No chart data
+        No telemetry data available
       </div>
     );
   }
 
-  const paddingLeft = showAxes ? 36 : 12;
+  const paddingLeft = showAxes ? 40 : 12;
   const paddingRight = 16;
-  const paddingTop = 16;
-  const paddingBottom = showAxes ? 28 : 12;
+  const paddingTop = 24;
+  const paddingBottom = showAxes ? 32 : 12;
 
   const chartWidth = Math.max(10, width - paddingLeft - paddingRight);
   const chartHeight = Math.max(10, height - paddingTop - paddingBottom);
 
   const maxVal = Math.max(...data.map((d) => d.value), 1);
   const barSlotWidth = chartWidth / data.length;
-  const barWidth = Math.min(28, Math.max(8, barSlotWidth * 0.55));
+  const barWidth = Math.min(24, Math.max(10, barSlotWidth * 0.45));
 
   const gridTiers = [0, 0.5, 1];
+  const hoveredItem = hoveredIndex !== null ? data[hoveredIndex] : null;
 
   return (
     <div
       ref={containerRef}
-      className={cn('relative w-full select-none font-sans', className)}
+      className={cn(
+        'relative w-full rounded-[24px] border border-border/70 bg-card p-5 select-none shadow-tactile transition-colors',
+        className
+      )}
       style={{ height }}
       onMouseLeave={() => setHoveredIndex(null)}
       {...props}
     >
-      <svg width={width} height={height} className="overflow-visible block">
-        {/* Horizontal Gridlines */}
+      {/* Floating Hover Readout Pill */}
+      <AnimatePresence>
+        {hoveredItem && hoveredIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0, y: 2 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="absolute top-3 right-4 z-20 px-2.5 py-1 rounded-lg bg-card border border-border/80 text-[11px] font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-1.5"
+          >
+            <span className="text-text-muted">{hoveredItem.label}:</span>
+            <span className="font-semibold text-text-primary">
+              {hoveredItem.formattedValue || `${hoveredItem.value}${unit}`}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <svg width={width - 40} height={height - 40} className="overflow-visible block">
+        {/* Horizontal Dashed Gridlines */}
         {showGrid &&
           gridTiers.map((tier, idx) => {
             const y = paddingTop + chartHeight * (1 - tier);
@@ -89,28 +110,28 @@ export function BarChart({
                 <line
                   x1={paddingLeft}
                   y1={y}
-                  x2={width - paddingRight}
+                  x2={chartWidth + paddingLeft}
                   y2={y}
-                  stroke="currentColor"
-                  strokeDasharray="2 3"
-                  className="text-border/40"
-                  strokeWidth={1}
+                  stroke="var(--border)"
+                  strokeDasharray="2 4"
+                  strokeWidth="0.75"
+                  className="opacity-60"
                 />
                 {showAxes && (
                   <text
-                    x={paddingLeft - 6}
+                    x={paddingLeft - 8}
                     y={y + 3}
                     textAnchor="end"
                     className="text-[10px] font-mono fill-text-muted/60 select-none"
                   >
-                    {Math.round(tier * maxVal)}
+                    {Math.round(tier * maxVal)}{unit}
                   </text>
                 )}
               </g>
             );
           })}
 
-        {/* Bars */}
+        {/* Tactile Bar Columns */}
         {data.map((item, idx) => {
           const barHeight = (item.value / maxVal) * chartHeight;
           const x = paddingLeft + idx * barSlotWidth + (barSlotWidth - barWidth) / 2;
@@ -119,6 +140,34 @@ export function BarChart({
 
           return (
             <g key={idx}>
+              {/* Recessed Track Well */}
+              <rect
+                x={x}
+                y={paddingTop}
+                width={barWidth}
+                height={chartHeight}
+                rx={4}
+                fill="var(--secondary)"
+                className="opacity-40 pointer-events-none"
+              />
+
+              {/* Filled Tactile Bar */}
+              <motion.rect
+                x={x}
+                y={y}
+                width={barWidth}
+                height={barHeight}
+                rx={4}
+                fill={barColor}
+                className={cn(
+                  'transition-all duration-150 pointer-events-none',
+                  isHovered ? 'opacity-100' : 'opacity-85'
+                )}
+                initial={{ height: 0, y: paddingTop + chartHeight }}
+                animate={{ height: barHeight, y }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              />
+
               {/* Interactive Hit Area */}
               <rect
                 x={paddingLeft + idx * barSlotWidth}
@@ -130,32 +179,15 @@ export function BarChart({
                 onMouseEnter={() => setHoveredIndex(idx)}
               />
 
-              {/* Bar Rect */}
-              <motion.rect
-                x={x}
-                y={y}
-                width={barWidth}
-                height={barHeight}
-                rx={2}
-                fill="currentColor"
-                initial={{ height: 0, y: paddingTop + chartHeight }}
-                animate={{ height: barHeight, y }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className={cn(
-                  'transition-opacity',
-                  isHovered ? 'text-text-primary opacity-90' : 'text-text-primary/40 hover:text-text-primary/70'
-                )}
-              />
-
-              {/* X-axis Label */}
+              {/* X-Axis Category Label */}
               {showAxes && (
                 <text
                   x={x + barWidth / 2}
-                  y={height - 6}
+                  y={paddingTop + chartHeight + 18}
                   textAnchor="middle"
                   className={cn(
-                    'text-[10px] font-mono transition-colors select-none',
-                    isHovered ? 'fill-text-primary' : 'fill-text-muted/60'
+                    'text-[10.5px] font-mono transition-colors select-none',
+                    isHovered ? 'fill-text-primary font-medium' : 'fill-text-muted/70'
                   )}
                 >
                   {item.label}
@@ -165,37 +197,6 @@ export function BarChart({
           );
         })}
       </svg>
-
-      {/* Floating Tooltip */}
-      <AnimatePresence>
-        {hoveredIndex !== null && data[hoveredIndex] && (
-          <motion.div
-            initial={{ opacity: 0, y: 3 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 3 }}
-            transition={{ duration: 0.12 }}
-            className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full px-2.5 py-1 rounded-md bg-card/95 border border-border/80 shadow-tactile backdrop-blur-md text-xs font-mono"
-            style={{
-              left:
-                paddingLeft +
-                hoveredIndex * barSlotWidth +
-                barSlotWidth / 2,
-              top:
-                paddingTop +
-                chartHeight -
-                (data[hoveredIndex].value / maxVal) * chartHeight -
-                8,
-            }}
-          >
-            <div className="flex items-center gap-2 text-[11px]">
-              <span className="text-text-muted">{data[hoveredIndex].label}:</span>
-              <span className="font-medium text-text-primary">
-                {data[hoveredIndex].formattedValue || `${data[hoveredIndex].value}${unit}`}
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

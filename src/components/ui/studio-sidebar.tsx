@@ -99,6 +99,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
   ) => {
     const [selected, setSelected] = React.useState(activeId);
     const [collapsed, setCollapsed] = React.useState(false);
+    const layoutId = React.useId();
 
     const handleSelect = (id: string) => {
       setSelected(id);
@@ -109,14 +110,14 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
       <aside
         ref={ref}
         className={cn(
-          'relative flex flex-col justify-between h-full bg-card border-r border-border/80 transition-all duration-300 select-none z-30',
+          'relative flex flex-col justify-between h-full bg-card/90 backdrop-blur-sm border-r border-border/80 transition-all duration-300 select-none z-30',
           collapsed ? 'w-16 sm:w-20' : 'w-64 sm:w-72',
           className
         )}
         {...props}
       >
         {/* Top Header: Brand & Workspace Switcher */}
-        <div className="p-4 border-b border-border/70 space-y-3">
+        <div className="p-3.5 border-b border-border/70 space-y-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
               <BrandLogo size="sm" variant="tactile" className="shrink-0" />
@@ -126,7 +127,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
                     {workspaceName}
                   </div>
                   <div className="text-[10px] font-mono text-text-muted flex items-center gap-1.5 truncate">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 shrink-0" />
                     <span className="truncate">{environmentName}</span>
                   </div>
                 </div>
@@ -137,7 +138,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
               <button
                 type="button"
                 onClick={() => setCollapsed(!collapsed)}
-                className="w-6 h-6 rounded-md flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-secondary/70 transition-colors cursor-pointer shrink-0"
+                className="w-6 h-6 rounded-md flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-secondary/70 transition-colors cursor-pointer shrink-0 border border-transparent hover:border-border/60"
                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
                 {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
@@ -156,7 +157,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
                 <Search className="w-3.5 h-3.5" />
                 <span className="text-[11px] font-sans">Command palette...</span>
               </div>
-              <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-background border border-border/60 text-text-muted">
+              <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-background/80 border border-border/60 text-text-muted">
                 ⌘K
               </kbd>
             </button>
@@ -164,7 +165,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
         </div>
 
         {/* Middle: Categorized Navigation Groups */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+        <div className="flex-1 overflow-y-auto px-2.5 py-3.5 space-y-5">
           {groups.map((group, groupIdx) => (
             <div key={groupIdx} className="space-y-1">
               {!collapsed && (
@@ -185,15 +186,27 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
                       onClick={() => handleSelect(item.id)}
                       title={collapsed ? item.label : undefined}
                       className={cn(
-                        'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs transition-all cursor-pointer text-left',
+                        'relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs transition-colors cursor-pointer text-left',
                         collapsed ? 'justify-center px-0' : 'justify-between',
                         isActive
-                          ? 'bg-secondary text-text-primary font-medium border border-border/80 shadow-2xs'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-secondary/50 border border-transparent'
+                          ? 'text-text-primary font-medium'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-secondary/40'
                       )}
                     >
+                      {isActive && (
+                        <motion.div
+                          layoutId={`studio-active-indicator-${layoutId}`}
+                          className="absolute inset-0 rounded-xl bg-secondary/80 border border-border/80 shadow-2xs -z-10"
+                          transition={{
+                            type: 'spring',
+                            stiffness: 380,
+                            damping: 34,
+                          }}
+                        />
+                      )}
+
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <Icon className={cn('w-4 h-4 shrink-0', isActive ? 'text-text-primary' : 'text-text-muted')} />
+                        <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-text-primary' : 'text-text-muted')} />
                         {!collapsed && (
                           <span className="truncate">{item.label}</span>
                         )}
@@ -227,9 +240,9 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
                 <span className="text-text-muted">Compute Quota</span>
                 <span className="text-text-primary font-medium">{storageQuota.percentage}%</span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-secondary overflow-hidden border border-border/40">
+              <div className="w-full h-1.5 rounded-full bg-background/80 shadow-inner-tactile overflow-hidden border border-border/40">
                 <div
-                  className="h-full bg-text-primary rounded-full transition-all"
+                  className="h-full bg-text-primary/90 rounded-full transition-all duration-300"
                   style={{ width: `${storageQuota.percentage}%` }}
                 />
               </div>
@@ -241,7 +254,7 @@ export const StudioSidebar = React.forwardRef<HTMLElement, StudioSidebarProps>(
           )}
 
           {/* User Row */}
-          <div className="flex items-center justify-between p-1.5 rounded-xl hover:bg-secondary/40 transition-colors">
+          <div className="flex items-center justify-between p-1.5 rounded-xl hover:bg-secondary/40 transition-colors cursor-pointer border border-transparent hover:border-border/40">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-7 h-7 rounded-lg bg-secondary border border-border/70 flex items-center justify-center text-text-primary text-xs font-mono font-medium shrink-0">
                 {user.name.slice(0, 2).toUpperCase()}
