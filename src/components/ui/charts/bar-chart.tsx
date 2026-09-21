@@ -22,7 +22,7 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function BarChart({
   data,
-  height = 220,
+  height = 240,
   barColor = 'var(--text-primary)',
   showGrid = true,
   showAxes = true,
@@ -57,17 +57,17 @@ export function BarChart({
     );
   }
 
-  const paddingLeft = showAxes ? 40 : 12;
-  const paddingRight = 16;
-  const paddingTop = 24;
-  const paddingBottom = showAxes ? 32 : 12;
+  const paddingLeft = showAxes ? 48 : 16;
+  const paddingRight = 20;
+  const paddingTop = 28;
+  const paddingBottom = showAxes ? 36 : 16;
 
   const chartWidth = Math.max(10, width - paddingLeft - paddingRight);
   const chartHeight = Math.max(10, height - paddingTop - paddingBottom);
 
-  const maxVal = Math.max(...data.map((d) => d.value), 1);
+  const maxVal = Math.max(...data.map((d) => d.value), 1) * 1.08;
   const barSlotWidth = chartWidth / data.length;
-  const barWidth = Math.min(24, Math.max(10, barSlotWidth * 0.45));
+  const barWidth = Math.min(28, Math.max(12, barSlotWidth * 0.46));
 
   const gridTiers = [0, 0.5, 1];
   const hoveredItem = hoveredIndex !== null ? data[hoveredIndex] : null;
@@ -76,7 +76,7 @@ export function BarChart({
     <div
       ref={containerRef}
       className={cn(
-        'relative w-full rounded-[24px] border border-border/70 bg-card p-5 select-none shadow-tactile transition-colors',
+        'relative w-full rounded-[24px] border border-border/70 bg-card select-none shadow-tactile transition-colors overflow-hidden',
         className
       )}
       style={{ height }}
@@ -87,20 +87,27 @@ export function BarChart({
       <AnimatePresence>
         {hoveredItem && hoveredIndex !== null && (
           <motion.div
-            initial={{ opacity: 0, y: 2 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="absolute top-3 right-4 z-20 px-2.5 py-1 rounded-lg bg-card border border-border/80 text-[11px] font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-1.5"
+            initial={{ opacity: 0, y: 2, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-3 right-4 z-20 px-3 py-1.5 rounded-xl bg-card/95 backdrop-blur-md border border-border/90 text-xs font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-2"
           >
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             <span className="text-text-muted">{hoveredItem.label}:</span>
             <span className="font-semibold text-text-primary">
-              {hoveredItem.formattedValue || `${hoveredItem.value}${unit}`}
+              {hoveredItem.formattedValue || `${hoveredItem.value.toLocaleString()}${unit}`}
             </span>
+            {hoveredItem.secondaryValue !== undefined && (
+              <span className="text-[10px] text-text-muted">
+                (prev {hoveredItem.secondaryValue.toLocaleString()}{unit})
+              </span>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <svg width={width - 40} height={height - 40} className="overflow-visible block">
+      <svg width={width} height={height} className="overflow-visible block">
         {/* Horizontal Dashed Gridlines */}
         {showGrid &&
           gridTiers.map((tier, idx) => {
@@ -113,18 +120,18 @@ export function BarChart({
                   x2={chartWidth + paddingLeft}
                   y2={y}
                   stroke="var(--border)"
-                  strokeDasharray="2 4"
+                  strokeDasharray="3 3"
                   strokeWidth="0.75"
-                  className="opacity-60"
+                  className="opacity-50"
                 />
                 {showAxes && (
                   <text
-                    x={paddingLeft - 8}
-                    y={y + 3}
+                    x={paddingLeft - 10}
+                    y={y + 3.5}
                     textAnchor="end"
                     className="text-[10px] font-mono fill-text-muted/60 select-none"
                   >
-                    {Math.round(tier * maxVal)}{unit}
+                    {Math.round(tier * maxVal).toLocaleString()}{unit}
                   </text>
                 )}
               </g>
@@ -140,15 +147,28 @@ export function BarChart({
 
           return (
             <g key={idx}>
+              {/* Vertical Spotlight Beam on Hover */}
+              {isHovered && (
+                <rect
+                  x={paddingLeft + idx * barSlotWidth + 2}
+                  y={paddingTop}
+                  width={barSlotWidth - 4}
+                  height={chartHeight}
+                  rx={8}
+                  fill="var(--text-primary)"
+                  className="opacity-[0.03] pointer-events-none transition-opacity duration-200"
+                />
+              )}
+
               {/* Recessed Track Well */}
               <rect
                 x={x}
                 y={paddingTop}
                 width={barWidth}
                 height={chartHeight}
-                rx={4}
+                rx={5}
                 fill="var(--secondary)"
-                className="opacity-40 pointer-events-none"
+                className="opacity-30 pointer-events-none"
               />
 
               {/* Filled Tactile Bar */}
@@ -157,15 +177,26 @@ export function BarChart({
                 y={y}
                 width={barWidth}
                 height={barHeight}
-                rx={4}
+                rx={5}
                 fill={barColor}
                 className={cn(
-                  'transition-all duration-150 pointer-events-none',
-                  isHovered ? 'opacity-100' : 'opacity-85'
+                  'transition-all duration-200 pointer-events-none drop-shadow-xs',
+                  isHovered ? 'opacity-100 brightness-110' : 'opacity-85'
                 )}
                 initial={{ height: 0, y: paddingTop + chartHeight }}
                 animate={{ height: barHeight, y }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              {/* Top Hairline Specular Edge */}
+              <line
+                x1={x + 2}
+                y1={y}
+                x2={x + barWidth - 2}
+                y2={y}
+                stroke="#ffffff"
+                strokeWidth="1.25"
+                className="opacity-40 pointer-events-none"
               />
 
               {/* Interactive Hit Area */}
@@ -183,11 +214,11 @@ export function BarChart({
               {showAxes && (
                 <text
                   x={x + barWidth / 2}
-                  y={paddingTop + chartHeight + 18}
+                  y={paddingTop + chartHeight + 20}
                   textAnchor="middle"
                   className={cn(
                     'text-[10.5px] font-mono transition-colors select-none',
-                    isHovered ? 'fill-text-primary font-medium' : 'fill-text-muted/70'
+                    isHovered ? 'fill-text-primary font-medium' : 'fill-text-muted/60'
                   )}
                 >
                   {item.label}

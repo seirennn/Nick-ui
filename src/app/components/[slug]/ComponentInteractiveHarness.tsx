@@ -18,7 +18,21 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio';
 import { Gauge } from '@/components/ui/gauge';
-import { Sparkline, AreaChart, BarChart, DotMatrixChart, TactileTrendCard, TactileMetricCard, TactileBarCard } from '@/components/ui/charts';
+import {
+  Sparkline,
+  AreaChart,
+  BarChart,
+  DotMatrixChart,
+  TactileTrendCard,
+  TactileMetricCard,
+  TactileBarCard,
+  RadarChart,
+  RadialMeter,
+  AnalyticsHeatmap,
+  CandlestickChart,
+  HeatmapCell,
+  CandleDataPoint,
+} from '@/components/ui/charts';
 import { RailSidebar } from '@/components/ui/rail-sidebar';
 import { StudioSidebar } from '@/components/ui/studio-sidebar';
 import { OtpInput, OtpInputVariant } from '@/components/ui/otp-input';
@@ -95,6 +109,26 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
   const [knobDamping, setKnobDamping] = React.useState(82);
   const [knobVariant, setKnobVariant] = React.useState<'tactile' | 'recessed' | 'default'>('tactile');
   const [knobTicks, setKnobTicks] = React.useState(true);
+
+  // Radar Chart state
+  const [radarSize, setRadarSize] = React.useState(280);
+  const [radarRings, setRadarRings] = React.useState(4);
+  const [radarShowGrid, setRadarShowGrid] = React.useState(true);
+  const [radarShowLabels, setRadarShowLabels] = React.useState(true);
+
+  // Radial Meter state
+  const [radialSize, setRadialSize] = React.useState(260);
+  const [radialStroke, setRadialStroke] = React.useState(10);
+  const [radialShowLegend, setRadialShowLegend] = React.useState(true);
+  const [radialCpuVal, setRadialCpuVal] = React.useState(78);
+  const [radialRamVal, setRadialRamVal] = React.useState(85);
+  const [radialDiskVal, setRadialDiskVal] = React.useState(46);
+
+  // Candlestick Chart state
+  const [candleHeight, setCandleHeight] = React.useState(280);
+  const [candleShowVolume, setCandleShowVolume] = React.useState(true);
+  const [candleShowAxes, setCandleShowAxes] = React.useState(true);
+
 
   switch (slug) {
     case 'button':
@@ -1397,6 +1431,361 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
           </ComponentPreview>
         </div>
       );
+
+    case 'radar-chart': {
+      const radarData = [
+        { axis: 'Throughput', value: 92 },
+        { axis: 'Latency', value: 84 },
+        { axis: 'Reliability', value: 98 },
+        { axis: 'Coherence', value: 76 },
+        { axis: 'Precision', value: 91 },
+        { axis: 'Memory', value: 68 },
+      ];
+
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Size:</span>
+              {[240, 280, 320].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setRadarSize(s)}
+                  className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer ${
+                    radarSize === s
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {s}px
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Rings:</span>
+              {[3, 4, 5].map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setRadarRings(r)}
+                  className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer ${
+                    radarRings === r
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setRadarShowGrid(!radarShowGrid)}
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+                radarShowGrid
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              }`}
+            >
+              Grid: {radarShowGrid ? 'Visible' : 'Hidden'}
+            </button>
+
+            <button
+              onClick={() => setRadarShowLabels(!radarShowLabels)}
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+                radarShowLabels
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              }`}
+            >
+              Labels: {radarShowLabels ? 'Visible' : 'Hidden'}
+            </button>
+          </div>
+
+          <ComponentPreview
+            code={`<RadarChart
+  data={[
+    { axis: 'Throughput', value: 92 },
+    { axis: 'Latency', value: 84 },
+    { axis: 'Reliability', value: 98 },
+    { axis: 'Coherence', value: 76 },
+    { axis: 'Precision', value: 91 },
+    { axis: 'Memory', value: 68 },
+  ]}
+  size={${radarSize}}
+  ringsCount={${radarRings}}
+  showGrid={${radarShowGrid}}
+  showLabels={${radarShowLabels}}
+/>`}
+          >
+            <div className="w-full flex flex-col items-center justify-center py-6">
+              <RadarChart
+                data={radarData}
+                size={radarSize}
+                ringsCount={radarRings}
+                showGrid={radarShowGrid}
+                showLabels={radarShowLabels}
+              />
+              <p className="mt-4 text-xs font-mono text-text-muted text-center">
+                Hover over vertex points to inspect exact multi-axis metrics
+              </p>
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'radial-meter': {
+      const radialSeries = [
+        { id: 'cpu', label: 'CPU Cluster', value: radialCpuVal, color: 'var(--text-primary)' },
+        { id: 'ram', label: 'Memory Cache', value: radialRamVal, color: 'var(--text-muted)' },
+        { id: 'disk', label: 'Disk IOPS', value: radialDiskVal, color: 'var(--border)' },
+      ];
+
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Size:</span>
+              {[220, 260, 300].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setRadialSize(s)}
+                  className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer ${
+                    radialSize === s
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {s}px
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Track Width:</span>
+              {[8, 10, 14].map((w) => (
+                <button
+                  key={w}
+                  onClick={() => setRadialStroke(w)}
+                  className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer ${
+                    radialStroke === w
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {w}px
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setRadialShowLegend(!radialShowLegend)}
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+                radialShowLegend
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              }`}
+            >
+              Legend: {radialShowLegend ? 'Visible' : 'Hidden'}
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/20 border border-border/60 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-text-muted">CPU: {radialCpuVal}%</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={radialCpuVal}
+                onChange={(e) => setRadialCpuVal(Number(e.target.value))}
+                className="w-24 accent-primary cursor-pointer"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-text-muted">RAM: {radialRamVal}%</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={radialRamVal}
+                onChange={(e) => setRadialRamVal(Number(e.target.value))}
+                className="w-24 accent-primary cursor-pointer"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-text-muted">Disk: {radialDiskVal}%</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={radialDiskVal}
+                onChange={(e) => setRadialDiskVal(Number(e.target.value))}
+                className="w-24 accent-primary cursor-pointer"
+              />
+            </div>
+          </div>
+
+          <ComponentPreview
+            code={`<RadialMeter
+  centerLabel="System Load"
+  size={${radialSize}}
+  strokeWidth={${radialStroke}}
+  showLegend={${radialShowLegend}}
+  series={[
+    { id: 'cpu', label: 'CPU Cluster', value: ${radialCpuVal}, color: 'var(--text-primary)' },
+    { id: 'ram', label: 'Memory Cache', value: ${radialRamVal}, color: 'var(--text-muted)' },
+    { id: 'disk', label: 'Disk IOPS', value: ${radialDiskVal}, color: 'var(--border)' },
+  ]}
+/>`}
+          >
+            <div className="w-full flex items-center justify-center py-6">
+              <RadialMeter
+                centerLabel="System Load"
+                size={radialSize}
+                strokeWidth={radialStroke}
+                showLegend={radialShowLegend}
+                series={radialSeries}
+              />
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'analytics-heatmap': {
+      // Generate 52 weeks (364 cells)
+      const heatmapData: HeatmapCell[] = Array.from({ length: 364 }, (_, i) => {
+        const d = new Date(2025, 0, 1);
+        d.setDate(d.getDate() + i);
+        const dateStr = d.toISOString().split('T')[0];
+        const rand = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+        const val = Math.abs(rand - Math.floor(rand));
+        let level: 0 | 1 | 2 | 3 | 4 = 0;
+        let count = 0;
+        if (val > 0.85) {
+          level = 4;
+          count = Math.floor(val * 45) + 30;
+        } else if (val > 0.65) {
+          level = 3;
+          count = Math.floor(val * 30) + 15;
+        } else if (val > 0.4) {
+          level = 2;
+          count = Math.floor(val * 20) + 8;
+        } else if (val > 0.2) {
+          level = 1;
+          count = Math.floor(val * 10) + 2;
+        }
+        return { date: dateStr, count, level };
+      });
+
+      return (
+        <div className="space-y-4">
+          <ComponentPreview
+            code={`<AnalyticsHeatmap
+  title="Consensus Verification Density"
+  totalLabel="Annual Ops"
+  data={heatmapData}
+/>`}
+          >
+            <div className="w-full flex items-center justify-center py-6 overflow-x-auto">
+              <AnalyticsHeatmap
+                title="Consensus Verification Density"
+                totalLabel="Annual Ops"
+                data={heatmapData}
+                className="w-full max-w-2xl"
+              />
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
+
+    case 'candlestick-chart': {
+      const candleTimes = [
+        '09:30', '10:00', '10:30', '11:00', '11:30', '12:00',
+        '12:30', '13:00', '13:30', '14:00', '14:30', '15:00',
+        '15:30', '16:00', '16:30', '17:00', '17:30', '18:00'
+      ];
+      let currentPrice = 4820;
+      const candleData: CandleDataPoint[] = candleTimes.map((time, i) => {
+        const delta = Math.sin(i * 1.3) * 35 + (i % 3 === 0 ? -25 : 20);
+        const open = Math.round(currentPrice);
+        const close = Math.round(currentPrice + delta);
+        const high = Math.round(Math.max(open, close) + Math.abs(Math.cos(i) * 20) + 5);
+        const low = Math.round(Math.min(open, close) - Math.abs(Math.sin(i) * 18) - 5);
+        const volume = Math.round(15000 + Math.abs(Math.sin(i * 2)) * 45000);
+        currentPrice = close;
+        return { time, open, high, low, close, volume };
+      });
+
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Height:</span>
+              {[240, 280, 340].map((h) => (
+                <button
+                  key={h}
+                  onClick={() => setCandleHeight(h)}
+                  className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer ${
+                    candleHeight === h
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {h}px
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCandleShowVolume(!candleShowVolume)}
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+                candleShowVolume
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              }`}
+            >
+              Volume Bars: {candleShowVolume ? 'Visible' : 'Hidden'}
+            </button>
+
+            <button
+              onClick={() => setCandleShowAxes(!candleShowAxes)}
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+                candleShowAxes
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              }`}
+            >
+              Price Axes: {candleShowAxes ? 'Visible' : 'Hidden'}
+            </button>
+          </div>
+
+          <ComponentPreview
+            code={`<CandlestickChart
+  data={candleData}
+  height={${candleHeight}}
+  showVolume={${candleShowVolume}}
+  showAxes={${candleShowAxes}}
+  unit="$"
+/>`}
+          >
+            <div className="w-full flex items-center justify-center py-6">
+              <CandlestickChart
+                data={candleData}
+                height={candleHeight}
+                showVolume={candleShowVolume}
+                showAxes={candleShowAxes}
+                unit="$"
+                className="w-full max-w-2xl"
+              />
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+    }
 
     default:
       return <div>Preview not available</div>;

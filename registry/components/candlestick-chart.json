@@ -1,0 +1,53 @@
+{
+  "name": "candlestick-chart",
+  "slug": "candlestick-chart",
+  "title": "Candlestick Chart",
+  "description": "Financial and telemetry OHLC candlestick chart with high/low wicks, bullish/bearish chassis bodies, integrated volume histogram, and hover crosshair.",
+  "category": "surface",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "default"
+  ],
+  "props": [
+    {
+      "name": "data",
+      "type": "CandleDataPoint[]",
+      "required": true,
+      "description": "Array of OHLC candle points with time, open, high, low, close, and volume"
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "defaultValue": "280",
+      "description": "Height of SVG charting canvas in pixels"
+    },
+    {
+      "name": "showVolume",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Renders proportional volume histogram bars at bottom of canvas"
+    },
+    {
+      "name": "showAxes",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Renders horizontal calibration price levels"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "defaultValue": "'$'",
+      "description": "Currency or metric unit prefix"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Financial Telemetry Stream",
+      "description": "Real-time OHLC candlestick price action with volume bars and floating inspection HUD.",
+      "code": "<CandlestickChart\n  height={300}\n  data={candleData}\n  showVolume={true}\n  unit=\"$\"\n/>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion, AnimatePresence } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\nexport interface CandleDataPoint {\n  time: string;\n  open: number;\n  high: number;\n  low: number;\n  close: number;\n  volume: number;\n}\n\nexport interface CandlestickChartProps extends React.HTMLAttributes<HTMLDivElement> {\n  data: CandleDataPoint[];\n  height?: number;\n  showVolume?: boolean;\n  showAxes?: boolean;\n  unit?: string;\n}\n\nexport function CandlestickChart({\n  data,\n  height = 280,\n  showVolume = true,\n  showAxes = true,\n  unit = '$',\n  className,\n  ...props\n}: CandlestickChartProps) {\n  const containerRef = React.useRef<HTMLDivElement>(null);\n  const [width, setWidth] = React.useState(600);\n  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);\n\n  React.useEffect(() => {\n    if (!containerRef.current) return;\n    const observer = new ResizeObserver((entries) => {\n      if (entries[0]) {\n        setWidth(entries[0].contentRect.width);\n      }\n    });\n    observer.observe(containerRef.current);\n    return () => observer.disconnect();\n  }, []);\n\n  if (!data || data.length === 0) {\n    return (\n      <div\n        ref={containerRef}\n        style={{ height }}\n        className=\"w-full flex items-center justify-center rounded-[24px] bg-card border border-border/60 text-xs font-mono text-text-muted\"\n      >\n        No market data available\n      </div>\n    );\n  }\n\n  const paddingLeft = showAxes ? 52 : 16;\n  const paddingRight = 20;\n  const paddingTop = 28;\n  const paddingBottom = showAxes ? 32 : 16;\n\n  const chartWidth = Math.max(10, width - paddingLeft - paddingRight);\n  const totalHeight = Math.max(10, height - paddingTop - paddingBottom);\n  const volumeHeight = showVolume ? totalHeight * 0.22 : 0;\n  const candleAreaHeight = totalHeight - volumeHeight - (showVolume ? 12 : 0);\n\n  // Calculate Price Range\n  const allHighs = data.map((d) => d.high);\n  const allLows = data.map((d) => d.low);\n  const minPrice = Math.min(...allLows) * 0.998;\n  const maxPrice = Math.max(...allHighs) * 1.002;\n  const priceRange = maxPrice - minPrice || 1;\n\n  // Calculate Volume Range\n  const maxVolume = Math.max(...data.map((d) => d.volume), 1);\n\n  const slotWidth = chartWidth / data.length;\n  const candleWidth = Math.min(18, Math.max(6, slotWidth * 0.55));\n\n  const hoveredCandle = hoveredIndex !== null ? data[hoveredIndex] : null;\n\n  return (\n    <div\n      ref={containerRef}\n      className={cn(\n        'relative w-full rounded-[24px] border border-border/70 bg-card select-none shadow-tactile transition-colors overflow-hidden',\n        className\n      )}\n      style={{ height }}\n      onMouseLeave={() => setHoveredIndex(null)}\n      {...props}\n    >\n      {/* Precision Floating Telemetry Pill */}\n      <div className=\"absolute top-3 right-4 z-20 flex items-center gap-3 text-xs font-mono pointer-events-none\">\n        {hoveredCandle ? (\n          <div className=\"px-3 py-1 rounded-xl bg-card/95 backdrop-blur-md border border-border/90 text-[11px] font-mono shadow-tactile flex items-center gap-3\">\n            <span className=\"text-text-muted\">{hoveredCandle.time}</span>\n            <span>O: <strong className=\"text-text-primary\">{unit}{hoveredCandle.open.toFixed(2)}</strong></span>\n            <span>H: <strong className=\"text-emerald-500\">{unit}{hoveredCandle.high.toFixed(2)}</strong></span>\n            <span>L: <strong className=\"text-rose-500\">{unit}{hoveredCandle.low.toFixed(2)}</strong></span>\n            <span>C: <strong className={hoveredCandle.close >= hoveredCandle.open ? 'text-emerald-500' : 'text-rose-500'}>{unit}{hoveredCandle.close.toFixed(2)}</strong></span>\n            {showVolume && <span className=\"text-text-muted\">Vol: {hoveredCandle.volume.toLocaleString()}</span>}\n          </div>\n        ) : (\n          <span className=\"text-[10px] font-mono text-text-muted/60\">Hover candle to inspect OHLC</span>\n        )}\n      </div>\n\n      <svg width={width} height={height} className=\"overflow-visible block\">\n        {/* Horizontal Price Gridlines */}\n        {[0, 0.5, 1].map((tier, idx) => {\n          const y = paddingTop + candleAreaHeight * (1 - tier);\n          const price = minPrice + tier * priceRange;\n          return (\n            <g key={idx}>\n              <line\n                x1={paddingLeft}\n                y1={y}\n                x2={chartWidth + paddingLeft}\n                y2={y}\n                stroke=\"var(--border)\"\n                strokeDasharray=\"3 3\"\n                strokeWidth=\"0.75\"\n                className=\"opacity-50\"\n              />\n              {showAxes && (\n                <text\n                  x={paddingLeft - 10}\n                  y={y + 3.5}\n                  textAnchor=\"end\"\n                  className=\"text-[10px] font-mono fill-text-muted/60 select-none\"\n                >\n                  {unit}{price.toFixed(2)}\n                </text>\n              )}\n            </g>\n          );\n        })}\n\n        {/* Candlestick Glyphs & Volume Bars */}\n        {data.map((d, idx) => {\n          const isBullish = d.close >= d.open;\n          const candleColor = isBullish ? '#10b981' : '#f43f5e';\n          const centerX = paddingLeft + idx * slotWidth + slotWidth / 2;\n          const leftX = centerX - candleWidth / 2;\n\n          const highY = paddingTop + candleAreaHeight - ((d.high - minPrice) / priceRange) * candleAreaHeight;\n          const lowY = paddingTop + candleAreaHeight - ((d.low - minPrice) / priceRange) * candleAreaHeight;\n          const openY = paddingTop + candleAreaHeight - ((d.open - minPrice) / priceRange) * candleAreaHeight;\n          const closeY = paddingTop + candleAreaHeight - ((d.close - minPrice) / priceRange) * candleAreaHeight;\n\n          const bodyY = Math.min(openY, closeY);\n          const bodyHeight = Math.max(2, Math.abs(closeY - openY));\n\n          // Volume Bar Coordinates\n          const volBarHeight = showVolume ? (d.volume / maxVolume) * volumeHeight : 0;\n          const volY = paddingTop + totalHeight - volBarHeight;\n\n          const isHovered = hoveredIndex === idx;\n\n          return (\n            <g key={idx}>\n              {/* Vertical Scrubber Highlight */}\n              {isHovered && (\n                <line\n                  x1={centerX}\n                  y1={paddingTop}\n                  x2={centerX}\n                  y2={paddingTop + totalHeight}\n                  stroke=\"var(--border)\"\n                  strokeDasharray=\"2 2\"\n                  strokeWidth=\"1\"\n                  className=\"opacity-80\"\n                />\n              )}\n\n              {/* High-Low Wick Line */}\n              <line\n                x1={centerX}\n                y1={highY}\n                x2={centerX}\n                y2={lowY}\n                stroke={candleColor}\n                strokeWidth=\"1.25\"\n                className=\"opacity-80 pointer-events-none\"\n              />\n\n              {/* Open-Close Candle Body */}\n              <rect\n                x={leftX}\n                y={bodyY}\n                width={candleWidth}\n                height={bodyHeight}\n                rx={2.5}\n                fill={candleColor}\n                className={cn(\n                  'transition-all duration-150 pointer-events-none drop-shadow-2xs',\n                  isHovered ? 'brightness-125' : 'opacity-90'\n                )}\n              />\n\n              {/* Volume Bar */}\n              {showVolume && (\n                <rect\n                  x={leftX}\n                  y={volY}\n                  width={candleWidth}\n                  height={volBarHeight}\n                  rx={2}\n                  fill={candleColor}\n                  className={cn(\n                    'transition-all duration-150 pointer-events-none',\n                    isHovered ? 'opacity-80' : 'opacity-35'\n                  )}\n                />\n              )}\n\n              {/* Interactive Hit Area */}\n              <rect\n                x={paddingLeft + idx * slotWidth}\n                y={0}\n                width={slotWidth}\n                height={height}\n                fill=\"transparent\"\n                className=\"cursor-pointer\"\n                onMouseEnter={() => setHoveredIndex(idx)}\n              />\n\n              {/* Time Label on X-Axis */}\n              {showAxes && idx % Math.ceil(data.length / 6) === 0 && (\n                <text\n                  x={centerX}\n                  y={paddingTop + totalHeight + 20}\n                  textAnchor=\"middle\"\n                  className=\"text-[10px] font-mono fill-text-muted/60 select-none\"\n                >\n                  {d.time}\n                </text>\n              )}\n            </g>\n          );\n        })}\n      </svg>\n    </div>\n  );\n}\n"
+}

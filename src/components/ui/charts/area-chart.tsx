@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 export interface AreaChartDataPoint {
   label: string;
   value: number;
+  baseline?: number;
   formattedValue?: string;
 }
 
@@ -38,6 +39,7 @@ export function AreaChart({
   const rawId = React.useId();
   const id = rawId.replace(/[^a-zA-Z0-9]/g, '');
   const gradientId = `areachart-gradient-${id}`;
+  const glowId = `areachart-glow-${id}`;
 
   React.useEffect(() => {
     if (!containerRef.current) return;
@@ -62,13 +64,13 @@ export function AreaChart({
     );
   }
 
-  const paddingLeft = showAxes ? 40 : 12;
-  const paddingRight = 16;
-  const paddingTop = 24;
-  const paddingBottom = showAxes ? 32 : 12;
+  const paddingLeft = showAxes ? 48 : 16;
+  const paddingRight = 20;
+  const paddingTop = 28;
+  const paddingBottom = showAxes ? 36 : 16;
 
-  const chartWidth = Math.max(10, width - paddingLeft - paddingRight - 40);
-  const chartHeight = Math.max(10, height - paddingTop - paddingBottom - 40);
+  const chartWidth = Math.max(10, width - paddingLeft - paddingRight);
+  const chartHeight = Math.max(10, height - paddingTop - paddingBottom);
 
   const values = data.map((d) => d.value);
   const minVal = Math.min(...values) * 0.95;
@@ -81,7 +83,7 @@ export function AreaChart({
     return { x, y, item, idx };
   });
 
-  // Smooth Catmull-Rom spline path
+  // Smooth Catmull-Rom cubic spline path
   const buildSmoothPath = (pts: typeof points) => {
     let path = `M ${pts[0].x},${pts[0].y}`;
     for (let i = 0; i < pts.length - 1; i++) {
@@ -111,36 +113,43 @@ export function AreaChart({
     <div
       ref={containerRef}
       className={cn(
-        'relative w-full rounded-[24px] border border-border/70 bg-card p-5 select-none shadow-tactile transition-colors',
+        'relative w-full rounded-[24px] border border-border/70 bg-card select-none shadow-tactile transition-colors overflow-hidden',
         className
       )}
       style={{ height }}
       onMouseLeave={() => setHoveredIndex(null)}
       {...props}
     >
-      {/* Floating Readout Pill */}
+      {/* Precision Floating Tooltip Pill */}
       <AnimatePresence>
         {hoveredPoint && (
           <motion.div
-            initial={{ opacity: 0, y: 2 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="absolute top-3 right-4 z-20 px-2.5 py-1 rounded-lg bg-card border border-border/80 text-[11px] font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-1.5"
+            initial={{ opacity: 0, y: 2, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-3 right-4 z-20 px-3 py-1.5 rounded-xl bg-card/95 backdrop-blur-md border border-border/90 text-xs font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-2"
           >
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             <span className="text-text-muted">{hoveredPoint.item.label}:</span>
             <span className="font-semibold text-text-primary">
-              {hoveredPoint.item.formattedValue || `${hoveredPoint.item.value}${unit}`}
+              {hoveredPoint.item.formattedValue || `${hoveredPoint.item.value.toLocaleString()}${unit}`}
             </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <svg width={width - 40} height={height - 40} className="overflow-visible block">
+      <svg width={width} height={height} className="overflow-visible block">
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.12" />
+            <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+            <stop offset="60%" stopColor={color} stopOpacity="0.05" />
             <stop offset="100%" stopColor={color} stopOpacity="0.0" />
           </linearGradient>
+          <filter id={glowId} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
         </defs>
 
         {/* Horizontal Dashed Gridlines */}
@@ -156,18 +165,18 @@ export function AreaChart({
                   x2={chartWidth + paddingLeft}
                   y2={y}
                   stroke="var(--border)"
-                  strokeDasharray="2 4"
+                  strokeDasharray="3 3"
                   strokeWidth="0.75"
-                  className="opacity-60"
+                  className="opacity-50"
                 />
                 {showAxes && (
                   <text
-                    x={paddingLeft - 8}
-                    y={y + 3}
+                    x={paddingLeft - 10}
+                    y={y + 3.5}
                     textAnchor="end"
                     className="text-[10px] font-mono fill-text-muted/60 select-none"
                   >
-                    {Math.round(val)}{unit}
+                    {Math.round(val).toLocaleString()}{unit}
                   </text>
                 )}
               </g>
@@ -177,15 +186,27 @@ export function AreaChart({
         {/* Ambient Area Gradient Fill */}
         <path d={areaPath} fill={`url(#${gradientId})`} className="pointer-events-none" />
 
+        {/* Ambient Glow Halo behind line */}
+        <path
+          d={linePath}
+          fill="none"
+          stroke={color}
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="opacity-15 pointer-events-none"
+          filter={`url(#${glowId})`}
+        />
+
         {/* Spline Wave Line */}
         <motion.path
           d={linePath}
           fill="none"
           stroke={color}
-          strokeWidth="1.75"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="opacity-90 pointer-events-none"
+          className="opacity-95 pointer-events-none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -194,29 +215,33 @@ export function AreaChart({
         {/* Hover Crosshair & Indicator Point */}
         {hoveredPoint && (
           <g className="pointer-events-none">
+            {/* Scrubber vertical line */}
             <line
               x1={hoveredPoint.x}
               y1={paddingTop}
               x2={hoveredPoint.x}
               y2={baselineY}
-              stroke="var(--border)"
-              strokeDasharray="2 2"
+              stroke={color}
+              strokeDasharray="2 3"
               strokeWidth="1"
+              className="opacity-60"
             />
+            {/* Outer ambient pulse ring */}
             <circle
               cx={hoveredPoint.x}
               cy={hoveredPoint.y}
-              r="6"
+              r="8"
               fill={color}
-              className="opacity-15"
+              className="opacity-20 animate-pulse"
             />
+            {/* Inner specular dot */}
             <circle
               cx={hoveredPoint.x}
               cy={hoveredPoint.y}
-              r="3.5"
+              r="4"
               fill="var(--card)"
               stroke={color}
-              strokeWidth="1.75"
+              strokeWidth="2"
               className="drop-shadow-xs"
             />
           </g>
@@ -242,11 +267,11 @@ export function AreaChart({
               {showAxes && (
                 <text
                   x={pt.x}
-                  y={baselineY + 18}
+                  y={baselineY + 20}
                   textAnchor="middle"
                   className={cn(
                     'text-[10.5px] font-mono transition-colors select-none',
-                    hoveredIndex === idx ? 'fill-text-primary font-medium' : 'fill-text-muted/70'
+                    hoveredIndex === idx ? 'fill-text-primary font-medium' : 'fill-text-muted/60'
                   )}
                 >
                   {pt.item.label}

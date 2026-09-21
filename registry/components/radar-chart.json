@@ -1,0 +1,65 @@
+{
+  "name": "radar-chart",
+  "slug": "radar-chart",
+  "title": "Radar Chart",
+  "description": "Multi-dimensional polygonal telemetry web with concentric rings, radial spokes, specular stroke highlights, and interactive vertex inspection nodes.",
+  "category": "surface",
+  "dependencies": [
+    "framer-motion"
+  ],
+  "variants": [
+    "default"
+  ],
+  "props": [
+    {
+      "name": "data",
+      "type": "RadarDataPoint[]",
+      "required": true,
+      "description": "Array of axis metrics with label, value, and optional fullMark"
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "defaultValue": "280",
+      "description": "Square dimensions of chart viewport in pixels"
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "defaultValue": "'var(--text-primary)'",
+      "description": "Base color tint for polygon boundary and fill gradient"
+    },
+    {
+      "name": "fillOpacity",
+      "type": "number",
+      "defaultValue": "0.12",
+      "description": "Opacity of translucent interior web polygon"
+    },
+    {
+      "name": "showGrid",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Renders concentric polygonal web rings and spokes"
+    },
+    {
+      "name": "showLabels",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Renders axis labels around the outer perimeter"
+    },
+    {
+      "name": "ringsCount",
+      "type": "number",
+      "defaultValue": "4",
+      "description": "Number of concentric calibration rings"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Agent Capability Profile",
+      "description": "Multi-axis capability web with interactive vertex inspection.",
+      "code": "<RadarChart\n  data={[\n    { axis: 'Latency', value: 88 },\n    { axis: 'Throughput', value: 92 },\n    { axis: 'Reliability', value: 99 },\n    { axis: 'Coherence', value: 85 },\n    { axis: 'Precision', value: 94 },\n    { axis: 'Memory', value: 76 },\n  ]}\n  size={280}\n/>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { motion, AnimatePresence } from 'framer-motion';\nimport { cn } from '@/lib/utils';\n\nexport interface RadarDataPoint {\n  axis: string;\n  value: number; // 0 to 100\n  fullMark?: number; // default 100\n}\n\nexport interface RadarChartProps extends React.HTMLAttributes<HTMLDivElement> {\n  data: RadarDataPoint[];\n  size?: number;\n  color?: string;\n  fillOpacity?: number;\n  showGrid?: boolean;\n  showLabels?: boolean;\n  ringsCount?: number;\n}\n\nexport function RadarChart({\n  data,\n  size = 280,\n  color = 'var(--text-primary)',\n  fillOpacity = 0.12,\n  showGrid = true,\n  showLabels = true,\n  ringsCount = 4,\n  className,\n  ...props\n}: RadarChartProps) {\n  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);\n\n  const rawId = React.useId();\n  const id = rawId.replace(/[^a-zA-Z0-9]/g, '');\n  const gradientId = `radar-grad-${id}`;\n\n  if (!data || data.length < 3) {\n    return (\n      <div\n        style={{ width: size, height: size }}\n        className=\"flex items-center justify-center rounded-[24px] bg-card border border-border/60 text-xs font-mono text-text-muted\"\n      >\n        Minimum 3 axes required\n      </div>\n    );\n  }\n\n  const center = size / 2;\n  const radius = center - (showLabels ? 42 : 16);\n  const angleStep = (Math.PI * 2) / data.length;\n\n  // Calculate polygon vertices for a given ring ratio (0 to 1)\n  const getRingPoints = (ratio: number) => {\n    return data\n      .map((_, i) => {\n        const angle = i * angleStep - Math.PI / 2;\n        const r = radius * ratio;\n        const x = center + r * Math.cos(angle);\n        const y = center + r * Math.sin(angle);\n        return `${x},${y}`;\n      })\n      .join(' ');\n  };\n\n  // Calculate data polygon vertices\n  const dataPoints = data.map((d, i) => {\n    const angle = i * angleStep - Math.PI / 2;\n    const fullMark = d.fullMark || 100;\n    const ratio = Math.max(0, Math.min(1, d.value / fullMark));\n    const r = radius * ratio;\n    const x = center + r * Math.cos(angle);\n    const y = center + r * Math.sin(angle);\n    return { x, y, angle, d, ratio };\n  });\n\n  const dataPolygonString = dataPoints.map((p) => `${p.x},${p.y}`).join(' ');\n\n  const hoveredItem = hoveredIndex !== null ? dataPoints[hoveredIndex] : null;\n\n  return (\n    <div\n      className={cn(\n        'relative rounded-[24px] border border-border/70 bg-card p-4 select-none shadow-tactile flex items-center justify-center overflow-hidden',\n        className\n      )}\n      style={{ width: size, height: size }}\n      onMouseLeave={() => setHoveredIndex(null)}\n      {...props}\n    >\n      {/* Floating Hover Readout Pill */}\n      <AnimatePresence>\n        {hoveredItem && (\n          <motion.div\n            initial={{ opacity: 0, y: 2, scale: 0.96 }}\n            animate={{ opacity: 1, y: 0, scale: 1 }}\n            exit={{ opacity: 0, scale: 0.96 }}\n            transition={{ duration: 0.15 }}\n            className=\"absolute top-3 right-3 z-20 px-2.5 py-1 rounded-lg bg-card/95 backdrop-blur-md border border-border/80 text-[11px] font-mono text-text-primary shadow-tactile pointer-events-none flex items-center gap-1.5\"\n          >\n            <span className=\"w-1.5 h-1.5 rounded-full bg-primary\" />\n            <span className=\"text-text-muted\">{hoveredItem.d.axis}:</span>\n            <span className=\"font-semibold text-text-primary\">{hoveredItem.d.value}%</span>\n          </motion.div>\n        )}\n      </AnimatePresence>\n\n      <svg width={size} height={size} className=\"overflow-visible block\">\n        <defs>\n          <radialGradient id={gradientId} cx=\"50%\" cy=\"50%\" r=\"50%\">\n            <stop offset=\"0%\" stopColor={color} stopOpacity={fillOpacity * 1.8} />\n            <stop offset=\"100%\" stopColor={color} stopOpacity={fillOpacity * 0.2} />\n          </radialGradient>\n        </defs>\n\n        {/* Concentric Web Rings */}\n        {showGrid &&\n          Array.from({ length: ringsCount }).map((_, idx) => {\n            const ratio = (idx + 1) / ringsCount;\n            return (\n              <polygon\n                key={idx}\n                points={getRingPoints(ratio)}\n                fill=\"none\"\n                stroke=\"var(--border)\"\n                strokeWidth=\"0.75\"\n                strokeDasharray={idx === ringsCount - 1 ? 'none' : '2 3'}\n                className=\"opacity-60\"\n              />\n            );\n          })}\n\n        {/* Radial Spokes from Center to Outer Vertices */}\n        {showGrid &&\n          data.map((_, i) => {\n            const angle = i * angleStep - Math.PI / 2;\n            const x = center + radius * Math.cos(angle);\n            const y = center + radius * Math.sin(angle);\n            return (\n              <line\n                key={i}\n                x1={center}\n                y1={center}\n                x2={x}\n                y2={y}\n                stroke=\"var(--border)\"\n                strokeWidth=\"0.75\"\n                className=\"opacity-40\"\n              />\n            );\n          })}\n\n        {/* Data Filled Polygon */}\n        <motion.polygon\n          points={dataPolygonString}\n          fill={`url(#${gradientId})`}\n          stroke={color}\n          strokeWidth=\"1.75\"\n          strokeLinejoin=\"round\"\n          className=\"drop-shadow-xs\"\n          initial={{ opacity: 0, scale: 0.85 }}\n          animate={{ opacity: 1, scale: 1 }}\n          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}\n          style={{ transformOrigin: `${center}px ${center}px` }}\n        />\n\n        {/* Axis Labels */}\n        {showLabels &&\n          data.map((d, i) => {\n            const angle = i * angleStep - Math.PI / 2;\n            const labelRadius = radius + 22;\n            const x = center + labelRadius * Math.cos(angle);\n            const y = center + labelRadius * Math.sin(angle);\n            const isHovered = hoveredIndex === i;\n\n            return (\n              <text\n                key={i}\n                x={x}\n                y={y}\n                textAnchor=\"middle\"\n                dominantBaseline=\"central\"\n                className={cn(\n                  'text-[10px] font-mono transition-colors select-none',\n                  isHovered ? 'fill-text-primary font-medium' : 'fill-text-muted/70'\n                )}\n              >\n                {d.axis}\n              </text>\n            );\n          })}\n\n        {/* Interactive Vertex Nodes */}\n        {dataPoints.map((pt, i) => {\n          const isHovered = hoveredIndex === i;\n          return (\n            <g key={i} className=\"cursor-pointer\" onMouseEnter={() => setHoveredIndex(i)}>\n              {/* Outer invisible hit target */}\n              <circle cx={pt.x} cy={pt.y} r=\"14\" fill=\"transparent\" />\n\n              {/* Glowing ring on hover */}\n              {isHovered && (\n                <circle cx={pt.x} cy={pt.y} r=\"8\" fill={color} className=\"opacity-20 animate-pulse\" />\n              )}\n\n              {/* Vertex core dot */}\n              <circle\n                cx={pt.x}\n                cy={pt.y}\n                r={isHovered ? 4.5 : 3}\n                fill=\"var(--card)\"\n                stroke={color}\n                strokeWidth={isHovered ? 2.5 : 1.5}\n                className=\"transition-all duration-150 drop-shadow-2xs\"\n              />\n            </g>\n          );\n        })}\n      </svg>\n    </div>\n  );\n}\n"
+}

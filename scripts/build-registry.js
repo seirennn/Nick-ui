@@ -48,6 +48,10 @@ const slugToFile = {
   'dot-matrix-chart': 'charts/dot-matrix-chart.tsx',
   'tactile-trend-card': 'charts/tactile-trend-card.tsx',
   'tactile-metric-card': 'charts/tactile-metric-card.tsx',
+  'radar-chart': 'charts/radar-chart.tsx',
+  'radial-meter': 'charts/radial-meter.tsx',
+  'analytics-heatmap': 'charts/analytics-heatmap.tsx',
+  'candlestick-chart': 'charts/candlestick-chart.tsx',
   'segmented-control': 'segmented-control.tsx',
   'knob': 'knob.tsx',
 };
