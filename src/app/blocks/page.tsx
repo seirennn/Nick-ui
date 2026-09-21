@@ -3,6 +3,9 @@
 import * as React from 'react';
 import { SiteNavbar } from '@/components/docs/SiteNavbar';
 import { BlockViewer } from '@/components/blocks/BlockViewer';
+import { TechnicalDocsLayout } from '@/components/blocks/TechnicalDocsLayout';
+import { MissionControlDashboard } from '@/components/blocks/MissionControlDashboard';
+import { EditorialWorkspaceDashboard } from '@/components/blocks/EditorialWorkspaceDashboard';
 import { TactileStudioDashboard } from '@/components/blocks/TactileStudioDashboard';
 import { ExecutiveStudioConsole } from '@/components/blocks/ExecutiveStudioConsole';
 import { AnalyticsDashboard } from '@/components/blocks/AnalyticsDashboard';
@@ -37,6 +40,36 @@ const getBlockSource = (slug: string) => {
 const getSource = (slug: string) => {
   return componentsData.find((c) => c.slug === slug)?.sourceCode || '';
 };
+
+const TECHNICAL_DOCS_CODE = `import { TechnicalDocsLayout } from '@/components/blocks/TechnicalDocsLayout';
+
+export default function DocsConfigPage() {
+  return (
+    <main className="min-h-screen p-6 md:p-10 bg-background">
+      <TechnicalDocsLayout />
+    </main>
+  );
+}`;
+
+const MISSION_CONTROL_CODE = `import { MissionControlDashboard } from '@/components/blocks/MissionControlDashboard';
+
+export default function MissionControlPage() {
+  return (
+    <main className="min-h-screen p-6 md:p-10 bg-background">
+      <MissionControlDashboard />
+    </main>
+  );
+}`;
+
+const EDITORIAL_WORKSPACE_CODE = `import { EditorialWorkspaceDashboard } from '@/components/blocks/EditorialWorkspaceDashboard';
+
+export default function EditorialPage() {
+  return (
+    <main className="min-h-screen p-6 md:p-10 bg-background">
+      <EditorialWorkspaceDashboard />
+    </main>
+  );
+}`;
 
 const FLAGSHIP_CODE = `import { TactileStudioDashboard } from '@/components/blocks/TactileStudioDashboard';
 
@@ -217,7 +250,7 @@ export default function BlocksPage() {
         <div className="max-w-3xl space-y-3">
           <div className="flex items-center gap-2">
             <Badge variant="mono" className="text-xs">
-              Open-Source Blocks · 11 Production Patterns
+              Open-Source Blocks · 14 Production Patterns
             </Badge>
           </div>
           <h1 className="text-3xl sm:text-4xl font-medium tracking-tight text-text-primary">
@@ -244,7 +277,64 @@ export default function BlocksPage() {
 
         {/* Blocks Showcase Stack */}
         <div className="space-y-16">
-          {/* ─── DASHBOARD TYPE 1: MONOLITHIC SHELL (RAIL SIDEBAR) ─── */}
+          {/* ─── DASHBOARD TYPE 1: THREE-COLUMN TECHNICAL DOCS & SCULPTED TAB NOTCH ─── */}
+          {(activeTab === 'all' || activeTab === 'dashboards') && (
+            <BlockViewer
+              title="Technical Documentation & Config Layout"
+              category="Three-Column Technical · Sculpted Tab Notch"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add technical-docs-layout"
+              code={getBlockSource('technical-docs-layout')}
+              codeFileName="TechnicalDocsLayout.tsx"
+              usageCode={TECHNICAL_DOCS_CODE}
+              usageFileName="page.tsx"
+              description="Three-column technical documentation & telemetry config layout with narrow left sidebar, centered content area with floating action pill, large code blocks, slim right-side table of contents, and a distinct sculpted top-right tab notch housing the user profile dropdown."
+            >
+              <div className="w-full">
+                <TechnicalDocsLayout />
+              </div>
+            </BlockViewer>
+          )}
+
+          {/* ─── DASHBOARD TYPE 2: MISSION CONTROL HIGH-DENSITY GRID CONSOLE ─── */}
+          {(activeTab === 'all' || activeTab === 'dashboards' || activeTab === 'infrastructure') && (
+            <BlockViewer
+              title="Mission Control High-Density Grid Console"
+              category="Operations Console · 16px Spatial Gaps"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add mission-control-dashboard"
+              code={getBlockSource('mission-control-dashboard')}
+              codeFileName="MissionControlDashboard.tsx"
+              usageCode={MISSION_CONTROL_CODE}
+              usageFileName="page.tsx"
+              description="High-density multi-pane operational console with 16px breathable spatial gaps, real-time orderbook depth, high-frequency area chart, hardware dials/knobs, and streaming execution logs."
+            >
+              <div className="w-full">
+                <MissionControlDashboard />
+              </div>
+            </BlockViewer>
+          )}
+
+          {/* ─── DASHBOARD TYPE 3: EDITORIAL ARCHITECTURE & KNOWLEDGE CODEX ─── */}
+          {(activeTab === 'all' || activeTab === 'dashboards') && (
+            <BlockViewer
+              title="Editorial Architecture & Knowledge Codex"
+              category="Editorial Architecture · Generous Whitespace"
+              isNew
+              cliCommand="pnpm dlx @sehrennn/nickui add editorial-workspace-dashboard"
+              code={getBlockSource('editorial-workspace-dashboard')}
+              codeFileName="EditorialWorkspaceDashboard.tsx"
+              usageCode={EDITORIAL_WORKSPACE_CODE}
+              usageFileName="page.tsx"
+              description="Understated, typography-first management dashboard with generous whitespace, subtle recessed chassis wells, segmented navigation, and publication codex."
+            >
+              <div className="w-full">
+                <EditorialWorkspaceDashboard />
+              </div>
+            </BlockViewer>
+          )}
+
+          {/* ─── DASHBOARD TYPE 4: MONOLITHIC SHELL (RAIL SIDEBAR) ─── */}
           {(activeTab === 'all' || activeTab === 'dashboards') && (
             <BlockViewer
               title="Tactile Studio Dashboard"

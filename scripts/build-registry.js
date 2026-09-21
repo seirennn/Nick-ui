@@ -95,6 +95,36 @@ const registryBlocksPath = path.join(rootDir, 'registry', 'blocks.json');
 
 const blockDefinitions = [
   {
+    slug: 'technical-docs-layout',
+    name: 'TechnicalDocsLayout',
+    title: 'Technical Documentation & Config Layout',
+    category: 'Dashboards',
+    filePath: 'TechnicalDocsLayout.tsx',
+    fileName: 'TechnicalDocsLayout.tsx',
+    description: 'Three-column technical documentation & telemetry config layout with narrow left sidebar, centered content area with floating action pill, large code blocks, slim right-side table of contents, and a distinct sculpted top-right tab notch housing the user profile dropdown.',
+    dependencies: ['@sehrennn/nickui', 'lucide-react', 'framer-motion'],
+  },
+  {
+    slug: 'mission-control-dashboard',
+    name: 'MissionControlDashboard',
+    title: 'Mission Control High-Density Grid Console',
+    category: 'Dashboards',
+    filePath: 'MissionControlDashboard.tsx',
+    fileName: 'MissionControlDashboard.tsx',
+    description: 'High-density multi-pane operational console with 16px breathable spatial gaps, real-time orderbook depth, high-frequency area chart, hardware dials/knobs, and streaming execution logs.',
+    dependencies: ['@sehrennn/nickui', 'lucide-react', 'framer-motion'],
+  },
+  {
+    slug: 'editorial-workspace-dashboard',
+    name: 'EditorialWorkspaceDashboard',
+    title: 'Editorial Architecture & Knowledge Codex',
+    category: 'Dashboards',
+    filePath: 'EditorialWorkspaceDashboard.tsx',
+    fileName: 'EditorialWorkspaceDashboard.tsx',
+    description: 'Understated, typography-first management dashboard with generous whitespace, subtle recessed chassis wells, segmented navigation, and publication codex.',
+    dependencies: ['@sehrennn/nickui', 'lucide-react'],
+  },
+  {
     slug: 'tactile-studio-dashboard',
     name: 'TactileStudioDashboard',
     title: 'Tactile Studio Dashboard',
