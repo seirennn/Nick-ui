@@ -26,6 +26,8 @@ import { SpotlightCard, SpotlightCardHeader, SpotlightCardTitle, SpotlightCardDe
 import { FolderPreview } from '@/components/ui/folder-preview';
 import { MagneticTabs } from '@/components/ui/magnetic-tabs';
 import { StackDeck } from '@/components/ui/stack-deck';
+import { SegmentedControl } from '@/components/ui/segmented-control';
+import { Knob } from '@/components/ui/knob';
 import { Search, Settings, Copy, Sun, Trash, Download, Sparkles, ChevronDown, Terminal, Check, Volume2, Cpu, HardDrive, ShieldCheck, Activity, Radio as RadioIcon } from 'lucide-react';
 import { ComponentPreview } from '@/components/docs/ComponentPreview';
 
@@ -79,6 +81,18 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
 
   const [folderExpanded, setFolderExpanded] = React.useState(false);
   const [stackIdx, setStackIdx] = React.useState(0);
+
+  // Segmented control state
+  const [segmentedVal, setSegmentedVal] = React.useState('clusters');
+  const [segmentedVariant, setSegmentedVariant] = React.useState<'tactile' | 'recessed' | 'default'>('tactile');
+  const [segmentedSize, setSegmentedSize] = React.useState<'sm' | 'md' | 'lg'>('md');
+
+  // Knob state
+  const [knobGain, setKnobGain] = React.useState(68);
+  const [knobThreshold, setKnobThreshold] = React.useState(34);
+  const [knobDamping, setKnobDamping] = React.useState(82);
+  const [knobVariant, setKnobVariant] = React.useState<'tactile' | 'recessed' | 'default'>('tactile');
+  const [knobTicks, setKnobTicks] = React.useState(true);
 
   switch (slug) {
     case 'button':
@@ -1010,11 +1024,22 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
     case 'rail-sidebar':
       return (
         <ComponentPreview
-          code={`<div className="h-96 border border-border/80 rounded-2xl overflow-hidden">\n  <RailSidebar\n    activeId="overview"\n    workspaceGlyph="N"\n    workspaceName="NickUI Core Studio"\n  />\n</div>`}
+          code={`<div className="h-[440px] border border-border/80 rounded-2xl overflow-hidden flex bg-card">\n  <RailSidebar\n    activeId="overview"\n    workspaceGlyph="N"\n    workspaceName="NickUI Core Studio"\n    collapsible={true}\n  />\n  <div className="flex-1 p-6 flex items-center justify-center text-xs text-text-muted">\n    Dashboard Content Area\n  </div>\n</div>`}
         >
-          <div className="h-96 w-full flex justify-center py-4">
-            <div className="h-full border border-border/80 rounded-2xl overflow-hidden shadow-sm">
-              <RailSidebar />
+          <div className="h-[440px] w-full flex justify-center py-4">
+            <div className="h-full w-full max-w-xl border border-border/80 rounded-2xl overflow-hidden shadow-tactile flex bg-card">
+              <RailSidebar collapsible={true} />
+              <div className="flex-1 p-6 bg-secondary/15 flex flex-col justify-center items-center text-center space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-secondary/80 border border-border/70 flex items-center justify-center text-text-primary">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-xs font-medium text-text-primary">Interactive Rail Navigation</h4>
+                  <p className="text-[11px] text-text-muted max-w-xs leading-relaxed">
+                    Click the toggle button at the bottom of the rail to switch between the compact icon rail and the expanded drawer with full labels and keyboard shortcuts.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </ComponentPreview>
@@ -1031,6 +1056,193 @@ export function ComponentInteractiveHarness({ slug }: { slug: string }) {
             </div>
           </div>
         </ComponentPreview>
+      );
+
+    case 'segmented-control':
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Variant:</span>
+              {(['tactile', 'recessed', 'default'] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setSegmentedVariant(v)}
+                  className={`px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer ${
+                    segmentedVariant === v
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-text-muted font-medium">Size:</span>
+              {(['sm', 'md', 'lg'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSegmentedSize(s)}
+                  className={`px-2 py-0.5 rounded-md text-xs uppercase font-mono transition-colors cursor-pointer ${
+                    segmentedSize === s
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <ComponentPreview
+            code={`<SegmentedControl
+  value="${segmentedVal}"
+  onChange={setSelected}
+  variant="${segmentedVariant}"
+  size="${segmentedSize}"
+  options={[
+    { value: 'overview', label: 'Overview', icon: <Activity className="w-3.5 h-3.5" /> },
+    { value: 'clusters', label: 'Clusters', icon: <Cpu className="w-3.5 h-3.5" />, badge: 14 },
+    { value: 'telemetry', label: 'Telemetry', icon: <RadioIcon className="w-3.5 h-3.5" /> },
+    { value: 'security', label: 'Security', icon: <ShieldCheck className="w-3.5 h-3.5" />, badge: 'Audit' },
+  ]}
+/>`}
+          >
+            <div className="w-full flex flex-col items-center justify-center gap-6 py-6">
+              <SegmentedControl
+                value={segmentedVal}
+                onChange={setSegmentedVal}
+                variant={segmentedVariant}
+                size={segmentedSize}
+                options={[
+                  { value: 'overview', label: 'Overview', icon: <Activity className="w-3.5 h-3.5" /> },
+                  { value: 'clusters', label: 'Clusters', icon: <Cpu className="w-3.5 h-3.5" />, badge: 14 },
+                  { value: 'telemetry', label: 'Telemetry', icon: <RadioIcon className="w-3.5 h-3.5" /> },
+                  { value: 'security', label: 'Security', icon: <ShieldCheck className="w-3.5 h-3.5" />, badge: 'Audit' },
+                ]}
+              />
+
+              <div className="flex items-center gap-2 text-xs font-mono text-text-muted">
+                <span>Active Segment:</span>
+                <span className="px-2 py-0.5 rounded bg-secondary text-text-primary font-medium border border-border/60">
+                  {segmentedVal}
+                </span>
+              </div>
+            </div>
+          </ComponentPreview>
+        </div>
+      );
+
+    case 'knob':
+      return (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4 p-3 rounded-xl bg-secondary/30 border border-border text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-text-muted font-medium">Variant:</span>
+              {(['tactile', 'recessed', 'default'] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setKnobVariant(v)}
+                  className={`px-2.5 py-1 rounded-md text-xs capitalize transition-colors cursor-pointer ${
+                    knobVariant === v
+                      ? 'bg-primary text-primary-foreground font-medium shadow-2xs'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary/60'
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setKnobTicks(!knobTicks)}
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+                knobTicks
+                  ? 'bg-secondary text-text-primary font-medium border-border'
+                  : 'text-text-muted hover:text-text-primary border-transparent'
+              }`}
+            >
+              Radial Ticks: {knobTicks ? 'Visible' : 'Hidden'}
+            </button>
+          </div>
+
+          <ComponentPreview
+            code={`<div className="flex items-center gap-8">
+  <Knob
+    label="Master Gain"
+    value={${knobGain}}
+    onChange={setGain}
+    min={0}
+    max={100}
+    unit="%"
+    variant="${knobVariant}"
+    showTicks={${knobTicks}}
+  />
+  <Knob
+    label="Threshold"
+    value={${knobThreshold}}
+    onChange={setThreshold}
+    min={0}
+    max={60}
+    unit="dB"
+    variant="${knobVariant}"
+    showTicks={${knobTicks}}
+  />
+  <Knob
+    label="Damping"
+    value={${knobDamping}}
+    onChange={setDamping}
+    min={0}
+    max={100}
+    unit="ms"
+    variant="${knobVariant}"
+    showTicks={${knobTicks}}
+  />
+</div>`}
+          >
+            <div className="w-full flex flex-col items-center justify-center gap-6 py-6">
+              <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+                <Knob
+                  label="Master Gain"
+                  value={knobGain}
+                  onChange={setKnobGain}
+                  min={0}
+                  max={100}
+                  unit="%"
+                  variant={knobVariant}
+                  showTicks={knobTicks}
+                />
+                <Knob
+                  label="Threshold"
+                  value={knobThreshold}
+                  onChange={setKnobThreshold}
+                  min={0}
+                  max={60}
+                  unit="dB"
+                  variant={knobVariant}
+                  showTicks={knobTicks}
+                />
+                <Knob
+                  label="Damping"
+                  value={knobDamping}
+                  onChange={setKnobDamping}
+                  min={0}
+                  max={100}
+                  unit="ms"
+                  variant={knobVariant}
+                  showTicks={knobTicks}
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-secondary/30 border border-border/60 text-xs font-mono text-text-muted text-center max-w-md">
+                <span className="text-text-primary font-medium">Interactivity:</span> Click and drag vertically, scroll mouse wheel, or use Arrow Up/Down & PageUp/PageDown keys while focused.
+              </div>
+            </div>
+          </ComponentPreview>
+        </div>
       );
 
     default:

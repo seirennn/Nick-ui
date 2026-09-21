@@ -1,0 +1,99 @@
+{
+  "name": "knob",
+  "slug": "knob",
+  "title": "Knob",
+  "description": "Rotary encoder dial with circular milled bezel, tick marks, physical indicator line, mouse drag/wheel/keyboard physics, and telemetry readout.",
+  "category": "primitives",
+  "dependencies": [],
+  "variants": [
+    "tactile",
+    "recessed",
+    "default"
+  ],
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": false,
+      "description": "Controlled numeric value"
+    },
+    {
+      "name": "defaultValue",
+      "type": "number",
+      "defaultValue": "50",
+      "description": "Initial numeric value for uncontrolled mode"
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "defaultValue": "0",
+      "description": "Minimum value boundary"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "defaultValue": "100",
+      "description": "Maximum value boundary"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "defaultValue": "1",
+      "description": "Increment step value"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: number) => void",
+      "description": "Value update callback during drag, scroll, or keyboard adjustments"
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "defaultValue": "80",
+      "description": "Diameter of rotary encoder dial in pixels"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Telemetry parameter label"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "defaultValue": "''",
+      "description": "Display unit suffix (e.g., '%', 'dB', 'ms', 'kHz')"
+    },
+    {
+      "name": "variant",
+      "type": "'tactile' | 'recessed' | 'default'",
+      "defaultValue": "'tactile'",
+      "description": "Depth tier styling of dial bezel and face"
+    },
+    {
+      "name": "showTicks",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Renders radial tick marks around dial circumference"
+    },
+    {
+      "name": "showValue",
+      "type": "boolean",
+      "defaultValue": "true",
+      "description": "Renders recessed digital value readout pill"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "defaultValue": "false",
+      "description": "Disables interaction and dims indicator"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Rotary Telemetry Dial",
+      "description": "Tactile milled encoder with radial tick marks and numerical readout.",
+      "code": "<Knob\n  label=\"Master Gain\"\n  defaultValue={64}\n  min={0}\n  max={100}\n  unit=\"%\"\n  variant=\"tactile\"\n/>"
+    }
+  ],
+  "sourceCode": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nexport interface KnobProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {\n  value?: number;\n  defaultValue?: number;\n  min?: number;\n  max?: number;\n  step?: number;\n  onChange?: (value: number) => void;\n  size?: number;\n  label?: string;\n  unit?: string;\n  variant?: 'tactile' | 'recessed' | 'default';\n  showTicks?: boolean;\n  showValue?: boolean;\n  disabled?: boolean;\n}\n\nexport const Knob = React.forwardRef<HTMLDivElement, KnobProps>(\n  (\n    {\n      value: controlledValue,\n      defaultValue = 50,\n      min = 0,\n      max = 100,\n      step = 1,\n      onChange,\n      size = 80,\n      label,\n      unit = '',\n      variant = 'tactile',\n      showTicks = true,\n      showValue = true,\n      disabled = false,\n      className,\n      ...props\n    },\n    ref\n  ) => {\n    const rawId = React.useId();\n    const id = rawId.replace(/[^a-zA-Z0-9]/g, '');\n\n    const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);\n    const currentValue = controlledValue !== undefined ? controlledValue : uncontrolledValue;\n\n    const [isDragging, setIsDragging] = React.useState(false);\n    const startYRef = React.useRef(0);\n    const startValRef = React.useRef(currentValue);\n\n    // 270 degree rotation range: -135deg to +135deg\n    const clampedValue = Math.min(Math.max(currentValue, min), max);\n    const percentage = (clampedValue - min) / (max - min || 1);\n    const rotationDeg = -135 + percentage * 270;\n\n    const updateValue = (newVal: number) => {\n      const stepped = Math.round((newVal - min) / step) * step + min;\n      const clamped = Math.min(Math.max(stepped, min), max);\n      if (controlledValue === undefined) {\n        setUncontrolledValue(clamped);\n      }\n      onChange?.(clamped);\n    };\n\n    const handleMouseDown = (e: React.MouseEvent) => {\n      if (disabled) return;\n      setIsDragging(true);\n      startYRef.current = e.clientY;\n      startValRef.current = currentValue;\n\n      const handleMouseMove = (moveEvent: MouseEvent) => {\n        const deltaY = startYRef.current - moveEvent.clientY;\n        const range = max - min;\n        const change = (deltaY / 150) * range;\n        updateValue(startValRef.current + change);\n      };\n\n      const handleMouseUp = () => {\n        setIsDragging(false);\n        window.removeEventListener('mousemove', handleMouseMove);\n        window.removeEventListener('mouseup', handleMouseUp);\n      };\n\n      window.addEventListener('mousemove', handleMouseMove);\n      window.addEventListener('mouseup', handleMouseUp);\n    };\n\n    const handleWheel = (e: React.WheelEvent) => {\n      if (disabled) return;\n      e.preventDefault();\n      const delta = e.deltaY < 0 ? step : -step;\n      updateValue(currentValue + delta);\n    };\n\n    const handleKeyDown = (e: React.KeyboardEvent) => {\n      if (disabled) return;\n      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {\n        e.preventDefault();\n        updateValue(currentValue + step);\n      } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {\n        e.preventDefault();\n        updateValue(currentValue - step);\n      } else if (e.key === 'Home') {\n        e.preventDefault();\n        updateValue(min);\n      } else if (e.key === 'End') {\n        e.preventDefault();\n        updateValue(max);\n      }\n    };\n\n    // Calculate calibration ticks around 270deg\n    const numTicks = 13;\n    const ticks = Array.from({ length: numTicks }, (_, i) => {\n      const angle = -135 + (i / (numTicks - 1)) * 270;\n      const rad = (angle - 90) * (Math.PI / 180);\n      const rOuter = size / 2 - 2;\n      const rInner = size / 2 - 6;\n      const cx = size / 2;\n      const cy = size / 2;\n      const x1 = cx + rOuter * Math.cos(rad);\n      const y1 = cy + rOuter * Math.sin(rad);\n      const x2 = cx + rInner * Math.cos(rad);\n      const y2 = cy + rInner * Math.sin(rad);\n      const isPassed = angle <= rotationDeg;\n\n      return { angle, x1, y1, x2, y2, isPassed };\n    });\n\n    const knobRadius = size / 2 - 12;\n\n    return (\n      <div\n        ref={ref}\n        className={cn('inline-flex flex-col items-center select-none gap-2', className)}\n        {...props}\n      >\n        {label && (\n          <span className=\"text-[10px] font-mono uppercase tracking-wider text-text-muted text-center\">\n            {label}\n          </span>\n        )}\n\n        <div\n          role=\"slider\"\n          tabIndex={disabled ? -1 : 0}\n          aria-valuemin={min}\n          aria-valuemax={max}\n          aria-valuenow={clampedValue}\n          aria-label={label || 'Rotary knob'}\n          onMouseDown={handleMouseDown}\n          onWheel={handleWheel}\n          onKeyDown={handleKeyDown}\n          style={{ width: size, height: size }}\n          className={cn(\n            'relative flex items-center justify-center cursor-ns-resize focus:outline-none rounded-full',\n            disabled && 'opacity-40 cursor-not-allowed'\n          )}\n        >\n          {/* Outer SVG Tick Scale */}\n          {showTicks && (\n            <svg\n              width={size}\n              height={size}\n              className=\"absolute inset-0 pointer-events-none\"\n            >\n              {ticks.map((t, i) => (\n                <line\n                  key={i}\n                  x1={t.x1}\n                  y1={t.y1}\n                  x2={t.x2}\n                  y2={t.y2}\n                  stroke={t.isPassed ? 'var(--text-primary)' : 'var(--border)'}\n                  strokeWidth={1.5}\n                  strokeLinecap=\"round\"\n                  className=\"transition-colors duration-100\"\n                />\n              ))}\n            </svg>\n          )}\n\n          {/* Physical Knob Disc */}\n          <div\n            style={{\n              width: knobRadius * 2,\n              height: knobRadius * 2,\n              transform: `rotate(${rotationDeg}deg)`,\n            }}\n            className={cn(\n              'relative rounded-full flex items-center justify-center transition-transform duration-75 ease-out',\n              variant === 'tactile' &&\n                'bg-gradient-to-b from-card to-secondary/80 border border-border/80 shadow-tactile',\n              variant === 'recessed' &&\n                'bg-background border border-border/90 shadow-inner-tactile',\n              variant === 'default' &&\n                'bg-card border border-border shadow-xs'\n            )}\n          >\n            {/* Radial Specular Highlight */}\n            <div className=\"absolute inset-1 rounded-full bg-gradient-to-tr from-transparent via-foreground/[0.03] to-foreground/[0.08] pointer-events-none\" />\n\n            {/* Rotary Indicator Notch */}\n            <div className=\"absolute top-1.5 w-1 h-3 rounded-full bg-text-primary shadow-2xs\" />\n\n            {/* Center Metallic Pivot Cap */}\n            <div className=\"w-4 h-4 rounded-full bg-secondary border border-border/70 shadow-inner-tactile\" />\n          </div>\n        </div>\n\n        {/* Value Telemetry Readout Pill */}\n        {showValue && (\n          <div className=\"px-2 py-0.5 rounded-md bg-secondary/60 border border-border/50 text-[11px] font-mono text-text-primary\">\n            {clampedValue}\n            {unit}\n          </div>\n        )}\n      </div>\n    );\n  }\n);\n\nKnob.displayName = 'Knob';\n"
+}

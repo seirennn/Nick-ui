@@ -25,3 +25,5 @@ export * from './spotlight-card';
 export * from './folder-preview';
 export * from './magnetic-tabs';
 export * from './stack-deck';
+export * from './segmented-control';
+export * from './knob';

@@ -46,7 +46,7 @@ export function SiteNavbar() {
     },
     {
       id: 'go-cli',
-      title: 'NickUI CLI Guide (pnpm dlx nickui add)',
+      title: 'NickUI CLI Guide (pnpm dlx @sehrennn/nickui add)',
       category: 'Developer Experience',
       shortcut: 'G X',
       icon: <TerminalSquare className="w-4 h-4" />,

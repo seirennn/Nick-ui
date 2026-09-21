@@ -182,7 +182,7 @@ export default function CliDocPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <CodeBlock code="pnpm dlx nickui add button" language="bash" />
+                    <CodeBlock code="pnpm dlx @sehrennn/nickui add button" language="bash" />
                     <p className="text-xs text-text-muted leading-relaxed">
                       Components live in your <code className="font-mono text-text-primary">src/components/ui/</code>. Modify anything at will.
                     </p>

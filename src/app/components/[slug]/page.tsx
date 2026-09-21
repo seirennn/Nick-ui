@@ -64,11 +64,11 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
               <div className="p-3 rounded-xl bg-card border border-border/80 shadow-tactile flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <span className="text-text-muted uppercase text-[10px]">Source CLI:</span>
-                  <span className="text-text-primary select-all">pnpm dlx nickui add {component.slug}</span>
+                  <span className="text-text-primary select-all">pnpm dlx @sehrennn/nickui add {component.slug}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-text-muted uppercase text-[10px]">Package:</span>
-                  <span className="text-text-primary select-all">import &#123; {component.title.replace(/\s+/g, '')} &#125; from &apos;nickui&apos;;</span>
+                  <span className="text-text-primary select-all">import &#123; {component.title.replace(/\s+/g, '')} &#125; from &apos;@sehrennn/nickui&apos;;</span>
                 </div>
               </div>
 

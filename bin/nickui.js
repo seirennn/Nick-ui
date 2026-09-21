@@ -83,8 +83,8 @@ program
     console.log(`✔ Created nickui.json`);
     console.log(`✔ Configured components directory: ${componentsDir}`);
     console.log('\nYou can now add components to your project:');
-    console.log('  pnpm dlx nickui add button');
-    console.log('  pnpm dlx nickui add card input\n');
+    console.log('  pnpm dlx @sehrennn/nickui add button');
+    console.log('  pnpm dlx @sehrennn/nickui add card input\n');
   });
 
 // ─── COMMAND: ADD ───────────────────────────────────────────
@@ -96,8 +96,8 @@ program
   .action(async (compNames, options) => {
     if (!compNames || compNames.length === 0) {
       console.log('Please specify one or more components to add:');
-      console.log('  pnpm dlx nickui add button');
-      console.log('  pnpm dlx nickui add card otp-input tabs');
+      console.log('  pnpm dlx @sehrennn/nickui add button');
+      console.log('  pnpm dlx @sehrennn/nickui add card otp-input tabs');
       console.log('\nRun "nickui list" to see all available components.');
       return;
     }
@@ -209,7 +209,7 @@ program
     }
 
     console.log('Add any component using:');
-    console.log('  pnpm dlx nickui add <component-name>\n');
+    console.log('  pnpm dlx @sehrennn/nickui add <component-name>\n');
   });
 
 // ─── COMMAND: MCP ───────────────────────────────────────────

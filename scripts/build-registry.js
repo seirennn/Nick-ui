@@ -48,6 +48,8 @@ const slugToFile = {
   'dot-matrix-chart': 'charts/dot-matrix-chart.tsx',
   'tactile-trend-card': 'charts/tactile-trend-card.tsx',
   'tactile-metric-card': 'charts/tactile-metric-card.tsx',
+  'segmented-control': 'segmented-control.tsx',
+  'knob': 'knob.tsx',
 };
 
 const components = JSON.parse(fs.readFileSync(registryJsonPath, 'utf8'));
